@@ -190,7 +190,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .zoom-ctrl .pct{font-size:12px;font-weight:800;min-width:44px;text-align:center;color:var(--text-1);padding:0 4px;}
 @media print{.zoom-ctrl{display:none !important;}}
 
-/* header - compressed */
 .page-header{margin-bottom:3px;}
 .header-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:6px;align-items:start;}
 .hcol{display:flex;flex-direction:column;gap:1px;min-width:0;}
@@ -217,36 +216,31 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .q-desc-el s{text-decoration:line-through;opacity:.7;}
 .q-image{display:block;margin-top:5px;max-width:60%;max-height:55mm;object-fit:contain;border-radius:4px;}
 
-/* Math formulas */
-.math-frac{
-  display:inline-flex;flex-direction:column;vertical-align:-0.55em;
-  text-align:center;font-size:0.9em;line-height:1.05;margin:0 3px;
+/* Answer page */
+.ans-item{
+  margin-bottom:8px;overflow-wrap:anywhere;
+  page-break-inside:avoid;break-inside:avoid;
 }
+.ans-title{
+  font-weight:bold;margin-bottom:2px;overflow-wrap:anywhere;
+}
+.ans-text{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+}
+
+/* Math */
+.math-frac{display:inline-flex;flex-direction:column;vertical-align:-0.55em;text-align:center;font-size:0.9em;line-height:1.05;margin:0 3px;}
 .math-frac .mf-num{border-bottom:1.4px solid currentColor;padding:0 5px;}
 .math-frac .mf-den{padding:0 5px;}
 .math-root{display:inline-flex;align-items:flex-start;vertical-align:-0.15em;margin:0 2px;}
 .math-root .mr-sym{font-size:1.25em;line-height:1;}
-.math-root .mr-content{
-  border-top:1.4px solid currentColor;
-  padding:1px 5px 0 3px;
-  margin-top:0.1em;
-  min-width:14px;
-}
-.math-matrix{
-  display:inline-table;vertical-align:middle;margin:2px 4px;
-  padding:2px 6px;position:relative;
-}
-.math-matrix::before,.math-matrix::after{
-  content:'';position:absolute;top:0;bottom:0;width:5px;
-  border:1.5px solid currentColor;
-}
+.math-root .mr-content{border-top:1.4px solid currentColor;padding:1px 5px 0 3px;margin-top:0.1em;min-width:14px;}
+.math-matrix{display:inline-table;vertical-align:middle;margin:2px 4px;padding:2px 6px;position:relative;}
+.math-matrix::before,.math-matrix::after{content:'';position:absolute;top:0;bottom:0;width:5px;border:1.5px solid currentColor;}
 .math-matrix::before{left:0;border-left:none;border-radius:0 3px 3px 0;}
 .math-matrix::after{right:0;border-right:none;border-radius:3px 0 0 3px;}
 .math-matrix table{border-collapse:separate;border-spacing:8px 2px;}
 .math-matrix td{text-align:center;min-width:16px;padding:1px 4px;}
-.math-limit{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;line-height:1;}
-.math-limit .ml-top{font-size:0.62em;}
-.math-limit .ml-main{font-size:1.1em;font-weight:bold;}
 .math-lim{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.05;}
 .math-lim .ml-lim{font-size:0.8em;font-style:italic;}
 .math-lim .ml-sub{font-size:0.6em;margin-top:-2px;}
@@ -272,23 +266,12 @@ input.shape-lbl{
   font-size:11px;-webkit-appearance:none;appearance:none;
 }
 input.shape-lbl::placeholder{color:rgba(0,0,0,.22);font-size:9px;}
-input.shape-lbl:focus{
-  border-color:var(--accent);border-style:solid;
-  background:#fff;z-index:5;box-shadow:0 0 0 2px var(--accent-ring);
-}
+input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#fff;z-index:5;box-shadow:0 0 0 2px var(--accent-ring);}
 .q-desc-el .shape-lbl{background:transparent;border:none;color:inherit;}
 
-/* Table */
-.q-desc-el .content-table{
-  border-collapse:collapse;margin:6px 0;width:100%;
-  font-family:inherit;font-size:0.95em;
-}
-.q-desc-el .content-table td,
-.q-desc-el .content-table th{
-  border:1px solid currentColor;padding:4px 8px;
-  text-align:center;min-width:30px;
-}
-.q-desc-el .content-table th{font-weight:bold;background:rgba(99,102,241,.06);}
+.content-table{border-collapse:collapse;margin:6px 0;width:100%;font-family:inherit;font-size:0.95em;}
+.content-table td,.content-table th{border:1px solid currentColor;padding:4px 8px;text-align:center;min-width:30px;}
+.content-table th{font-weight:bold;background:rgba(99,102,241,.06);}
 
 .page-footer{margin-top:auto;padding-top:8px;display:flex;flex-direction:column;gap:4px;}
 .footer-wish{text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;}
@@ -298,11 +281,6 @@ input.shape-lbl:focus{
 .footer-grid .fcol.center{text-align:center;}
 .footer-grid .fcol.left{text-align:left;}
 .footer-teachers{display:flex;flex-direction:column;gap:1px;}
-
-/* Answer key */
-.answer-item{margin-bottom:6px;line-height:1.5;overflow-wrap:anywhere;}
-.answer-item .a-num{font-weight:bold;color:var(--accent);}
-.answer-item .a-text{white-space:pre-wrap;}
 
 .subtabs{
   display:flex;gap:4px;overflow-x:auto;padding:4px;
@@ -401,13 +379,12 @@ input.shape-lbl:focus{
 
 .q-meta-item{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
 .q-meta-item label{font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;}
-.q-meta-item input,.q-meta-item textarea{
+.q-meta-item input{
   border:1.5px solid var(--border-strong);border-radius:8px;
   padding:8px 10px;font-size:13px;background:var(--bg-2);
   outline:none;width:100%;font-family:inherit;
 }
-.q-meta-item textarea{min-height:50px;resize:vertical;}
-.q-meta-item input:focus,.q-meta-item textarea:focus{border-color:var(--accent);background:var(--bg-1);}
+.q-meta-item input:focus{border-color:var(--accent);background:var(--bg-1);}
 
 .style-block{
   border:1.5px solid var(--border);border-radius:10px;
@@ -511,19 +488,18 @@ input.shape-lbl:focus{
 .table-picker button.on{background:var(--accent);border-color:var(--accent);}
 .table-picker button:hover{background:var(--accent-light);}
 
-/* Shape toolbar */
 .shape-toolbar{
   position:fixed;z-index:400;
   background:var(--bg-1);border:1px solid var(--border);
   border-radius:12px;padding:8px;
   box-shadow:var(--shadow-lg);
-  display:none;min-width:240px;
+  display:none;min-width:250px;
 }
 .shape-toolbar.open{display:block;}
 .st-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
 .st-row:last-child{margin-bottom:0;}
 .st-label{font-size:11px;font-weight:700;color:var(--text-3);min-width:52px;}
-.st-row input[type=range]{flex:1;accent-color:var(--accent);}
+.st-row input[type=range]{flex:1;accent-color:var(--accent);min-width:0;}
 .st-row .st-value{font-size:11px;font-weight:800;color:var(--accent);min-width:38px;text-align:center;}
 .st-row button{
   padding:4px 8px;border:1px solid var(--border);background:var(--bg-2);
@@ -565,7 +541,6 @@ input.shape-lbl:focus{
   border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;
   color:var(--text-2);font-family:inherit;
 }
-.align-btns button:hover{background:var(--accent-light);color:var(--accent);}
 .align-btns button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 
 .img-preview{
@@ -876,9 +851,7 @@ input.shape-lbl:focus{
         <button class="add-q-btn" id="addQuestionBtn" onclick="addQuestion()">
           <span style="font-size:15px;">➕</span> إضافة سؤال جديد
         </button>
-        <p class="hint">
-          🔣 = صيغ رياضية · ⬛ = أشكال · 📊 = جدول · ⋯ = نسخ/لصق
-        </p>
+        <p class="hint">🔣 صيغ رياضية · ∑ رموز · ⬛ أشكال · 📊 جدول · ⋯ نسخ/لصق</p>
       </div>
       <div id="questions-editor"></div>
     </div>
@@ -894,10 +867,8 @@ input.shape-lbl:focus{
           <label>عنوان الصفحة</label>
           <input type="text" data-key="answerTitle">
         </div>
-        <p class="hint">
-          اكتب الإجابة لكل سؤال في بطاقته (قسم الأسئلة) — راح تظهر كلها بصفحة منفصلة.
-        </p>
       </div>
+      <div id="answers-editor"></div>
     </div>
 
     <div class="subview" id="sub-footer">
@@ -1012,9 +983,9 @@ input.shape-lbl:focus{
 </main>
 
 <div class="zoom-ctrl no-print" id="zoomCtrl">
-  <button onclick="changeZoom(-0.1)" title="تصغير">−</button>
+  <button onclick="changeZoom(-0.1)">−</button>
   <span class="pct" id="zoomPct">100%</span>
-  <button onclick="changeZoom(0.1)" title="تكبير">+</button>
+  <button onclick="changeZoom(0.1)">+</button>
 </div>
 
 <nav class="bottomnav no-print">
@@ -1031,11 +1002,10 @@ input.shape-lbl:focus{
 <div id="toast"></div>
 <div id="save-ind">✓ تم الحفظ</div>
 
-<!-- Shape toolbar -->
 <div class="shape-toolbar no-print" id="shapeToolbar">
   <div class="st-row">
     <span class="st-label">📏 الحجم</span>
-    <input type="range" min="0.5" max="2.5" step="0.05" id="stScale" oninput="applyShapeScale(this.value)">
+    <input type="range" min="0.4" max="3" step="0.05" id="stScale" oninput="applyShapeScale(this.value)">
     <span class="st-value" id="stScaleVal">100%</span>
   </div>
   <div class="st-row">
@@ -1068,7 +1038,7 @@ input.shape-lbl:focus{
 
 <script>
 "use strict";
-const STORAGE_KEY='qform_v14';
+const STORAGE_KEY='qform_v15';
 const THEME_KEY='qform_theme';
 const MAX_QUESTIONS=10;
 const FONTS=['Arial','Tahoma','Times New Roman','Traditional Arabic','Simplified Arabic','Sakkal Majalla','Andalus','Diwani','Arabic Typesetting','Calibri','Courier New'];
@@ -1121,10 +1091,9 @@ const SHAPES=[
   {id:'coord',name:'محور',w:120,h:120,svg:'<svg viewBox="0 0 120 120" preserveAspectRatio="none"><line x1="15" y1="105" x2="110" y2="105" stroke="currentColor" stroke-width="1.6"/><line x1="15" y1="105" x2="15" y2="15" stroke="currentColor" stroke-width="1.6"/><polygon points="110,105 104,102 104,108" fill="currentColor"/><polygon points="15,15 12,21 18,21" fill="currentColor"/></svg>',labels:[{x:112,y:116,p:'x'},{x:10,y:8,p:'y'},{x:6,y:114,p:'O'}]}
 ];
 
-/* Math formulas */
 const MATH_ITEMS = [
   {id:'frac',   label:'كسر',       glyph:'<span class="math-frac"><span class="mf-num">a</span><span class="mf-den">b</span></span>'},
-  {id:'frac3',  label:'كسر مزدوج', glyph:'<span class="math-frac"><span class="mf-num">1</span><span class="mf-den">2</span></span>'},
+  {id:'frac3',  label:'كسر 1/2',   glyph:'<span class="math-frac"><span class="mf-num">1</span><span class="mf-den">2</span></span>'},
   {id:'root',   label:'جذر',       glyph:'<span class="math-root"><span class="mr-sym">√</span><span class="mr-content">x</span></span>'},
   {id:'root3',  label:'جذر تكعيبي', glyph:'<span class="math-root"><span class="mr-sym">∛</span><span class="mr-content">x</span></span>'},
   {id:'int',    label:'تكامل',     glyph:'<span style="font-size:1.5em;vertical-align:middle;">∫</span><sub>a</sub><sup>b</sup>'},
@@ -1149,6 +1118,8 @@ const MATH_ITEMS = [
 function defaultFont(){return{text:'',family:'Arial',size:12,weight:'normal',color:'#111827'};}
 function defaultTitleStyle(){return{family:'Arial',size:14,weight:'bold',color:'#111827'};}
 function defaultDescStyle(){return{family:'Arial',size:14,weight:'normal',color:'#111827',lineHeight:1.6};}
+function defaultAnsTitleStyle(){return{family:'Arial',size:14,weight:'bold',color:'#111827'};}
+function defaultAnsAnswerStyle(){return{family:'Arial',size:14,weight:'normal',color:'#111827',lineHeight:1.7};}
 
 const defaultState={
   h:{
@@ -1209,6 +1180,7 @@ function schedulePaperUpdate(){if(paperTimer)clearTimeout(paperTimer);paperTimer
 function fullRender(){
   buildPages();
   renderQuestionsEditor();
+  renderAnswersEditor();
   renderTeachersEditor();
   updateQuestionCounter();
   updateFramePicker();
@@ -1260,8 +1232,7 @@ function buildHeaderElement(){
   header.appendChild(line);
   if(state.h.note.text){
     const note=document.createElement('div');note.className='header-note';applyStyle(note,state.h.note);
-    const align=state.h.note.align||'center';
-    note.style.textAlign=align;
+    note.style.textAlign=state.h.note.align||'center';
     header.appendChild(note);
   }
   return header;
@@ -1346,6 +1317,34 @@ function buildQuestionElement(q){
   return el;
 }
 
+function buildAnswerPageElement(q,i){
+  const el=document.createElement('div');
+  el.className='ans-item';
+
+  const ts=q.ansTitleStyle||{};
+  const title=document.createElement('div');
+  title.className='ans-title';
+  title.style.fontFamily=(ts.family||'Arial')+', Arial, sans-serif';
+  title.style.fontSize=(ts.size||14)+'pt';
+  title.style.fontWeight=ts.weight||'bold';
+  title.style.color=ts.color||'#111827';
+  title.textContent=q.ansTitle||('س '+(i+1));
+  el.appendChild(title);
+
+  const as=q.ansAnswerStyle||{};
+  const txt=document.createElement('div');
+  txt.className='ans-text';
+  txt.style.fontFamily=(as.family||'Arial')+', Arial, sans-serif';
+  txt.style.fontSize=(as.size||14)+'pt';
+  txt.style.fontWeight=as.weight||'normal';
+  txt.style.color=as.color||'#111827';
+  txt.style.lineHeight=String(as.lineHeight||1.7);
+  txt.textContent=q.ansAnswer||'';
+  el.appendChild(txt);
+
+  return el;
+}
+
 function buildWatermarkElement(){
   if(!state.wm||state.wm.type==='none')return null;
   const wrap=document.createElement('div');wrap.className='watermark';
@@ -1373,27 +1372,6 @@ function buildFrameElement(){
   frame.className='page-frame '+(found?found.css:'frame-none');
   frame.style.setProperty('--frame-c',state.frame.color||'#000');
   return frame;
-}
-
-/* Answer element */
-function buildAnswerElement(q,i){
-  const el=document.createElement('div');
-  el.className='answer-item';
-  const ds=q.descStyle||{};
-  el.style.fontFamily=(ds.family||'Arial')+', Arial, sans-serif';
-  el.style.fontSize=(ds.size||14)+'pt';
-  el.style.color=ds.color||'#111827';
-
-  const num=document.createElement('span');
-  num.className='a-num';
-  num.textContent='س '+(i+1)+': ';
-  el.appendChild(num);
-
-  const txt=document.createElement('span');
-  txt.className='a-text';
-  txt.textContent=(q.answer||'—');
-  el.appendChild(txt);
-  return el;
 }
 
 const PAGE_PADDING_MM=12;
@@ -1483,12 +1461,12 @@ function buildPages(){
     container.appendChild(scaler);
   });
 
-  // Answer key pages
+  // Answers page
   if(state.showAnswers && state.questions.length){
     const ansPages=[];
     let ansCur={items:[]};
     let ansUsed=0;
-    // measure title
+
     const titleEl=document.createElement('div');
     titleEl.style.cssText='text-align:center;font-weight:bold;font-size:18pt;margin-bottom:12px;';
     titleEl.textContent=state.answerTitle||'مفتاح الإجابة';
@@ -1496,8 +1474,8 @@ function buildPages(){
     ansUsed=titleH;
 
     state.questions.forEach((q,i)=>{
-      const aEl=buildAnswerElement(q,i);
-      const h=measure(aEl)+4;
+      const aEl=buildAnswerPageElement(q,i);
+      const h=measure(aEl)+6;
       if(ansUsed+h>contentHeightPx && ansCur.items.length>0){
         ansPages.push(ansCur);
         ansCur={items:[]};
@@ -1527,7 +1505,7 @@ function buildPages(){
         t.textContent=state.answerTitle||'مفتاح الإجابة';
         main.appendChild(t);
       }
-      ap.items.forEach(it=>main.appendChild(buildAnswerElement(it.q,it.i)));
+      ap.items.forEach(it=>main.appendChild(buildAnswerPageElement(it.q,it.i)));
       content.appendChild(main);
       pageEl.appendChild(content);
       scaler.appendChild(pageEl);
@@ -1574,17 +1552,38 @@ function updateZoomUI(){
 function shapeToHtml(sh){
   const labelsHtml=sh.labels.map((lbl,i)=>{
     const rot=lbl.r?' rotate('+lbl.r+'deg)':'';
+    const leftPct=(lbl.x/sh.w*100).toFixed(2);
+    const topPct=(lbl.y/sh.h*100).toFixed(2);
     return '<input type="text" class="shape-lbl" data-idx="'+i+'" value="" placeholder="'+(lbl.p||'')+'" '+
-           'style="left:'+lbl.x+'px;top:'+lbl.y+'px;transform:translate(-50%,-50%)'+rot+';">';
+           'style="left:'+leftPct+'%;top:'+topPct+'%;transform:translate(-50%,-50%)'+rot+';">';
   }).join('');
   return '<span class="shape-block" contenteditable="false" data-shape="'+sh.id+'" data-base-w="'+sh.w+'" data-base-h="'+sh.h+'" data-scale="1" data-rotate="0" data-float="inline" style="width:'+sh.w+'px;height:'+sh.h+'px;">'+
          sh.svg + labelsHtml +
          '</span>';
 }
 
-/* ============================================================
-   Editor
-   ============================================================ */
+/* Migrate existing shapes to % labels */
+function migrateShapeLabels(html){
+  if(!html) return html;
+  const temp=document.createElement('div');
+  temp.innerHTML=html;
+  temp.querySelectorAll('.shape-block').forEach(shape=>{
+    const w=parseFloat(shape.dataset.baseW||shape.style.width)||100;
+    const h=parseFloat(shape.dataset.baseH||shape.style.height)||100;
+    shape.querySelectorAll('.shape-lbl').forEach(lbl=>{
+      const l=parseFloat(lbl.style.left)||0;
+      const t=parseFloat(lbl.style.top)||0;
+      if(lbl.style.left && lbl.style.left.endsWith('px')){
+        lbl.style.left=(l/w*100)+'%';
+      }
+      if(lbl.style.top && lbl.style.top.endsWith('px')){
+        lbl.style.top=(t/h*100)+'%';
+      }
+    });
+  });
+  return temp.innerHTML;
+}
+
 function renderQuestionsEditor(){
   const cont=$('questions-editor');
   if(!cont)return;
@@ -1655,7 +1654,7 @@ function buildQuestionCard(q,idx){
   const del=miniBtn('✕','حذف',()=>deleteQuestion(idx));del.classList.add('danger');head.appendChild(del);
   card.appendChild(head);
 
-  // Title block
+  // Title
   const titleBlock=document.createElement('div');titleBlock.className='style-block';
   const titleHeader=document.createElement('div');titleHeader.className='style-block-title';
   titleHeader.innerHTML='<span>🏷️ العنوان</span><span class="tag">مستقل</span>';
@@ -1677,7 +1676,7 @@ function buildQuestionCard(q,idx){
   titleBlock.appendChild(buildFontRow(q.titleStyle,()=>{save();schedulePaperUpdate();},false));
   card.appendChild(titleBlock);
 
-  // Description block
+  // Description
   const descBlock=document.createElement('div');descBlock.className='style-block';
   const descHeader=document.createElement('div');descHeader.className='style-block-title';
   descHeader.innerHTML='<span>📝 الوصف</span><span class="tag">مستقل</span>';
@@ -1752,7 +1751,7 @@ function buildQuestionCard(q,idx){
   editor.className='rich-editor';
   editor.setAttribute('contenteditable','true');
   editor.setAttribute('data-placeholder','اكتب وصف السؤال...');
-  editor.innerHTML=q.desc||'';
+  editor.innerHTML=migrateShapeLabels(q.desc||'');
 
   q.descStyle=q.descStyle||defaultDescStyle();
   const applyDescStyleToEditor=()=>{
@@ -1765,14 +1764,12 @@ function buildQuestionCard(q,idx){
   };
   applyDescStyleToEditor();
 
-  // Shape click handler
   editor.addEventListener('click',(e)=>{
     const shape=e.target.closest('.shape-block');
     if(shape && editor.contains(shape)){
       e.preventDefault();
       selectShape(shape,editor);
     } else {
-      // Deselect if not clicked inside toolbar
       if(!e.target.closest('.shape-toolbar')){
         hideShapeToolbar();
       }
@@ -1831,17 +1828,7 @@ function buildQuestionCard(q,idx){
 
   card.appendChild(descBlock);
 
-  // Answer
-  const ansItem=document.createElement('div');ansItem.className='q-meta-item';
-  const ansLbl=document.createElement('label');ansLbl.textContent='الإجابة (تظهر في صفحة الإجابات)';ansItem.appendChild(ansLbl);
-  const ansInp=document.createElement('textarea');
-  ansInp.placeholder='اكتب الإجابة النموذجية...';
-  ansInp.value=q.answer||'';
-  ansInp.addEventListener('input',()=>{q.answer=ansInp.value;save();});
-  ansItem.appendChild(ansInp);
-  card.appendChild(ansItem);
-
-  // Meta: points + image
+  // Points + Image
   const meta=document.createElement('div');
   meta.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;';
 
@@ -1882,6 +1869,76 @@ function buildQuestionCard(q,idx){
   }
   meta.appendChild(imgItem);
   card.appendChild(meta);
+
+  return card;
+}
+
+/* Answers editor */
+function renderAnswersEditor(){
+  const cont=$('answers-editor');
+  if(!cont)return;
+  cont.innerHTML='';
+  if(!state.questions.length){
+    const empty=document.createElement('div');
+    empty.style.cssText='text-align:center;color:var(--text-3);font-size:12px;padding:24px;';
+    empty.textContent='أضف أسئلة أولاً لتظهر الإجابات هنا.';
+    cont.appendChild(empty);
+    return;
+  }
+  state.questions.forEach((q,i)=>cont.appendChild(buildAnswerCard(q,i)));
+}
+
+function buildAnswerCard(q,i){
+  const card=document.createElement('div');
+  card.className='q-card';
+
+  const head=document.createElement('div');
+  head.className='q-card-head';
+  const num=document.createElement('span');
+  num.className='num';num.textContent='إجابة سؤال '+(i+1);head.appendChild(num);
+  card.appendChild(head);
+
+  // Title block
+  const titleBlock=document.createElement('div');titleBlock.className='style-block';
+  const tHeader=document.createElement('div');tHeader.className='style-block-title';
+  tHeader.innerHTML='<span>🏷️ عنوان السؤال (يظهر بصفحة الإجابات)</span>';
+  titleBlock.appendChild(tHeader);
+
+  const tInp=document.createElement('input');
+  tInp.type='text';tInp.placeholder='مثال: س 1. ما هو...؟';
+  tInp.value=q.ansTitle||'';
+  tInp.style.cssText='border:1.5px solid var(--border-strong);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--bg-1);outline:none;width:100%;';
+  tInp.addEventListener('input',()=>{q.ansTitle=tInp.value;save();if(state.showAnswers)schedulePaperUpdate();});
+  titleBlock.appendChild(tInp);
+
+  q.ansTitleStyle=q.ansTitleStyle||defaultAnsTitleStyle();
+  const tSLbl=document.createElement('div');
+  tSLbl.style.cssText='font-size:10.5px;font-weight:700;color:var(--text-3);margin:8px 0 0;';
+  tSLbl.textContent='خط · حجم · سماكة · لون';
+  titleBlock.appendChild(tSLbl);
+  titleBlock.appendChild(buildFontRow(q.ansTitleStyle,()=>{save();if(state.showAnswers)schedulePaperUpdate();},false));
+  card.appendChild(titleBlock);
+
+  // Answer block
+  const ansBlock=document.createElement('div');ansBlock.className='style-block';
+  const aHeader=document.createElement('div');aHeader.className='style-block-title';
+  aHeader.innerHTML='<span>✅ نص الإجابة</span>';
+  ansBlock.appendChild(aHeader);
+
+  const ta=document.createElement('textarea');
+  ta.placeholder='اكتب الإجابة...';
+  ta.value=q.ansAnswer||'';
+  ta.style.cssText='border:1.5px solid var(--border-strong);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--bg-1);outline:none;width:100%;min-height:70px;resize:vertical;font-family:inherit;line-height:1.6;';
+  ta.addEventListener('input',()=>{q.ansAnswer=ta.value;save();if(state.showAnswers)schedulePaperUpdate();});
+  ansBlock.appendChild(ta);
+
+  q.ansAnswerStyle=q.ansAnswerStyle||defaultAnsAnswerStyle();
+  const aSLbl=document.createElement('div');
+  aSLbl.style.cssText='font-size:10.5px;font-weight:700;color:var(--text-3);margin:8px 0 0;';
+  aSLbl.textContent='خط · حجم · سماكة · لون · تباعد الأسطر';
+  ansBlock.appendChild(aSLbl);
+  ansBlock.appendChild(buildFontRow(q.ansAnswerStyle,()=>{save();if(state.showAnswers)schedulePaperUpdate();},true));
+  card.appendChild(ansBlock);
 
   return card;
 }
@@ -2005,7 +2062,6 @@ function togglePopover(popover, editor, mode){
 function renderMathPopover(popover, editor){
   const title=document.createElement('div');title.className='popover-title';
   title.textContent='صيغ رياضية';popover.appendChild(title);
-
   const grid=document.createElement('div');grid.className='math-grid';
   MATH_ITEMS.forEach(m=>{
     const b=document.createElement('button');
@@ -2051,12 +2107,11 @@ function renderTablePopover(popover, editor){
   title.textContent='اختر حجم الجدول';popover.appendChild(title);
 
   const picker=document.createElement('div');picker.className='table-picker';
-  let cols=5,rows=4;
+  const cols=6,rows=4;
   for(let r=1;r<=rows;r++){
     for(let c=1;c<=cols;c++){
       const b=document.createElement('button');
-      b.type='button';
-      b.dataset.r=r;b.dataset.c=c;
+      b.type='button';b.dataset.r=r;b.dataset.c=c;
       b.onmousedown=preventDefault;
       b.onmouseenter=()=>{
         picker.querySelectorAll('button').forEach(btn=>{
@@ -2064,18 +2119,11 @@ function renderTablePopover(popover, editor){
           btn.classList.toggle('on',rr<=r&&cc<=c);
         });
       };
-      b.onclick=()=>{
-        insertAtCursorInEditor(editor, buildTableHtml(r,c));
-      };
+      b.onclick=()=>{insertAtCursorInEditor(editor, buildTableHtml(r,c));};
       picker.appendChild(b);
     }
   }
   popover.appendChild(picker);
-
-  const info=document.createElement('div');
-  info.style.cssText='font-size:11px;color:var(--text-3);text-align:center;margin-top:6px;';
-  info.textContent='مرّر للإشارة، اضغط للإدراج';
-  popover.appendChild(info);
 
   const custom=document.createElement('div');
   custom.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;';
@@ -2117,7 +2165,6 @@ function buildTableHtml(rows,cols){
 function renderShapesPopover(popover, editor){
   const title=document.createElement('div');title.className='popover-title';
   title.textContent='الأشكال الهندسية';popover.appendChild(title);
-
   const grid=document.createElement('div');grid.className='shapes-grid';
   SHAPES.forEach(sh=>{
     const b=document.createElement('button');
@@ -2135,7 +2182,6 @@ function renderShapesPopover(popover, editor){
 
 /* Shape toolbar */
 function selectShape(shape, editor){
-  // Remove old selection
   document.querySelectorAll('.shape-block.selected').forEach(el=>el.classList.remove('selected'));
   shape.classList.add('selected');
   selectedShape=shape;selectedShapeEditor=editor;
@@ -2143,9 +2189,8 @@ function selectShape(shape, editor){
   const tb=$('shapeToolbar');
   tb.classList.add('open');
 
-  // Position near shape
   const r=shape.getBoundingClientRect();
-  const tbW=250, tbH=200;
+  const tbW=260, tbH=210;
   let left=r.left;
   let top=r.bottom+8;
   if(left+tbW>window.innerWidth-8) left=window.innerWidth-tbW-8;
@@ -2176,11 +2221,15 @@ function hideShapeToolbar(){
   $('shapeToolbar').classList.remove('open');
 }
 
+/* FIX: change width/height instead of zoom */
 function applyShapeScale(v){
   if(!selectedShape) return;
   const s=parseFloat(v);
   selectedShape.dataset.scale=s;
-  selectedShape.style.zoom=s;
+  const bw=parseFloat(selectedShape.dataset.baseW||'100');
+  const bh=parseFloat(selectedShape.dataset.baseH||'100');
+  selectedShape.style.width=(bw*s)+'px';
+  selectedShape.style.height=(bh*s)+'px';
   $('stScaleVal').textContent=Math.round(s*100)+'%';
   if(selectedShapeEditor){
     selectedShapeEditor.dispatchEvent(new Event('input',{bubbles:true}));
@@ -2192,7 +2241,6 @@ function rotateShape(delta){
   let cur=parseFloat(selectedShape.dataset.rotate||'0');
   if(delta==='reset') cur=0;
   else cur=cur+delta;
-  // normalize
   cur=((cur%360)+360)%360;
   selectedShape.dataset.rotate=cur;
   applyRotation(selectedShape,cur);
@@ -2203,9 +2251,7 @@ function rotateShape(delta){
 }
 
 function applyRotation(shape,deg){
-  const scale=shape.dataset.scale||'1';
   shape.style.transform='rotate('+deg+'deg)';
-  // transform-origin center
   shape.style.transformOrigin='center center';
 }
 
@@ -2231,7 +2277,6 @@ function deleteSelectedShape(){
   toast('تم حذف الشكل');
 }
 
-// Hide toolbar when clicking outside
 document.addEventListener('click',(e)=>{
   const tb=$('shapeToolbar');
   if(!tb) return;
@@ -2288,13 +2333,19 @@ function updateQuestionCounter(){
   if(btn)btn.disabled=state.questions.length>=MAX_QUESTIONS;
 }
 
-function addQuestion(){
-  if(state.questions.length>=MAX_QUESTIONS){toast('وصلت للحد الأقصى');return;}
-  state.questions.push({
+function newQuestionObj(){
+  return {
     title:'',titleStyle:defaultTitleStyle(),
     desc:'',descStyle:defaultDescStyle(),
-    answer:'',points:0,image:null
-  });
+    points:0,image:null,
+    ansTitle:'',ansTitleStyle:defaultAnsTitleStyle(),
+    ansAnswer:'',ansAnswerStyle:defaultAnsAnswerStyle()
+  };
+}
+
+function addQuestion(){
+  if(state.questions.length>=MAX_QUESTIONS){toast('وصلت للحد الأقصى');return;}
+  state.questions.push(newQuestionObj());
   save();fullRender();
   setTimeout(()=>{
     const eds=document.querySelectorAll('#questions-editor .rich-editor');
@@ -2308,7 +2359,9 @@ function duplicateQuestion(idx){
   state.questions.splice(idx+1,0,{
     title:q.title||'',titleStyle:Object.assign({},q.titleStyle||defaultTitleStyle()),
     desc:q.desc||'',descStyle:Object.assign({},q.descStyle||defaultDescStyle()),
-    answer:q.answer||'',points:q.points||0,image:q.image||null
+    points:q.points||0,image:q.image||null,
+    ansTitle:q.ansTitle||'',ansTitleStyle:Object.assign({},q.ansTitleStyle||defaultAnsTitleStyle()),
+    ansAnswer:q.ansAnswer||'',ansAnswerStyle:Object.assign({},q.ansAnswerStyle||defaultAnsAnswerStyle())
   });
   save();fullRender();toast('تم النسخ');
 }
@@ -2383,7 +2436,6 @@ function syncNoteAlignBtns(){
   });
 }
 
-// Note alignment buttons
 document.addEventListener('click',(e)=>{
   const b=e.target.closest('#noteAlignBtns button');
   if(b){
@@ -2504,12 +2556,17 @@ function triggerImport(){closeMenu();const el=$('importFile');if(el)el.click();}
 function migrateQuestion(q){
   if(q.desc===undefined) q.desc=q.text||'';
   if(q.title===undefined) q.title='';
-  if(q.answer===undefined) q.answer='';
   if(!q.titleStyle) q.titleStyle={family:q.family||'Arial',size:q.size||14,weight:q.weight||'bold',color:q.color||'#111827'};
   if(!q.descStyle) q.descStyle={family:q.family||'Arial',size:q.size||14,weight:q.weight||'normal',color:q.color||'#111827',lineHeight:1.6};
   if(q.points===undefined) q.points=0;
   if(q.image===undefined) q.image=null;
-  delete q.family;delete q.size;delete q.weight;delete q.color;delete q.text;
+  if(!q.ansTitleStyle) q.ansTitleStyle={family:q.family||'Arial',size:q.size||14,weight:'bold',color:q.color||'#111827'};
+  if(!q.ansAnswerStyle) q.ansAnswerStyle={family:q.family||'Arial',size:q.size||14,weight:'normal',color:q.color||'#111827',lineHeight:1.7};
+  if(q.ansTitle===undefined) q.ansTitle='';
+  if(q.ansAnswer===undefined) q.ansAnswer=q.answer||'';
+  delete q.family;delete q.size;delete q.weight;delete q.color;delete q.text;delete q.answer;
+  // Migrate shape labels
+  if(q.desc) q.desc=migrateShapeLabels(q.desc);
   return q;
 }
 
