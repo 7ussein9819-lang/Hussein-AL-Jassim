@@ -1689,4 +1689,202 @@ function fillFontSelects(){
     FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);});
   });
 }
-function loadStateIntoInputs
+function loadStateIntoInputs(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key=el.getAttribute('data-key');
+    const val=getNested(state,key);
+    if(val===undefined||val===null)return;
+    if(el.type==='checkbox')el.checked=!!val;else el.value=val;
+  });
+}
+function bindAllInputs(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    if(el._bound)return;el._bound=true;
+    const handler=()=>{
+      const key=el.getAttribute('data-key');
+      let val;
+      if(el.type==='checkbox')val=el.checked;
+      else if(el.type==='number')val=Number(el.value)||0;
+      else val=el.value;
+      setNested(state,key,val);save();schedulePaperUpdate();
+    };
+    el.addEventListener('input',handler);
+    el.addEventListener('change',handler);
+  });
+}
+
+function switchView(name){
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-view')===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  const sub=$('topbar-sub');
+  if(sub)sub.textContent=(name==='preview')?'صفحة المعاينة':'لوحة التحكم';
+  const zoom=$('zoomCtrl');
+  if(zoom) zoom.style.display=(name==='preview')?'flex':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='preview')setTimeout(fitPages,50);
+}
+function switchSub(name){
+  document.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.getAttribute('data-sub')===name));
+  document.querySelectorAll('.subview').forEach(v=>v.classList.toggle('active',v.id==='sub-'+name));
+}
+function toggleMenu(e){if(e)e.stopPropagation();const m=$('moreMenu');if(m)m.classList.toggle('open');}
+function closeMenu(){const m=$('moreMenu');if(m)m.classList.remove('open');}
+
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(THEME_KEY,t);}catch(e){}updateThemePicker();}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light';setTheme(c==='dark'?'light':'dark');}
+function updateThemePicker(){const c=document.documentElement.getAttribute('data-theme')||'light';document.querySelectorAll('[data-theme-pick]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-theme-pick')===c));}
+
+function buildFramePicker(){
+  const picker=$('framePicker');if(!picker)return;picker.innerHTML='';
+  FRAMES.forEach(f=>{
+    const btn=document.createElement('button');
+    btn.className='frame-opt';btn.dataset.frame=f.id;btn.type='button';
+    btn.onclick=()=>{state.frame.style=f.id;save();buildPages();updateFramePicker();};
+    const prev=document.createElement('div');prev.className='preview';
+    const box=document.createElement('div');box.className='box';
+    const c=state.frame.color||'#111827';
+    if(f.id==='solid')box.style.border='1.5px solid '+c;
+    else if(f.id==='double')box.style.border='3px double '+c;
+    else if(f.id==='dashed')box.style.border='2px dashed '+c;
+    else if(f.id==='dotted')box.style.border='2px dotted '+c;
+    else if(f.id==='thick')box.style.border='4px solid '+c;
+    else if(f.id==='elegant'){box.style.border='1px solid '+c;box.style.boxShadow='0 0 0 2px #fff, 0 0 0 3px '+c;}
+    else if(f.id==='rounded'){box.style.border='2px solid '+c;box.style.borderRadius='8px';}
+    else if(f.id==='double-thin'){box.style.border='1px solid '+c;box.style.boxShadow='inset 0 0 0 3px #fff, inset 0 0 0 4px '+c;}
+    else if(f.id==='ornate'){box.style.border='3px solid '+c;box.style.outline='1px solid '+c;box.style.outlineOffset='2px';}
+    else if(f.id==='none')box.style.border='1px dashed #cbd5e1';
+    prev.appendChild(box);
+    const label=document.createElement('span');label.textContent=f.label;
+    btn.appendChild(prev);btn.appendChild(label);picker.appendChild(btn);
+  });
+}
+function updateFramePicker(){document.querySelectorAll('.frame-opt').forEach(el=>el.classList.toggle('active',el.dataset.frame===state.frame.style));}
+
+function removeWatermarkImage(){state.wm.image=null;save();buildPages();toast('تم الحذف');}
+
+function doPrint(){closeMenu();switchView('preview');setTimeout(()=>window.print(),200);}
+function exportPDF(){closeMenu();toast('اختر "حفظ كـ PDF"');switchView('preview');setTimeout(()=>window.print(),300);}
+
+function exportWord(){
+  closeMenu();
+  const container=$('pages-container');if(!container)return;
+  const pages=container.querySelectorAll('.page');
+  let bodyHtml='';
+  pages.forEach(p=>{
+    const clone=p.cloneNode(true);
+    bodyHtml+='<div style="page-break-after:always;">'+clone.innerHTML+'</div>';
+  });
+  const styles='@page{size:A4;margin:0;}body{font-family:Arial,sans-serif;direction:rtl;}'
+    +'.page-content{padding:12mm;box-sizing:border-box;}'
+    +'.header-grid{display:table;width:100%;table-layout:fixed;border-collapse:collapse;}'
+    +'.hcol{display:table-cell;vertical-align:top;width:33%;padding:2px;}'
+    +'.hcol-center{text-align:center;}.hcol-left{text-align:left;}'
+    +'.header-line{border-top:2px solid #000;margin:8px 0;}'
+    +'.header-extra,.header-note{text-align:center;}'
+    +'.footer-grid{display:table;width:100%;table-layout:fixed;margin-top:20px;}'
+    +'.fcol{display:table-cell;width:33%;padding:2px;}'
+    +'.footer-wish{text-align:center;}.q-item{margin-bottom:8px;}.watermark{display:none;}'
+    +'.q-head-row{display:flex;justify-content:space-between;}.q-title-el{font-weight:bold;}.q-points-el{font-weight:bold;}';
+  const html='<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar"><head><meta charset="utf-8"><title>نموذج أسئلة</title><style>'+styles+'</style></head><body>'+bodyHtml+'</body></html>';
+  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نموذج-أسئلة.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('تم حفظ Word ✅');
+}
+function backup(){
+  closeMenu();
+  const data=JSON.stringify(state,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نموذج-أسئلة.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('تم حفظ نسخة 💾');
+}
+function triggerImport(){closeMenu();const el=$('importFile');if(el)el.click();}
+function restore(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d||!d.h||!Array.isArray(d.questions))throw new Error('bad');
+      state=deepMerge(JSON.parse(JSON.stringify(defaultState)),d);
+      // Migrate old questions
+      state.questions.forEach(q=>{
+        if(q.desc===undefined){ q.desc=q.text||''; }
+        if(q.title===undefined) q.title='';
+        if(!q.family) q.family='Arial';
+        if(!q.size) q.size=14;
+        if(!q.weight) q.weight='normal';
+        if(!q.color) q.color='#111827';
+        if(q.points===undefined) q.points=0;
+        if(q.image===undefined) q.image=null;
+      });
+      loadStateIntoInputs();fullRender();save();
+      switchView('preview');toast('تم الاستيراد ✅');
+    }catch(err){toast('الملف غير صالح ❌');}
+  };
+  r.readAsText(f);input.value='';
+}
+function clearAll(){
+  closeMenu();
+  if(!confirm('حذف كل الأسئلة؟'))return;
+  state.questions=[];save();fullRender();toast('تم الحذف 🗑️');
+}
+
+function boot(){
+  try{const t=localStorage.getItem(THEME_KEY);if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const loaded=JSON.parse(raw);
+      if(loaded&&loaded.h&&Array.isArray(loaded.questions)){
+        state=deepMerge(JSON.parse(JSON.stringify(defaultState)),loaded);
+      }
+    }
+  }catch(e){}
+
+  // Migrate old saves
+  state.questions.forEach(q=>{
+    if(q.desc===undefined){ q.desc=q.text||''; }
+    if(q.title===undefined) q.title='';
+    if(!q.family) q.family='Arial';
+    if(!q.size) q.size=14;
+    if(!q.weight) q.weight='normal';
+    if(!q.color) q.color='#111827';
+    if(q.points===undefined) q.points=0;
+    if(q.image===undefined) q.image=null;
+  });
+
+  fillFontSelects();
+  loadStateIntoInputs();
+  bindAllInputs();
+  buildFramePicker();
+
+  const wmInput=$('wmImageInput');
+  if(wmInput){
+    wmInput.addEventListener('change',()=>{
+      const f=wmInput.files&&wmInput.files[0];if(!f)return;
+      if(f.size>3*1024*1024){toast('الصورة كبيرة');wmInput.value='';return;}
+      const reader=new FileReader();
+      reader.onload=e=>{state.wm.image=e.target.result;state.wm.type='image';save();loadStateIntoInputs();buildPages();toast('تم الرفع ✅');};
+      reader.readAsDataURL(f);wmInput.value='';
+    });
+  }
+
+  document.querySelectorAll('.navbtn').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.getAttribute('data-view'))));
+  document.querySelectorAll('.subtab').forEach(tab=>tab.addEventListener('click',()=>switchSub(tab.getAttribute('data-sub'))));
+  document.addEventListener('click',e=>{if(!e.target.closest('.menu-wrap'))closeMenu();});
+
+  fullRender();
+  window.addEventListener('beforeprint',()=>switchView('preview'));
+  setTimeout(fitPages,300);
+  setTimeout(fitPages,1000);
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot);}else{boot();}
+</script>
+
+</body>
+</html>
