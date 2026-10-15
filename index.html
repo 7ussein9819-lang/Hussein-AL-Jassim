@@ -13,7 +13,6 @@
   --accent-light:#eef2ff; --accent-ring:rgba(99,102,241,.2);
   --accent-glow:rgba(99,102,241,.35);
   --success:#10b981; --danger:#ef4444; --danger-light:#fee2e2;
-  --warning:#f59e0b;
   --shadow-xs:0 1px 2px rgba(11,18,32,.04);
   --shadow-sm:0 1px 3px rgba(11,18,32,.06),0 1px 2px rgba(11,18,32,.04);
   --shadow:0 4px 16px rgba(11,18,32,.08);
@@ -161,7 +160,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .page-frame.frame-double-thin{border:1px solid var(--frame-c,#000);box-shadow:inset 0 0 0 4px transparent, inset 0 0 0 5px var(--frame-c,#000);}
 .page-frame.frame-ornate::before,.page-frame.frame-ornate::after{content:'';position:absolute;inset:0;border:3px solid var(--frame-c,#000);}
 .page-frame.frame-ornate::before{inset:6px;border-width:1px;}
-/* إطارات جديدة */
 .page-frame.frame-triple{border:1px solid var(--frame-c,#000);box-shadow:0 0 0 3px transparent, 0 0 0 4px var(--frame-c,#000), 0 0 0 7px transparent, 0 0 0 8px var(--frame-c,#000);}
 .page-frame.frame-corners{background:linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) top right/30px 2px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) top right/2px 30px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) top left/30px 2px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) top left/2px 30px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) bottom right/30px 2px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) bottom right/2px 30px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) bottom left/30px 2px no-repeat,linear-gradient(var(--frame-c,#000),var(--frame-c,#000)) bottom left/2px 30px no-repeat;}
 .page-frame.frame-thin-solid{border:0.5px solid var(--frame-c,#000);}
@@ -214,11 +212,9 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   display:flex;justify-content:space-between;align-items:baseline;
   gap:8px;margin-bottom:2px;flex-wrap:nowrap;
 }
-.q-title-el{font-weight:bold;flex:1 1 auto;min-width:0;overflow-wrap:anywhere;}
-.q-points-el{
-  font-weight:bold;flex:0 0 auto;white-space:nowrap;
-}
-.q-desc-el{white-space:normal;line-height:1.6;overflow-wrap:anywhere;}
+.q-title-el{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;}
+.q-points-el{flex:0 0 auto;white-space:nowrap;}
+.q-desc-el{white-space:normal;overflow-wrap:anywhere;}
 .q-desc-el p{margin:0 0 4px;}
 .q-desc-el strong{font-weight:900;}
 .q-desc-el em{font-style:italic;}
@@ -229,38 +225,39 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 /* Shape blocks */
 .shape-block{
   position:relative;display:inline-block;
-  vertical-align:middle;margin:6px 4px;
+  vertical-align:middle;margin:8px 6px;
   user-select:none;-webkit-user-select:none;
 }
 .shape-block svg{display:block;width:100%;height:100%;pointer-events:none;}
 .shape-lbl{
   position:absolute;
-  transform-origin:center center;
   text-align:center;
   font-family:inherit;
-  font-size:11px;
   color:inherit;
   font-weight:bold;
   padding:0;
   line-height:1.1;
+  box-sizing:border-box;
 }
 input.shape-lbl{
-  background:rgba(255,255,255,.75);
-  border:1px dashed rgba(99,102,241,.5);
+  background:rgba(255,255,255,.85);
+  border:1px dashed rgba(99,102,241,.55);
   border-radius:3px;
   outline:none;
-  width:26px;height:16px;
+  width:30px;height:16px;
   padding:0 2px;
+  font-size:11px;
   -webkit-appearance:none;
   appearance:none;
 }
+input.shape-lbl::placeholder{color:rgba(0,0,0,.25);font-size:9px;}
 input.shape-lbl:focus{
   border-color:var(--accent);border-style:solid;
   background:#fff;z-index:5;
   box-shadow:0 0 0 2px var(--accent-ring);
 }
 .q-desc-el .shape-lbl{
-  background:transparent;border:none;color:inherit;font-size:inherit;
+  background:transparent;border:none;color:inherit;
 }
 
 .page-footer{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:6px;}
@@ -272,7 +269,6 @@ input.shape-lbl:focus{
 .footer-grid .fcol.left{text-align:left;}
 .footer-teachers{display:flex;flex-direction:column;gap:2px;}
 
-/* Control panel */
 .subtabs{
   display:flex;gap:5px;overflow-x:auto;padding:5px;
   background:var(--bg-1);border-radius:var(--radius);
@@ -314,6 +310,7 @@ input.shape-lbl:focus{
 .field-group input:focus,.field-group select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);}
 
 .font-row{display:grid;grid-template-columns:1.5fr 55px 80px 40px;gap:5px;margin-top:4px;}
+.font-row.with-lh{grid-template-columns:1.4fr 50px 75px 40px 50px;}
 .font-row select,.font-row input[type="number"]{
   border:1.5px solid var(--border-strong);border-radius:8px;
   padding:6px;font-size:12px;background:var(--bg-1);
@@ -325,7 +322,10 @@ input.shape-lbl:focus{
 }
 .font-row input[type="color"]::-webkit-color-swatch-wrapper{padding:0;}
 .font-row input[type="color"]::-webkit-color-swatch{border:none;border-radius:6px;}
-@media (max-width:520px){.font-row{grid-template-columns:1fr 50px 70px 36px;}}
+@media (max-width:520px){
+  .font-row{grid-template-columns:1fr 48px 68px 36px;}
+  .font-row.with-lh{grid-template-columns:1.3fr 46px 66px 34px 46px;}
+}
 
 .btn{
   border:none;border-radius:9px;padding:10px 14px;
@@ -360,7 +360,6 @@ input.shape-lbl:focus{
   font-size:13px;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;padding:0;
 }
-.mini-btn:hover{background:var(--bg-3);}
 .mini-btn:disabled{opacity:.35;cursor:default;}
 .mini-btn.danger{color:var(--danger);}
 .mini-btn.danger:hover{background:var(--danger-light);}
@@ -375,20 +374,34 @@ input.shape-lbl:focus{
 }
 .q-meta-item input:focus{border-color:var(--accent);background:var(--bg-1);}
 
-/* Rich editor */
+/* Block styling */
+.style-block{
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:10px;margin-bottom:10px;background:var(--bg-2);
+}
+.style-block-title{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;font-weight:800;color:var(--text-2);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;
+}
+.style-block-title .tag{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+  background:var(--accent-light);color:var(--accent);text-transform:none;letter-spacing:0;
+}
+
 .rich-wrap{
   border:1.5px solid var(--border-strong);border-radius:9px;
-  background:var(--bg-2);overflow:visible;position:relative;
+  background:var(--bg-1);overflow:visible;position:relative;
 }
-.rich-wrap:focus-within{border-color:var(--accent);background:var(--bg-1);}
+.rich-wrap:focus-within{border-color:var(--accent);}
 .rich-toolbar{
   display:flex;flex-wrap:wrap;gap:3px;padding:6px;
-  background:var(--bg-1);border-bottom:1px solid var(--border);
+  background:var(--bg-2);border-bottom:1px solid var(--border);
   align-items:center;border-radius:8px 8px 0 0;
 }
 .rich-toolbar button{
   min-width:32px;height:32px;padding:0 8px;border-radius:7px;
-  border:1px solid var(--border);background:var(--bg-2);
+  border:1px solid var(--border);background:var(--bg-1);
   color:var(--text-2);font-size:13px;font-weight:700;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
   font-family:inherit;
@@ -397,7 +410,7 @@ input.shape-lbl:focus{
 .rich-toolbar button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .rich-toolbar select{
   height:32px;padding:0 6px;border-radius:7px;
-  border:1px solid var(--border);background:var(--bg-2);
+  border:1px solid var(--border);background:var(--bg-1);
   color:var(--text-2);font-size:12px;cursor:pointer;outline:none;
 }
 .rich-toolbar .sep{width:1px;height:22px;background:var(--border);margin:0 3px;}
@@ -407,8 +420,7 @@ input.shape-lbl:focus{
   font-family:Arial,sans-serif;font-size:14px;line-height:1.7;
   color:var(--text-1);white-space:pre-wrap;overflow-wrap:anywhere;
   -webkit-touch-callout:none;
-  -webkit-user-select:text;
-  user-select:text;
+  -webkit-user-select:text;user-select:text;
 }
 .rich-editor:empty::before{
   content:attr(data-placeholder);color:var(--text-3);
@@ -438,12 +450,12 @@ input.shape-lbl:focus{
 .shapes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
 .shapes-grid button{
   border:1px solid var(--border);background:var(--bg-2);
-  border-radius:8px;padding:8px 4px;cursor:pointer;
+  border-radius:8px;padding:6px 4px;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:4px;
-  font-size:11px;color:var(--text-2);font-weight:600;font-family:inherit;
+  font-size:10.5px;color:var(--text-2);font-weight:600;font-family:inherit;
 }
 .shapes-grid button:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
-.shapes-grid button svg{max-width:100%;}
+.shapes-grid button svg{color:var(--text-2);}
 .popover-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
 .popover-cats button{
   padding:4px 10px;border-radius:20px;border:1px solid var(--border);
@@ -452,7 +464,6 @@ input.shape-lbl:focus{
 }
 .popover-cats button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 
-/* Context menu (custom) */
 .ctx-menu{
   position:fixed;z-index:500;
   background:var(--bg-1);border:1px solid var(--border);
@@ -468,14 +479,12 @@ input.shape-lbl:focus{
   display:flex;align-items:center;gap:10px;font-family:inherit;
 }
 .ctx-menu button:hover{background:var(--bg-2);}
-.ctx-menu button:active{background:var(--accent-light);}
 
-/* Color indicator */
 .color-dot{
   display:inline-flex;align-items:center;gap:4px;
-  padding:4px 8px;border:1px solid var(--border);background:var(--bg-2);
+  padding:4px 10px;border:1px solid var(--border);background:var(--bg-1);
   border-radius:20px;font-size:11px;font-weight:700;color:var(--text-2);
-  cursor:pointer;margin-top:4px;
+  margin-top:6px;
 }
 .color-dot .dot{
   width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.15);
@@ -499,7 +508,6 @@ input.shape-lbl:focus{
   font-size:13px;font-weight:800;color:var(--text-2);
   display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.add-q-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-light);color:var(--accent);border-style:solid;}
 .add-q-btn:disabled{opacity:.5;cursor:not-allowed;}
 
 .teacher-item{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
@@ -733,7 +741,7 @@ input.shape-lbl:focus{
       </div>
 
       <div class="card">
-        <h3><span class="em">➕</span> حقل عام (تحت الأعمدة)</h3>
+        <h3><span class="em">➕</span> حقل عام</h3>
         <label class="toggle-row">
           <input type="checkbox" data-key="h.extra.enabled">
           <span>تفعيل الحقل العام</span>
@@ -751,7 +759,7 @@ input.shape-lbl:focus{
       </div>
 
       <div class="card">
-        <h3><span class="em">📌</span> الملاحظة (تحت الخط)</h3>
+        <h3><span class="em">📌</span> الملاحظة</h3>
         <div class="field-group">
           <label>نص الملاحظة</label>
           <input type="text" data-key="h.note.text">
@@ -775,8 +783,8 @@ input.shape-lbl:focus{
           <span style="font-size:16px;">➕</span> إضافة سؤال جديد
         </button>
         <p class="hint">
-          💡 حدد النص داخل الوصف ثم اضغط B/I/U/S أو اختر حجم من القائمة.<br>
-          🖱️ للنسخ/اللصق: اضغط الدائرة <b>⋯</b> في شريط الأدوات.
+          🎨 لكل من <b>العنوان</b> و <b>الوصف</b>: خط، حجم، سماكة، لون.<br>
+          📏 الوصف بيه هم <b>تباعد الأسطر</b>.
         </p>
       </div>
       <div id="questions-editor"></div>
@@ -797,7 +805,7 @@ input.shape-lbl:focus{
         </div>
       </div>
       <div class="card">
-        <h3><span class="em">👥</span> أسماء المعلمين (اليمين)</h3>
+        <h3><span class="em">👥</span> أسماء المعلمين</h3>
         <div id="teachersEditor"></div>
         <button class="btn blue sm" onclick="addTeacher()" style="margin-top:8px;">➕ إضافة معلم</button>
         <div class="field-group" style="margin-top:12px;">
@@ -927,7 +935,7 @@ input.shape-lbl:focus{
 
 <script>
 "use strict";
-const STORAGE_KEY='qform_v12';
+const STORAGE_KEY='qform_v13';
 const THEME_KEY='qform_theme';
 const MAX_QUESTIONS=10;
 const FONTS=['Arial','Tahoma','Times New Roman','Traditional Arabic','Simplified Arabic','Sakkal Majalla','Andalus','Diwani','Arabic Typesetting','Calibri','Courier New'];
@@ -962,121 +970,162 @@ const SYMBOL_CATS = {
   'أسهم':['←','→','↑','↓','↔','↕','⇒','⇐','⇔','⟶','⟵','⟷','↦','↤']
 };
 
-/* الأشكال مع مواضع الأرقام (نسبة مئوية داخل الصندوق) */
+/*
+  الأشكال: كل شكل له w,h بالبكسل. svg يستخدم viewBox بنفس الأبعاد.
+  labels: [{x,y,r?,p}] حيث x,y موقع الرقم بالبكسل داخل الصندوق، r زاوية الدوران، p النص الافتراضي
+*/
 const SHAPES=[
   {
     id:'tri', name:'مثلث', w:150, h:130,
-    svg:'<svg viewBox="0 0 150 130" preserveAspectRatio="none"><polygon points="75,10 8,122 142,122" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    svg:'<svg viewBox="0 0 150 130" preserveAspectRatio="none"><polygon points="75,15 12,115 138,115" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:31,y:51,r:-60,p:'a'},{x:75,y:118,r:0,p:'b'},{x:119,y:51,r:60,p:'c'},
-      {x:75,y:5,r:0,p:'A'},{x:5,y:128,r:0,p:'B'},{x:145,y:128,r:0,p:'C'}
+      {x:75, y:6, p:'A'},
+      {x:8, y:122, p:'B'},
+      {x:142, y:122, p:'C'},
+      {x:75, y:127, p:'a'},
+      {x:117, y:60, r:54, p:'b'},
+      {x:33, y:60, r:-54, p:'c'}
     ]
   },
   {
     id:'rtri', name:'قائم', w:150, h:130,
-    svg:'<svg viewBox="0 0 150 130" preserveAspectRatio="none"><polygon points="8,8 8,122 142,122" fill="none" stroke="currentColor" stroke-width="1.8"/><polyline points="8,108 22,108 22,122" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+    svg:'<svg viewBox="0 0 150 130" preserveAspectRatio="none"><polygon points="15,15 15,115 135,115" fill="none" stroke="currentColor" stroke-width="1.6"/><polyline points="15,101 29,101 29,115" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
     labels:[
-      {x:3,y:65,r:-90,p:'a'},{x:75,y:118,r:0,p:'b'},{x:75,y:58,r:-37,p:'c'},
-      {x:5,y:128,r:0,p:'B'},{x:145,y:128,r:0,p:'C'},{x:75,y:5,r:0,p:'A'}
+      {x:6, y:65, p:'a'},
+      {x:75, y:127, p:'b'},
+      {x:100, y:55, r:-46, p:'c'},
+      {x:8, y:122, p:'B'},
+      {x:142, y:122, p:'C'},
+      {x:75, y:6, p:'A'}
     ]
   },
   {
-    id:'sq', name:'مربع', w:130, h:130,
-    svg:'<svg viewBox="0 0 130 130" preserveAspectRatio="none"><rect x="8" y="8" width="114" height="114" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'sq', name:'مربع', w:100, h:100,
+    svg:'<svg viewBox="0 0 100 100" preserveAspectRatio="none"><rect x="15" y="15" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:65,y:5,r:0,p:'a'},{x:65,y:125,r:0,p:'c'},
-      {x:4,y:65,r:-90,p:'b'},{x:126,y:65,r:-90,p:'d'}
+      {x:50, y:6, p:'a'},
+      {x:50, y:94, p:'c'},
+      {x:6, y:50, p:'b'},
+      {x:94, y:50, p:'d'}
     ]
   },
   {
-    id:'rect', name:'مستطيل', w:180, h:110,
-    svg:'<svg viewBox="0 0 180 110" preserveAspectRatio="none"><rect x="8" y="8" width="164" height="94" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'rect', name:'مستطيل', w:150, h:100,
+    svg:'<svg viewBox="0 0 150 100" preserveAspectRatio="none"><rect x="15" y="15" width="120" height="70" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:90,y:5,r:0,p:'a'},{x:90,y:105,r:0,p:'c'},
-      {x:4,y:55,r:-90,p:'b'},{x:176,y:55,r:-90,p:'d'}
+      {x:75, y:6, p:'a'},
+      {x:75, y:94, p:'c'},
+      {x:6, y:50, p:'b'},
+      {x:144, y:50, p:'d'}
     ]
   },
   {
-    id:'circ', name:'دائرة', w:140, h:140,
-    svg:'<svg viewBox="0 0 140 140" preserveAspectRatio="none"><circle cx="70" cy="70" r="62" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
-    labels:[]
-  },
-  {
-    id:'circ-r', name:'دائرة نصف قطر', w:150, h:140,
-    svg:'<svg viewBox="0 0 150 140" preserveAspectRatio="none"><circle cx="75" cy="70" r="62" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="75" y1="70" x2="137" y2="70" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'circ', name:'دائرة', w:100, h:100,
+    svg:'<svg viewBox="0 0 100 100" preserveAspectRatio="none"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:105,y:65,r:0,p:'r'},{x:75,y:65,r:0,p:'O'}
+      {x:50, y:94, p:'O'}
     ]
   },
   {
-    id:'circ-d', name:'دائرة قطر', w:150, h:140,
-    svg:'<svg viewBox="0 0 150 140" preserveAspectRatio="none"><circle cx="75" cy="70" r="62" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="13" y1="70" x2="137" y2="70" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'circ-r', name:'دائرة نصف قطر', w:110, h:100,
+    svg:'<svg viewBox="0 0 110 100" preserveAspectRatio="none"><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="50" y1="50" x2="90" y2="50" stroke="currentColor" stroke-width="1.6"/><circle cx="50" cy="50" r="2" fill="currentColor"/></svg>',
     labels:[
-      {x:75,y:65,r:0,p:'d'}
+      {x:50, y:98, p:'O'},
+      {x:70, y:42, p:'r'}
     ]
   },
   {
-    id:'trap', name:'شبه منحرف', w:170, h:120,
-    svg:'<svg viewBox="0 0 170 120" preserveAspectRatio="none"><polygon points="45,8 125,8 162,112 8,112" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'circ-d', name:'دائرة قطر', w:110, h:100,
+    svg:'<svg viewBox="0 0 110 100" preserveAspectRatio="none"><circle cx="55" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="15" y1="50" x2="95" y2="50" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:85,y:5,r:0,p:'a'},{x:85,y:116,r:0,p:'c'},
-      {x:22,y:60,r:-70,p:'b'},{x:148,y:60,r:70,p:'d'}
+      {x:55, y:40, p:'d'}
     ]
   },
   {
-    id:'para', name:'متوازي أضلاع', w:170, h:110,
-    svg:'<svg viewBox="0 0 170 110" preserveAspectRatio="none"><polygon points="45,8 162,8 125,102 8,102" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'trap', name:'شبه منحرف', w:150, h:100,
+    svg:'<svg viewBox="0 0 150 100" preserveAspectRatio="none"><polygon points="45,15 105,15 140,85 10,85" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:105,y:5,r:0,p:'a'},{x:65,y:105,r:0,p:'c'},
-      {x:22,y:55,r:-70,p:'b'},{x:148,y:55,r:-70,p:'d'}
+      {x:75, y:6, p:'a'},
+      {x:75, y:94, p:'c'},
+      {x:20, y:50, r:-68, p:'b'},
+      {x:130, y:50, r:68, p:'d'}
     ]
   },
   {
-    id:'rho', name:'معين', w:130, h:150,
-    svg:'<svg viewBox="0 0 130 150" preserveAspectRatio="none"><polygon points="65,8 122,75 65,142 8,75" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'para', name:'متوازي أضلاع', w:150, h:85,
+    svg:'<svg viewBox="0 0 150 85" preserveAspectRatio="none"><polygon points="40,15 145,15 110,70 5,70" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:65,y:5,r:0,p:'A'},{x:127,y:75,r:0,p:'B'},{x:65,y:148,r:0,p:'C'},{x:3,y:75,r:0,p:'D'}
+      {x:92, y:6, p:'a'},
+      {x:58, y:79, p:'c'},
+      {x:18, y:43, r:-58, p:'b'},
+      {x:132, y:43, r:-58, p:'d'}
     ]
   },
   {
-    id:'pent', name:'خماسي', w:140, h:140,
-    svg:'<svg viewBox="0 0 140 140" preserveAspectRatio="none"><polygon points="70,8 132,52 108,128 32,128 8,52" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'rho', name:'معين', w:90, h:120,
+    svg:'<svg viewBox="0 0 90 120" preserveAspectRatio="none"><polygon points="45,15 80,60 45,105 10,60" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:70,y:5,r:0,p:'A'},{x:137,y:52,r:0,p:'B'},{x:108,y:135,r:0,p:'C'},{x:32,y:135,r:0,p:'D'},{x:3,y:52,r:0,p:'E'}
+      {x:45, y:6, p:'A'},
+      {x:88, y:60, p:'B'},
+      {x:45, y:114, p:'C'},
+      {x:2, y:60, p:'D'}
     ]
   },
   {
-    id:'hex', name:'سداسي', w:150, h:140,
-    svg:'<svg viewBox="0 0 150 140" preserveAspectRatio="none"><polygon points="40,8 110,8 142,70 110,132 40,132 8,70" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'pent', name:'خماسي', w:110, h:110,
+    svg:'<svg viewBox="0 0 110 110" preserveAspectRatio="none"><polygon points="55,15 105,50 85,100 25,100 5,50" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:75,y:5,r:0,p:'A'},{x:145,y:70,r:0,p:'B'},{x:110,y:136,r:0,p:'C'},{x:40,y:136,r:0,p:'D'},{x:5,y:70,r:0,p:'E'}
+      {x:55, y:6, p:'A'},
+      {x:108, y:50, p:'B'},
+      {x:85, y:106, p:'C'},
+      {x:25, y:106, p:'D'},
+      {x:2, y:50, p:'E'}
     ]
   },
   {
-    id:'angle', name:'زاوية', w:130, h:120,
-    svg:'<svg viewBox="0 0 130 120" preserveAspectRatio="none"><line x1="8" y1="112" x2="122" y2="112" stroke="currentColor" stroke-width="1.8"/><line x1="8" y1="112" x2="106" y2="10" stroke="currentColor" stroke-width="1.8"/><path d="M 48 112 A 40 40 0 0 0 35 83" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+    id:'hex', name:'سداسي', w:120, h:110,
+    svg:'<svg viewBox="0 0 120 110" preserveAspectRatio="none"><polygon points="35,15 85,15 110,55 85,95 35,95 10,55" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     labels:[
-      {x:70,y:55,r:0,p:'θ'},{x:65,y:118,r:0,p:'a'},{x:70,y:55,r:0,p:'b'},{x:35,y:90,r:0,p:'α'}
+      {x:60, y:6, p:'A'},
+      {x:118, y:55, p:'B'},
+      {x:85, y:106, p:'C'},
+      {x:35, y:106, p:'D'},
+      {x:2, y:55, p:'E'}
     ]
   },
   {
-    id:'longdiv', name:'قسمة طويلة', w:180, h:130,
-    svg:'<svg viewBox="0 0 180 130" preserveAspectRatio="none"><line x1="8" y1="40" x2="172" y2="40" stroke="currentColor" stroke-width="1.8"/><line x1="45" y1="8" x2="45" y2="122" stroke="currentColor" stroke-width="1.8"/><line x1="45" y1="40" x2="8" y2="8" stroke="currentColor" stroke-width="1.8"/></svg>',
+    id:'angle', name:'زاوية', w:120, h:100,
+    svg:'<svg viewBox="0 0 120 100" preserveAspectRatio="none"><line x1="10" y1="88" x2="110" y2="88" stroke="currentColor" stroke-width="1.6"/><line x1="10" y1="88" x2="100" y2="15" stroke="currentColor" stroke-width="1.6"/><path d="M 42 88 A 32 32 0 0 0 30 65" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
     labels:[
-      {x:110,y:22,r:0,p:''},{x:22,y:80,r:0,p:''},{x:110,y:80,r:0,p:''}
+      {x:6, y:94, p:'O'},
+      {x:112, y:94, p:'A'},
+      {x:100, y:8, p:'B'},
+      {x:40, y:70, p:'θ'}
     ]
   },
   {
-    id:'coord', name:'محور إحداثيات', w:170, h:170,
-    svg:'<svg viewBox="0 0 170 170" preserveAspectRatio="none"><line x1="10" y1="160" x2="160" y2="160" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="10" x2="10" y2="160" stroke="currentColor" stroke-width="1.8"/><polygon points="160,160 152,156 152,164" fill="currentColor"/><polygon points="10,10 6,18 14,18" fill="currentColor"/></svg>',
+    id:'longdiv', name:'قسمة طويلة', w:140, h:100,
+    svg:'<svg viewBox="0 0 140 100" preserveAspectRatio="none"><line x1="10" y1="30" x2="130" y2="30" stroke="currentColor" stroke-width="1.8"/><line x1="35" y1="10" x2="35" y2="90" stroke="currentColor" stroke-width="1.8"/><line x1="35" y1="30" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/></svg>',
     labels:[
-      {x:155,y:172,r:0,p:'x'},{x:3,y:12,r:0,p:'y'},{x:5,y:170,r:0,p:'O'},
-      {x:60,y:172,r:0,p:'1'},{x:110,y:172,r:0,p:'2'}
+      {x:82, y:20, p:''},
+      {x:22, y:60, p:''},
+      {x:82, y:60, p:''}
+    ]
+  },
+  {
+    id:'coord', name:'محور', w:120, h:120,
+    svg:'<svg viewBox="0 0 120 120" preserveAspectRatio="none"><line x1="15" y1="105" x2="110" y2="105" stroke="currentColor" stroke-width="1.6"/><line x1="15" y1="105" x2="15" y2="15" stroke="currentColor" stroke-width="1.6"/><polygon points="110,105 104,102 104,108" fill="currentColor"/><polygon points="15,15 12,21 18,21" fill="currentColor"/></svg>',
+    labels:[
+      {x:112, y:116, p:'x'},
+      {x:10, y:8, p:'y'},
+      {x:6, y:114, p:'O'}
     ]
   }
 ];
 
 function defaultFont(){return{text:'',family:'Arial',size:12,weight:'normal',color:'#111827'};}
+function defaultTitleStyle(){return{family:'Arial',size:14,weight:'bold',color:'#111827'};}
+function defaultDescStyle(){return{family:'Arial',size:14,weight:'normal',color:'#111827',lineHeight:1.6};}
 
 const defaultState={
   h:{
@@ -1157,7 +1206,7 @@ function buildHeaderElement(){
 
   const colR=document.createElement('div');colR.className='hcol hcol-right';
   [state.h.school,state.h.dir,state.h.rightExtra].forEach(o=>{
-    if(!o.text)return;
+    if(!o||!o.text)return;
     const d=document.createElement('div');d.className='hfield';applyStyle(d,o);colR.appendChild(d);
   });
   grid.appendChild(colR);
@@ -1170,7 +1219,7 @@ function buildHeaderElement(){
 
   const colL=document.createElement('div');colL.className='hcol hcol-left';
   [state.h.time,state.h.subjectLeft,state.h.grade,state.h.leftExtra].forEach(o=>{
-    if(!o.text)return;
+    if(!o||!o.text)return;
     const d=document.createElement('div');d.className='hfield';applyStyle(d,o);colL.appendChild(d);
   });
   grid.appendChild(colL);
@@ -1201,7 +1250,7 @@ function buildFooterElement(){
 }
 
 /* ============================================================
-   HTML to Paper (inputs → spans)
+   HTML → Paper (inputs → spans)
    ============================================================ */
 function htmlForPaper(html){
   const temp=document.createElement('div');
@@ -1210,47 +1259,57 @@ function htmlForPaper(html){
     const span=document.createElement('span');
     span.className='shape-lbl';
     span.style.cssText=inp.style.cssText;
-    span.textContent=inp.value||'';
+    // Remove width/height from style (spans auto-size)
+    span.style.width='auto';
+    span.style.height='auto';
+    span.style.transform=inp.style.transform;
+    span.textContent=(inp.value||'').trim()||'';
     inp.replaceWith(span);
   });
   return temp.innerHTML;
 }
 
+/* ============================================================
+   Question element (paper)
+   ============================================================ */
 function buildQuestionElement(q){
   const el=document.createElement('div');
   el.className='q-item';
-  el.style.fontFamily=(q.family||'Arial')+', Arial, sans-serif';
-  el.style.fontSize=(q.size||14)+'pt';
-  el.style.fontWeight=q.weight||'normal';
-  el.style.color=q.color||'#111827';
 
-  // First line: title (right) + points (far left)
+  // head row: title + points
   const head=document.createElement('div');
   head.className='q-head-row';
 
   const title=document.createElement('div');
   title.className='q-title-el';
+  const ts=q.titleStyle||{};
+  title.style.fontFamily=(ts.family||'Arial')+', Arial, sans-serif';
+  title.style.fontSize=(ts.size||14)+'pt';
+  title.style.fontWeight=ts.weight||'bold';
+  title.style.color=ts.color||'#111827';
   title.textContent=q.title||'';
   head.appendChild(title);
 
-  if(q.points&&Number(q.points)>0){
-    const pts=document.createElement('div');
-    pts.className='q-points-el';
-    pts.textContent='('+q.points+')';
-    head.appendChild(pts);
-  } else {
-    // Empty spacer to keep layout
-    const pts=document.createElement('div');
-    pts.className='q-points-el';
-    pts.textContent='';
-    head.appendChild(pts);
-  }
+  const pts=document.createElement('div');
+  pts.className='q-points-el';
+  pts.style.fontFamily=(ts.family||'Arial')+', Arial, sans-serif';
+  pts.style.fontSize=(ts.size||14)+'pt';
+  pts.style.fontWeight='bold';
+  pts.style.color=ts.color||'#111827';
+  pts.textContent=(q.points&&Number(q.points)>0)?'('+q.points+')':'';
+  head.appendChild(pts);
   el.appendChild(head);
 
-  // Description (with shapes)
+  // Description
   if(q.desc){
+    const ds=q.descStyle||{};
     const desc=document.createElement('div');
     desc.className='q-desc-el';
+    desc.style.fontFamily=(ds.family||'Arial')+', Arial, sans-serif';
+    desc.style.fontSize=(ds.size||14)+'pt';
+    desc.style.fontWeight=ds.weight||'normal';
+    desc.style.color=ds.color||'#111827';
+    desc.style.lineHeight=String(ds.lineHeight||1.6);
     desc.innerHTML=htmlForPaper(q.desc);
     el.appendChild(desc);
   }
@@ -1417,6 +1476,20 @@ function updateZoomUI(){
 }
 
 /* ============================================================
+   Shape HTML
+   ============================================================ */
+function shapeToHtml(sh){
+  const labelsHtml=sh.labels.map((lbl,i)=>{
+    const rot=lbl.r?' rotate('+lbl.r+'deg)':'';
+    return '<input type="text" class="shape-lbl" data-idx="'+i+'" value="" placeholder="'+(lbl.p||'')+'" '+
+           'style="left:'+lbl.x+'px;top:'+lbl.y+'px;transform:translate(-50%,-50%)'+rot+';">';
+  }).join('');
+  return '<span class="shape-block" contenteditable="false" data-shape="'+sh.id+'" style="width:'+sh.w+'px;height:'+sh.h+'px;">'+
+         sh.svg + labelsHtml +
+         '</span>';
+}
+
+/* ============================================================
    Questions editor
    ============================================================ */
 function renderQuestionsEditor(){
@@ -1433,16 +1506,52 @@ function renderQuestionsEditor(){
   state.questions.forEach((q,i)=>cont.appendChild(buildQuestionCard(q,i)));
 }
 
-/* تحويل الشكل إلى HTML */
-function shapeToHtml(sh){
-  const labels=sh.labels.map((lbl,i)=>{
-    const t=(lbl.r?' rotate('+lbl.r+'deg)':'');
-    return '<input type="text" class="shape-lbl" data-idx="'+i+'" value="" placeholder="'+(lbl.p||'')+'" '+
-           'style="left:'+lbl.x+'%;top:'+lbl.y+'%;transform:translate(-50%,-50%)'+t+';">';
-  }).join('');
-  return '<span class="shape-block" contenteditable="false" data-shape="'+sh.id+'" style="width:'+sh.w+'px;height:'+sh.h+'px;">'+
-         sh.svg + labels +
-         '</span>';
+function buildFontRow(target, onChange, withLineHeight){
+  const row=document.createElement('div');
+  row.className='font-row'+(withLineHeight?' with-lh':'');
+  row.style.marginTop='4px';
+
+  // Font family
+  const famSel=document.createElement('select');
+  FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;if(f===target.family)o.selected=true;famSel.appendChild(o);});
+  famSel.addEventListener('change',()=>{target.family=famSel.value;onChange();});
+  famSel.title='نوع الخط';
+  row.appendChild(famSel);
+
+  // Size
+  const szInp=document.createElement('input');
+  szInp.type='number';szInp.min=6;szInp.max=72;szInp.value=target.size||12;
+  szInp.addEventListener('input',()=>{target.size=Number(szInp.value)||12;onChange();});
+  szInp.title='الحجم';
+  szInp.placeholder='حجم';
+  row.appendChild(szInp);
+
+  // Weight
+  const wSel=document.createElement('select');
+  [['normal','عادي'],['bold','عريض']].forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===target.weight)o.selected=true;wSel.appendChild(o);});
+  wSel.addEventListener('change',()=>{target.weight=wSel.value;onChange();});
+  wSel.title='السماكة';
+  row.appendChild(wSel);
+
+  // Color
+  const colInp=document.createElement('input');
+  colInp.type='color';colInp.value=target.color||'#111827';
+  colInp.addEventListener('input',()=>{target.color=colInp.value;onChange();});
+  colInp.title='اللون';
+  row.appendChild(colInp);
+
+  // Line height (optional)
+  if(withLineHeight){
+    const lhInp=document.createElement('input');
+    lhInp.type='number';lhInp.min=0.8;lhInp.max=3;lhInp.step=0.1;
+    lhInp.value=target.lineHeight||1.6;
+    lhInp.addEventListener('input',()=>{target.lineHeight=Number(lhInp.value)||1.6;onChange();});
+    lhInp.title='تباعد الأسطر';
+    lhInp.placeholder='سطر';
+    row.appendChild(lhInp);
+  }
+
+  return row;
 }
 
 function buildQuestionCard(q,idx){
@@ -1460,28 +1569,49 @@ function buildQuestionCard(q,idx){
   const del=miniBtn('✕','حذف',()=>deleteQuestion(idx));del.classList.add('danger');head.appendChild(del);
   card.appendChild(head);
 
-  // Title
-  const tGrp=document.createElement('div');tGrp.className='q-meta-item';
-  const tLbl=document.createElement('label');tLbl.textContent='العنوان';tGrp.appendChild(tLbl);
+  // ---------- Title block ----------
+  const titleBlock=document.createElement('div');
+  titleBlock.className='style-block';
+
+  const titleHeader=document.createElement('div');
+  titleHeader.className='style-block-title';
+  titleHeader.innerHTML='<span>🏷️ العنوان</span><span class="tag">مستقل</span>';
+  titleBlock.appendChild(titleHeader);
+
   const tInp=document.createElement('input');
-  tInp.type='text';tInp.placeholder='مثال: 1. أو أ- أو اكتب العنوان';
+  tInp.type='text';tInp.placeholder='اكتب عنوان السؤال...';
   tInp.value=q.title||'';
+  tInp.style.cssText='border:1.5px solid var(--border-strong);border-radius:8px;padding:9px 11px;font-size:13px;background:var(--bg-1);outline:none;width:100%;';
   tInp.addEventListener('input',()=>{q.title=tInp.value;save();schedulePaperUpdate();});
-  tGrp.appendChild(tInp);card.appendChild(tGrp);
+  titleBlock.appendChild(tInp);
 
-  // Description
-  const descLbl=document.createElement('div');
-  descLbl.style.cssText='font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;margin-bottom:4px;';
-  descLbl.textContent='الوصف';
-  card.appendChild(descLbl);
+  const tStyleLbl=document.createElement('div');
+  tStyleLbl.style.cssText='font-size:10.5px;font-weight:700;color:var(--text-3);margin:8px 0 0;';
+  tStyleLbl.textContent='خط العنوان · حجم · سماكة · لون';
+  titleBlock.appendChild(tStyleLbl);
 
+  q.titleStyle=q.titleStyle||defaultTitleStyle();
+  const tFontRow=buildFontRow(q.titleStyle,()=>{save();schedulePaperUpdate();},false);
+  titleBlock.appendChild(tFontRow);
+
+  card.appendChild(titleBlock);
+
+  // ---------- Description block ----------
+  const descBlock=document.createElement('div');
+  descBlock.className='style-block';
+
+  const descHeader=document.createElement('div');
+  descHeader.className='style-block-title';
+  descHeader.innerHTML='<span>📝 الوصف</span><span class="tag">مستقل</span>';
+  descBlock.appendChild(descHeader);
+
+  // Rich editor wrapper
   const richWrap=document.createElement('div');
   richWrap.className='rich-wrap';
 
   const toolbar=document.createElement('div');
   toolbar.className='rich-toolbar';
 
-  // B I U S
   [['bold','<b>B</b>','عريض'],['italic','<i>I</i>','مائل'],['underline','<u>U</u>','تحته خط'],['strikeThrough','<s>S</s>','شطب']].forEach(([cmd,html,title])=>{
     const b=document.createElement('button');
     b.type='button';b.innerHTML=html;b.title=title;
@@ -1492,9 +1622,8 @@ function buildQuestionCard(q,idx){
 
   const sep1=document.createElement('span');sep1.className='sep';toolbar.appendChild(sep1);
 
-  // Size
   const szSel=document.createElement('select');
-  szSel.title='حجم النص';
+  szSel.title='حجم النص المحدد';
   const szOptDef=document.createElement('option');szOptDef.value='';szOptDef.textContent='حجم';szSel.appendChild(szOptDef);
   [8,9,10,11,12,13,14,16,18,20,22,24,28,32,36,40,48,56,64,72].forEach(s=>{
     const o=document.createElement('option');o.value=s;o.textContent=s;szSel.appendChild(o);
@@ -1505,46 +1634,35 @@ function buildQuestionCard(q,idx){
     const v=szSel.value;
     if(v){restoreSelection();applySizeToSelection(Number(v));}
     szSel.value='';
-  },false);
+  });
   toolbar.appendChild(szSel);
 
-  // Color
   const colorInp=document.createElement('input');
   colorInp.type='color';colorInp.value='#111827';
-  colorInp.title='لون النص';
-  colorInp.style.cssText='width:32px;height:32px;padding:2px;border-radius:7px;border:1px solid var(--border);background:var(--bg-2);cursor:pointer;';
+  colorInp.title='لون النص المحدد';
+  colorInp.style.cssText='width:32px;height:32px;padding:2px;border-radius:7px;border:1px solid var(--border);background:var(--bg-1);cursor:pointer;';
   colorInp.addEventListener('mousedown',()=>{saveSelection();});
   colorInp.addEventListener('touchstart',()=>{saveSelection();},{passive:true});
-  colorInp.addEventListener('input',()=>{
-    colorInp._val=colorInp.value;
-  });
   colorInp.addEventListener('change',()=>{
     const v=colorInp.value;
     restoreSelection();
     applyColorToSelection(v);
-    // Show indicator
     const ind=document.createElement('span');
     ind.className='color-dot';
     ind.innerHTML='تم تطبيق <span class="dot" style="background:'+v+'"></span>';
-    ind.style.animation='fadeIn .3s';
-    richWrap.appendChild(ind);
-    setTimeout(()=>ind.remove(),1500);
+    descBlock.appendChild(ind);
+    setTimeout(()=>ind.remove(),1600);
   });
   toolbar.appendChild(colorInp);
 
   const sep2=document.createElement('span');sep2.className='sep';toolbar.appendChild(sep2);
 
-  // Symbols
   const bSym=document.createElement('button');bSym.textContent='🔣';bSym.title='رموز رياضية';
-  bSym.onmousedown=preventDefault;
-  toolbar.appendChild(bSym);
+  bSym.onmousedown=preventDefault;toolbar.appendChild(bSym);
 
-  // Shapes
   const bShape=document.createElement('button');bShape.textContent='⬛';bShape.title='أشكال هندسية';
-  bShape.onmousedown=preventDefault;
-  toolbar.appendChild(bShape);
+  bShape.onmousedown=preventDefault;toolbar.appendChild(bShape);
 
-  // Context menu button (small circle)
   const bCtx=document.createElement('button');
   bCtx.textContent='⋯';bCtx.title='نسخ/قص/لصق';
   bCtx.style.borderRadius='50%';
@@ -1557,20 +1675,31 @@ function buildQuestionCard(q,idx){
   popover.className='popover';
   richWrap.appendChild(popover);
 
-  // Editor
   const editor=document.createElement('div');
   editor.className='rich-editor';
   editor.setAttribute('contenteditable','true');
   editor.setAttribute('data-placeholder','اكتب وصف السؤال...');
   editor.innerHTML=q.desc||'';
 
-  // Sync input values from value attribute
+  // Apply desc style to editor
+  q.descStyle=q.descStyle||defaultDescStyle();
+  const applyDescStyleToEditor=()=>{
+    const ds=q.descStyle;
+    editor.style.fontFamily=(ds.family||'Arial')+', Arial, sans-serif';
+    editor.style.fontSize=(ds.size||14)+'pt';
+    editor.style.fontWeight=ds.weight||'normal';
+    editor.style.color=ds.color||'#111827';
+    editor.style.lineHeight=String(ds.lineHeight||1.6);
+  };
+  applyDescStyleToEditor();
+
+  // Bind shape inputs after render
   setTimeout(()=>{
     editor.querySelectorAll('input.shape-lbl').forEach(inp=>{
       const attr=inp.getAttribute('value');
       if(attr!==null) inp.value=attr;
-      else if(inp.placeholder) inp.value='';
-      // Attach listeners
+      else inp.value=inp.placeholder||'';
+      inp._bound=true;
       inp.addEventListener('input',()=>{
         inp.setAttribute('value',inp.value);
         q.desc=editor.innerHTML;
@@ -1581,7 +1710,6 @@ function buildQuestionCard(q,idx){
   },0);
 
   editor.addEventListener('input',(e)=>{
-    // Sync shape-lbl inputs
     editor.querySelectorAll('input.shape-lbl').forEach(inp=>{
       inp.setAttribute('value',inp.value);
     });
@@ -1590,32 +1718,36 @@ function buildQuestionCard(q,idx){
     schedulePaperUpdate();
   });
 
-  // Prevent paste rich content - paste plain
   editor.addEventListener('paste',(e)=>{
     e.preventDefault();
     const text=(e.clipboardData||window.clipboardData).getData('text/plain');
     document.execCommand('insertText',false,text);
   });
 
-  // Prevent native context menu on mobile
   editor.addEventListener('contextmenu',(e)=>{
-    // Only prevent on non-desktop
     if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)){
       e.preventDefault();
     }
   });
 
   richWrap.appendChild(editor);
+  descBlock.appendChild(richWrap);
 
-  // Popover triggers
+  // Description style row
+  const dStyleLbl=document.createElement('div');
+  dStyleLbl.style.cssText='font-size:10.5px;font-weight:700;color:var(--text-3);margin:10px 0 0;';
+  dStyleLbl.textContent='خط الوصف · حجم · سماكة · لون · تباعد الأسطر';
+  descBlock.appendChild(dStyleLbl);
+
+  const dFontRow=buildFontRow(q.descStyle,()=>{applyDescStyleToEditor();save();schedulePaperUpdate();},true);
+  descBlock.appendChild(dFontRow);
+
+  // Popover bindings
   bSym.onclick=()=>{togglePopover(popover,editor,'sym');};
   bShape.onclick=()=>{togglePopover(popover,editor,'shape');};
-  bCtx.onclick=(e)=>{
-    e.stopPropagation();
-    showCtxMenu(bCtx,editor);
-  };
+  bCtx.onclick=(e)=>{e.stopPropagation();showCtxMenu(bCtx,editor);};
 
-  card.appendChild(richWrap);
+  card.appendChild(descBlock);
 
   // Meta: points + image
   const meta=document.createElement('div');
@@ -1659,42 +1791,15 @@ function buildQuestionCard(q,idx){
   meta.appendChild(imgItem);
   card.appendChild(meta);
 
-  // Font row
-  const fontRow=document.createElement('div');
-  fontRow.className='font-row';fontRow.style.marginTop='8px';
-
-  const famSel=document.createElement('select');
-  FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;if(f===q.family)o.selected=true;famSel.appendChild(o);});
-  famSel.addEventListener('change',()=>{q.family=famSel.value;save();schedulePaperUpdate();});
-  fontRow.appendChild(famSel);
-
-  const szInp=document.createElement('input');
-  szInp.type='number';szInp.min=8;szInp.max=72;szInp.value=q.size||14;
-  szInp.addEventListener('input',()=>{q.size=Number(szInp.value)||14;save();schedulePaperUpdate();});
-  fontRow.appendChild(szInp);
-
-  const wSel=document.createElement('select');
-  [['normal','عادي'],['bold','عريض']].forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===q.weight)o.selected=true;wSel.appendChild(o);});
-  wSel.addEventListener('change',()=>{q.weight=wSel.value;save();schedulePaperUpdate();});
-  fontRow.appendChild(wSel);
-
-  const colInp=document.createElement('input');
-  colInp.type='color';colInp.value=q.color||'#111827';
-  colInp.addEventListener('input',()=>{q.color=colInp.value;save();schedulePaperUpdate();});
-  fontRow.appendChild(colInp);
-  card.appendChild(fontRow);
-
   return card;
 }
 
 function preventDefault(e){e.preventDefault();}
 
-/* Save/restore selection */
 function saveSelection(){
   const sel=window.getSelection();
   if(sel.rangeCount>0){
     const r=sel.getRangeAt(0);
-    // Only save if inside an editor
     if(r.startContainer.parentElement && r.startContainer.parentElement.closest('.rich-editor')){
       savedRange=r.cloneRange();
     }
@@ -1707,21 +1812,15 @@ function restoreSelection(){
   sel.addRange(savedRange);
 }
 
-/* Execute command */
-function execCmd(cmd, btn){
+function execCmd(cmd,btn){
   saveSelection();
   document.execCommand(cmd,false,null);
-  // Find the editor and dispatch input
   if(savedRange){
     const editor=savedRange.startContainer.parentElement&&savedRange.startContainer.parentElement.closest('.rich-editor');
     if(editor) editor.dispatchEvent(new Event('input',{bubbles:true}));
   }
-  // Toggle button visual
   if(btn){
-    try{
-      const active=document.queryCommandState(cmd);
-      btn.classList.toggle('active',active);
-    }catch(e){}
+    try{btn.classList.toggle('active',document.queryCommandState(cmd));}catch(e){}
   }
 }
 
@@ -1731,21 +1830,12 @@ function applySizeToSelection(pt){
   const range=sel.getRangeAt(0);
   const span=document.createElement('span');
   span.style.fontSize=pt+'pt';
-  try{
-    range.surroundContents(span);
-  }catch(e){
-    const frag=range.extractContents();
-    span.appendChild(frag);
-    range.insertNode(span);
-  }
+  try{range.surroundContents(span);}catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
   const editor=span.closest('.rich-editor');
   if(editor) editor.dispatchEvent(new Event('input',{bubbles:true}));
-  // Reselect
-  const newRange=document.createRange();
-  newRange.selectNodeContents(span);
-  sel.removeAllRanges();
-  sel.addRange(newRange);
-  toast('تم تطبيق الحجم');
+  const nr=document.createRange();nr.selectNodeContents(span);
+  sel.removeAllRanges();sel.addRange(nr);
+  toast('تم تطبيق الحجم '+pt);
 }
 
 function applyColorToSelection(color){
@@ -1754,22 +1844,13 @@ function applyColorToSelection(color){
   const range=sel.getRangeAt(0);
   const span=document.createElement('span');
   span.style.color=color;
-  try{
-    range.surroundContents(span);
-  }catch(e){
-    const frag=range.extractContents();
-    span.appendChild(frag);
-    range.insertNode(span);
-  }
+  try{range.surroundContents(span);}catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
   const editor=span.closest('.rich-editor');
   if(editor) editor.dispatchEvent(new Event('input',{bubbles:true}));
-  const newRange=document.createRange();
-  newRange.selectNodeContents(span);
-  sel.removeAllRanges();
-  sel.addRange(newRange);
+  const nr=document.createRange();nr.selectNodeContents(span);
+  sel.removeAllRanges();sel.addRange(nr);
 }
 
-/* Insert HTML at cursor */
 function insertAtCursorInEditor(editor, html){
   editor.focus();
   const sel=window.getSelection();
@@ -1787,12 +1868,10 @@ function insertAtCursorInEditor(editor, html){
   temp.innerHTML=html;
   const frag=document.createDocumentFragment();
   let node,lastNode;
-  while((node=temp.firstChild)){
-    lastNode=frag.appendChild(node);
-  }
+  while((node=temp.firstChild)){lastNode=frag.appendChild(node);}
   range.insertNode(frag);
 
-  // Attach listeners to any new shape inputs
+  // Bind new inputs
   editor.querySelectorAll('input.shape-lbl').forEach(inp=>{
     if(inp._bound)return;
     inp._bound=true;
@@ -1806,17 +1885,14 @@ function insertAtCursorInEditor(editor, html){
     const r=range.cloneRange();
     r.setStartAfter(lastNode);
     r.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(r);
+    sel.removeAllRanges();sel.addRange(r);
   }
   editor.dispatchEvent(new Event('input',{bubbles:true}));
 }
 
-/* Popover */
 function togglePopover(popover, editor, mode){
   if(popover.classList.contains('open') && popover.dataset.mode===mode){
-    popover.classList.remove('open');
-    return;
+    popover.classList.remove('open');return;
   }
   popover.innerHTML='';
   popover.dataset.mode=mode;
@@ -1851,7 +1927,6 @@ function renderSymPopover(popover, editor){
       grid.appendChild(b);
     });
   }
-
   cats.forEach(c=>{
     const b=document.createElement('button');
     b.type='button';b.textContent=c;b.dataset.cat=c;
@@ -1874,17 +1949,18 @@ function renderShapesPopover(popover, editor){
     const b=document.createElement('button');
     b.type='button';
     b.onmousedown=preventDefault;
-    const miniW=54, miniH=42;
-    b.innerHTML='<div style="width:'+miniW+'px;height:'+miniH+'px;display:flex;align-items:center;justify-content:center;color:var(--text-2);">'+sh.svg.replace('<svg ','<svg width="'+miniW+'" height="'+miniH+'" ')+'</div><span>'+sh.name+'</span>';
-    b.onclick=()=>{
-      insertAtCursorInEditor(editor, shapeToHtml(sh));
-    };
+    // Preview scale to fit ~56x42
+    const scale=Math.min(56/sh.w, 42/sh.h);
+    const pw=Math.round(sh.w*scale), ph=Math.round(sh.h*scale);
+    b.innerHTML='<div style="width:'+pw+'px;height:'+ph+'px;display:flex;align-items:center;justify-content:center;">'+
+                sh.svg.replace('<svg ','<svg width="'+pw+'" height="'+ph+'" ').replace('width="'+pw+'" height="'+ph+'" viewBox','width="'+pw+'" height="'+ph+'" viewBox')+
+                '</div><span>'+sh.name+'</span>';
+    b.onclick=()=>{insertAtCursorInEditor(editor, shapeToHtml(sh));};
     grid.appendChild(b);
   });
   popover.appendChild(grid);
 }
 
-/* Context menu (custom) */
 function showCtxMenu(anchor, editor){
   saveSelection();
   const m=$('ctxMenu');
@@ -1892,7 +1968,6 @@ function showCtxMenu(anchor, editor){
   const r=anchor.getBoundingClientRect();
   m.style.top=(r.bottom+6)+'px';
   m.style.left=Math.max(6, Math.min(window.innerWidth-200, r.left-160))+'px';
-  m.dataset.editorId=editor.dataset.qid||'';
   m._editor=editor;
   m.classList.add('open');
   setTimeout(()=>{
@@ -1942,7 +2017,14 @@ function updateQuestionCounter(){
 
 function addQuestion(){
   if(state.questions.length>=MAX_QUESTIONS){toast('وصلت للحد الأقصى');return;}
-  state.questions.push({title:'',desc:'',points:0,family:'Arial',size:14,weight:'normal',color:'#111827',image:null});
+  state.questions.push({
+    title:'',
+    titleStyle:defaultTitleStyle(),
+    desc:'',
+    descStyle:defaultDescStyle(),
+    points:0,
+    image:null
+  });
   save();fullRender();
   setTimeout(()=>{
     const eds=document.querySelectorAll('#questions-editor .rich-editor');
@@ -1954,9 +2036,12 @@ function duplicateQuestion(idx){
   if(state.questions.length>=MAX_QUESTIONS){toast('وصلت للحد الأقصى');return;}
   const q=state.questions[idx];
   state.questions.splice(idx+1,0,{
-    title:q.title||'',desc:q.desc||'',points:q.points||0,
-    family:q.family||'Arial',size:q.size||14,weight:q.weight||'normal',
-    color:q.color||'#111827',image:q.image||null
+    title:q.title||'',
+    titleStyle:Object.assign({},q.titleStyle||defaultTitleStyle()),
+    desc:q.desc||'',
+    descStyle:Object.assign({},q.descStyle||defaultDescStyle()),
+    points:q.points||0,
+    image:q.image||null
   });
   save();fullRender();toast('تم النسخ');
 }
@@ -2061,9 +2146,7 @@ function buildFramePicker(){
     else if(f.id==='thick')box.style.border='4px solid '+c;
     else if(f.id==='elegant'){box.style.border='1px solid '+c;box.style.boxShadow='0 0 0 2px #fff, 0 0 0 3px '+c;}
     else if(f.id==='rounded'){box.style.border='2px solid '+c;box.style.borderRadius='8px';}
-    else if(f.id==='corners'){
-      box.style.background='linear-gradient('+c+','+c+') top right/8px 2px no-repeat,linear-gradient('+c+','+c+') top right/2px 8px no-repeat,linear-gradient('+c+','+c+') top left/8px 2px no-repeat,linear-gradient('+c+','+c+') top left/2px 8px no-repeat,linear-gradient('+c+','+c+') bottom right/8px 2px no-repeat,linear-gradient('+c+','+c+') bottom right/2px 8px no-repeat,linear-gradient('+c+','+c+') bottom left/8px 2px no-repeat,linear-gradient('+c+','+c+') bottom left/2px 8px no-repeat';
-    }
+    else if(f.id==='corners'){box.style.background='linear-gradient('+c+','+c+') top right/8px 2px no-repeat,linear-gradient('+c+','+c+') top right/2px 8px no-repeat,linear-gradient('+c+','+c+') top left/8px 2px no-repeat,linear-gradient('+c+','+c+') top left/2px 8px no-repeat,linear-gradient('+c+','+c+') bottom right/8px 2px no-repeat,linear-gradient('+c+','+c+') bottom right/2px 8px no-repeat,linear-gradient('+c+','+c+') bottom left/8px 2px no-repeat,linear-gradient('+c+','+c+') bottom left/2px 8px no-repeat';}
     else if(f.id==='top-bottom'){box.style.borderTop='3px solid '+c;box.style.borderBottom='3px solid '+c;}
     else if(f.id==='left-right'){box.style.borderLeft='3px solid '+c;box.style.borderRight='3px solid '+c;}
     else if(f.id==='double-thin'){box.style.border='1px solid '+c;box.style.boxShadow='inset 0 0 0 3px #fff, inset 0 0 0 4px '+c;}
@@ -2092,6 +2175,7 @@ function exportWord(){
       const sp=document.createElement('span');
       sp.className='shape-lbl';
       sp.style.cssText=inp.style.cssText;
+      sp.style.width='auto';sp.style.height='auto';
       sp.textContent=inp.value||'';
       inp.replaceWith(sp);
     });
@@ -2107,7 +2191,7 @@ function exportWord(){
     +'.footer-grid{display:table;width:100%;table-layout:fixed;margin-top:20px;}'
     +'.fcol{display:table-cell;width:33%;padding:2px;}'
     +'.footer-wish{text-align:center;}.q-item{margin-bottom:8px;}.watermark{display:none;}'
-    +'.q-head-row{display:flex;justify-content:space-between;}.q-title-el{font-weight:bold;}.q-points-el{font-weight:bold;}'
+    +'.q-head-row{display:flex;justify-content:space-between;align-items:baseline;}'
     +'.shape-block{position:relative;display:inline-block;}.shape-lbl{position:absolute;font-size:11px;font-weight:bold;}';
   const html='<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar"><head><meta charset="utf-8"><title>نموذج أسئلة</title><style>'+styles+'</style></head><body>'+bodyHtml+'</body></html>';
   const blob=new Blob(['\ufeff',html],{type:'application/msword'});
@@ -2126,6 +2210,22 @@ function backup(){
   toast('تم حفظ نسخة 💾');
 }
 function triggerImport(){closeMenu();const el=$('importFile');if(el)el.click();}
+
+function migrateQuestion(q){
+  if(q.desc===undefined) q.desc=q.text||'';
+  if(q.title===undefined) q.title='';
+  if(!q.titleStyle){
+    q.titleStyle={family:q.family||'Arial',size:q.size||14,weight:q.weight||'bold',color:q.color||'#111827'};
+  }
+  if(!q.descStyle){
+    q.descStyle={family:q.family||'Arial',size:q.size||14,weight:q.weight||'normal',color:q.color||'#111827',lineHeight:1.6};
+  }
+  if(q.points===undefined) q.points=0;
+  if(q.image===undefined) q.image=null;
+  delete q.family;delete q.size;delete q.weight;delete q.color;delete q.text;
+  return q;
+}
+
 function restore(input){
   const f=input.files&&input.files[0];if(!f)return;
   const r=new FileReader();
@@ -2134,16 +2234,7 @@ function restore(input){
       const d=JSON.parse(e.target.result);
       if(!d||!d.h||!Array.isArray(d.questions))throw new Error('bad');
       state=deepMerge(JSON.parse(JSON.stringify(defaultState)),d);
-      state.questions.forEach(q=>{
-        if(q.desc===undefined) q.desc=q.text||'';
-        if(q.title===undefined) q.title='';
-        if(!q.family) q.family='Arial';
-        if(!q.size) q.size=14;
-        if(!q.weight) q.weight='normal';
-        if(!q.color) q.color='#111827';
-        if(q.points===undefined) q.points=0;
-        if(q.image===undefined) q.image=null;
-      });
+      state.questions=state.questions.map(migrateQuestion);
       loadStateIntoInputs();fullRender();save();
       switchView('preview');toast('تم الاستيراد ✅');
     }catch(err){toast('الملف غير صالح ❌');}
@@ -2168,16 +2259,7 @@ function boot(){
     }
   }catch(e){}
 
-  state.questions.forEach(q=>{
-    if(q.desc===undefined) q.desc=q.text||'';
-    if(q.title===undefined) q.title='';
-    if(!q.family) q.family='Arial';
-    if(!q.size) q.size=14;
-    if(!q.weight) q.weight='normal';
-    if(!q.color) q.color='#111827';
-    if(q.points===undefined) q.points=0;
-    if(q.image===undefined) q.image=null;
-  });
+  state.questions=state.questions.map(migrateQuestion);
 
   fillFontSelects();
   loadStateIntoInputs();
