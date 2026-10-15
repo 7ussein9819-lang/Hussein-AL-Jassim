@@ -5,869 +5,489 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>منشئ نماذج الأسئلة</title>
 <style>
-/* ============================================================
-   المتغيرات (Light)
-   ============================================================ */
-:root {
-  --bg-0: #f1f5f9;
-  --bg-1: #ffffff;
-  --bg-2: #f8fafc;
-  --bg-3: #e2e8f0;
-  --bg-hover: #f1f5f9;
+:root{
+  --bg-0:#f4f6fb; --bg-1:#ffffff; --bg-2:#f8fafc; --bg-3:#e2e8f0;
+  --text-1:#0f172a; --text-2:#475569; --text-3:#94a3b8;
+  --border:#e5e7eb; --border-strong:#cbd5e1;
+  --accent:#6366f1; --accent-hover:#4f46e5; --accent-light:#eef2ff;
+  --accent-ring:rgba(99,102,241,.18);
+  --success:#10b981; --danger:#ef4444; --danger-light:#fee2e2;
+  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
+  --shadow:0 4px 14px rgba(15,23,42,.08);
+  --shadow-lg:0 12px 32px rgba(15,23,42,.12);
+  --shadow-paper:0 10px 40px rgba(15,23,42,.14);
+  --radius:12px; --radius-lg:16px; --radius-sm:8px;
+  --nav-h:66px; --topbar-h:60px;
+  --font:"Arial","Segoe UI","Tahoma",sans-serif;
+}
+html[data-theme="dark"]{
+  --bg-0:#0a0f1e; --bg-1:#0f172a; --bg-2:#1e293b; --bg-3:#334155;
+  --text-1:#f1f5f9; --text-2:#cbd5e1; --text-3:#64748b;
+  --border:#1e293b; --border-strong:#334155;
+  --accent:#818cf8; --accent-hover:#6366f1; --accent-light:#1e1b4b;
+  --accent-ring:rgba(129,140,248,.22);
+  --danger-light:#7f1d1d;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
+  --shadow:0 4px 14px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.5);
+  --shadow-paper:0 10px 40px rgba(0,0,0,.6);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;transition:background-color .25s,color .25s;}
+body{
+  background:var(--bg-0);color:var(--text-1);
+  font-family:var(--font);font-size:14px;min-height:100vh;
+  padding-bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
+  -webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;color:inherit;}
 
-  --text-1: #0f172a;
-  --text-2: #475569;
-  --text-3: #94a3b8;
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:100;background:var(--bg-1);
+  border-bottom:1px solid var(--border);height:var(--topbar-h);
+  padding:0 12px;display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto;min-width:0;}
+.brand-icon{
+  width:34px;height:34px;flex:0 0 34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:0 4px 10px var(--accent-ring);
+}
+.brand-text{min-width:0;}
+.brand-text b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text small{display:block;font-size:11px;color:var(--text-3);font-weight:normal;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;gap:6px;align-items:center;}
+.icon-btn{
+  width:38px;height:38px;border:1px solid transparent;border-radius:10px;
+  background:transparent;color:var(--text-2);
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;flex:0 0 auto;padding:0;
+  transition:background .15s,color .15s,border-color .15s,transform .1s;
+}
+.icon-btn:hover{background:var(--bg-2);color:var(--text-1);border-color:var(--border);}
+.icon-btn:active{transform:scale(.94);}
+.icon-btn svg{width:20px;height:20px;display:block;}
+html[data-theme="light"] .icon-btn .icon-dark{display:none;}
+html[data-theme="dark"] .icon-btn .icon-light{display:none;}
 
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+/* Menu */
+.menu-wrap{position:relative;}
+.menu{
+  position:absolute;top:calc(100% + 8px);left:0;
+  background:var(--bg-1);color:var(--text-1);min-width:230px;
+  border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);padding:6px;display:none;z-index:200;
+}
+.menu.open{display:block;animation:menuIn .15s ease-out;}
+@keyframes menuIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.menu button{
+  width:100%;text-align:right;border:none;background:transparent;
+  padding:10px 12px;border-radius:8px;font-size:13px;font-weight:500;
+  cursor:pointer;color:var(--text-1);display:flex;align-items:center;gap:10px;
+}
+.menu button:hover{background:var(--bg-2);}
+.menu button.danger{color:var(--danger);}
+.menu button.danger:hover{background:var(--danger-light);}
+.menu hr{border:none;border-top:1px solid var(--border);margin:4px 0;}
+.menu .mi{font-size:16px;width:20px;text-align:center;display:inline-flex;align-items:center;justify-content:center;}
 
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-light: #dbeafe;
-  --accent-ring: rgba(59,130,246,.15);
+/* Main */
+main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
+.view{display:none;}
+.view.active{display:block;animation:fadeIn .2s ease-out;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 
-  --success: #10b981;
-  --success-light: #d1fae5;
-  --danger: #ef4444;
-  --danger-light: #fee2e2;
+/* Bottom nav */
+.bottomnav{
+  position:fixed;bottom:0;left:0;right:0;background:var(--bg-1);
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-around;align-items:stretch;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+  z-index:150;box-shadow:0 -2px 14px rgba(0,0,0,.06);min-height:var(--nav-h);
+}
+.navbtn{
+  flex:1;border:none;background:transparent;color:var(--text-3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px 4px;border-radius:10px;cursor:pointer;
+  font-size:11px;font-weight:bold;transition:background .15s,color .15s;min-width:0;
+}
+.navbtn svg{width:22px;height:22px;stroke:currentColor;fill:none;}
+.navbtn:hover{background:var(--bg-2);color:var(--text-2);}
+.navbtn.active{color:var(--accent);background:var(--accent-light);}
 
-  --shadow-xs: 0 1px 2px rgba(15,23,42,.04);
-  --shadow-sm: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
-  --shadow: 0 4px 12px rgba(15,23,42,.08);
-  --shadow-lg: 0 12px 32px rgba(15,23,42,.12);
-  --shadow-paper: 0 8px 30px rgba(15,23,42,.12);
-
-  --radius-sm: 8px;
-  --radius: 12px;
-  --radius-lg: 16px;
-
-  --nav-h: 66px;
-  --topbar-h: 60px;
-
-  --font: "Arial", "Segoe UI", "Tahoma", sans-serif;
+@media (min-width:900px){
+  .bottomnav{max-width:760px;margin:0 auto;left:50%;transform:translateX(-50%);right:auto;border-radius:16px 16px 0 0;border:1px solid var(--border);border-bottom:none;}
 }
 
-html[data-theme="dark"] {
-  --bg-0: #0a0f1e;
-  --bg-1: #0f172a;
-  --bg-2: #1e293b;
-  --bg-3: #334155;
-  --bg-hover: #1e293b;
-
-  --text-1: #f1f5f9;
-  --text-2: #cbd5e1;
-  --text-3: #64748b;
-
-  --border: #1e293b;
-  --border-strong: #334155;
-
-  --accent: #60a5fa;
-  --accent-hover: #3b82f6;
-  --accent-light: #1e3a8a;
-  --accent-ring: rgba(96,165,250,.2);
-
-  --success: #34d399;
-  --success-light: #064e3b;
-  --danger: #f87171;
-  --danger-light: #7f1d1d;
-
-  --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
-  --shadow: 0 4px 12px rgba(0,0,0,.4);
-  --shadow-lg: 0 12px 32px rgba(0,0,0,.5);
-  --shadow-paper: 0 8px 30px rgba(0,0,0,.6);
+/* ==================================================
+   Preview area — الورقة دائماً A4
+   ================================================== */
+.preview-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:20px;padding:10px 0;
+}
+.page-scaler{
+  position:relative;
+  /* width/height يُحسبان بالـ JS */
+}
+.page{
+  width:210mm;
+  height:297mm;
+  background:#ffffff;
+  color:#111827;
+  padding:12mm;
+  position:absolute;
+  top:0;left:0;
+  transform-origin:top center;
+  box-shadow:var(--shadow-paper);
+  display:flex;
+  flex-direction:column;
+  font-size:12pt;
+  line-height:1.55;
+  overflow:hidden;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-
-html, body {
-  margin: 0; padding: 0;
-  transition: background-color .25s ease, color .25s ease;
+/* frame */
+.page-frame{
+  position:absolute;inset:6mm;pointer-events:none;z-index:3;
 }
-
-body {
-  background: var(--bg-0);
-  color: var(--text-1);
-  font-family: var(--font);
-  font-size: 14px;
-  min-height: 100vh;
-  padding-bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
-  -webkit-tap-highlight-color: transparent;
-  -webkit-font-smoothing: antialiased;
-}
-
-button, input, select, textarea {
-  font-family: inherit;
-  color: inherit;
-}
-
-/* ============================================================
-   Topbar
-   ============================================================ */
-.topbar {
-  position: sticky; top: 0; z-index: 100;
-  background: var(--bg-1);
-  border-bottom: 1px solid var(--border);
-  height: var(--topbar-h);
-  padding: 0 12px;
-  display: flex; align-items: center; gap: 10px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.brand {
-  display: flex; align-items: center; gap: 10px;
-  margin-inline-end: auto; min-width: 0;
-}
-.brand-icon {
-  width: 34px; height: 34px; flex: 0 0 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 4px 10px var(--accent-ring);
-}
-.brand-text { min-width: 0; }
-.brand-text b {
-  display: block; font-size: 13px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.brand-text small {
-  display: block; font-size: 11px; color: var(--text-3);
-  font-weight: normal; margin-top: 1px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.topbar-actions {
-  display: flex; gap: 6px; align-items: center;
-}
-
-.icon-btn {
-  width: 38px; height: 38px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text-2);
-  display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer; flex: 0 0 auto; padding: 0;
-  transition: background .15s, color .15s, border-color .15s, transform .1s;
-}
-.icon-btn:hover {
-  background: var(--bg-2); color: var(--text-1);
-  border-color: var(--border);
-}
-.icon-btn:active { transform: scale(.94); }
-.icon-btn svg { width: 20px; height: 20px; display: block; }
-
-.icon-btn svg + svg { display: none; }
-html[data-theme="light"] .icon-btn .icon-dark { display: none; }
-html[data-theme="dark"] .icon-btn .icon-light { display: none; }
-
-/* ============================================================
-   Menu
-   ============================================================ */
-.menu-wrap { position: relative; }
-.menu {
-  position: absolute; top: calc(100% + 8px); left: 0;
-  background: var(--bg-1); color: var(--text-1);
-  min-width: 230px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
-  padding: 6px;
-  display: none; z-index: 200;
-  animation: menuIn .15s ease-out;
-}
-@keyframes menuIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.menu.open { display: block; }
-.menu button {
-  width: 100%; text-align: right;
-  border: none; background: transparent;
-  padding: 10px 12px; border-radius: 8px;
-  font-size: 13px; font-weight: 500;
-  cursor: pointer; color: var(--text-1);
-  display: flex; align-items: center; gap: 10px;
-  transition: background .12s;
-}
-.menu button:hover { background: var(--bg-2); }
-.menu button.danger { color: var(--danger); }
-.menu button.danger:hover { background: var(--danger-light); }
-.menu hr {
-  border: none; border-top: 1px solid var(--border);
-  margin: 4px 0;
-}
-.menu .mi {
-  font-size: 16px; width: 20px; text-align: center;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-
-/* ============================================================
-   Main
-   ============================================================ */
-main {
-  padding: 14px 10px;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-.view { display: none; }
-.view.active { display: block; animation: fadeIn .2s ease-out; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ============================================================
-   Bottom nav
-   ============================================================ */
-.bottomnav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg-1);
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-around; align-items: stretch;
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-  z-index: 150;
-  box-shadow: 0 -2px 14px rgba(0,0,0,.06);
-  min-height: var(--nav-h);
-}
-.navbtn {
-  flex: 1;
-  border: none; background: transparent;
-  color: var(--text-3);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 3px; padding: 6px 4px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 11px; font-weight: bold;
-  transition: background .15s, color .15s;
-  min-width: 0;
-}
-.navbtn svg {
-  width: 22px; height: 22px;
-  stroke: currentColor; fill: none;
-}
-.navbtn:hover { background: var(--bg-2); color: var(--text-2); }
-.navbtn.active {
-  color: var(--accent);
-  background: var(--accent-light);
-}
-
-@media (min-width: 900px) {
-  .bottomnav {
-    max-width: 760px; margin: 0 auto;
-    left: 50%; transform: translateX(-50%);
-    right: auto;
-    border-radius: 16px 16px 0 0;
-    border: 1px solid var(--border);
-    border-bottom: none;
-  }
-}
-
-/* ============================================================
-   Preview area
-   ============================================================ */
-.preview-wrap {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 20px;
-  padding: 10px 0;
-}
-
-/* ===== A4 page ===== */
-.page {
-  width: 210mm;
-  height: 297mm;
-  background: #ffffff;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-paper);
-  border-radius: 2px;
-  padding: 12mm;
-  display: flex;
-  flex-direction: column;
-  color: #111827;
-  font-size: 12pt;
-  line-height: 1.55;
-}
-
-/* Frame overlay */
-.page-frame {
-  position: absolute;
-  inset: 6mm;
-  pointer-events: none;
-  z-index: 3;
-  border-radius: 0;
-}
-.page-frame.frame-none { display: none; }
-.page-frame.frame-solid { border: 1.5px solid var(--frame-c, #000); }
-.page-frame.frame-double { border: 4px double var(--frame-c, #000); }
-.page-frame.frame-dashed { border: 2px dashed var(--frame-c, #000); }
-.page-frame.frame-dotted { border: 2px dotted var(--frame-c, #000); }
-.page-frame.frame-thick { border: 5px solid var(--frame-c, #000); }
-.page-frame.frame-elegant {
-  border: 1px solid var(--frame-c, #000);
-  outline: 3px solid var(--frame-c, #000);
-  outline-offset: 3px;
-}
-.page-frame.frame-rounded {
-  border: 2px solid var(--frame-c, #000);
-  border-radius: 12px;
-}
-.page-frame.frame-double-thin {
-  border: 1px solid var(--frame-c, #000);
-  box-shadow: inset 0 0 0 4px transparent,
-              inset 0 0 0 5px var(--frame-c, #000);
-  border-radius: 0;
+.page-frame.frame-none{display:none;}
+.page-frame.frame-solid{border:1.5px solid var(--frame-c,#000);}
+.page-frame.frame-double{border:4px double var(--frame-c,#000);}
+.page-frame.frame-dashed{border:2px dashed var(--frame-c,#000);}
+.page-frame.frame-dotted{border:2px dotted var(--frame-c,#000);}
+.page-frame.frame-thick{border:5px solid var(--frame-c,#000);}
+.page-frame.frame-elegant{border:1px solid var(--frame-c,#000);outline:3px solid var(--frame-c,#000);outline-offset:3px;}
+.page-frame.frame-rounded{border:2px solid var(--frame-c,#000);border-radius:12px;}
+.page-frame.frame-double-thin{
+  border:1px solid var(--frame-c,#000);
+  box-shadow:inset 0 0 0 4px transparent, inset 0 0 0 5px var(--frame-c,#000);
 }
 .page-frame.frame-ornate::before,
-.page-frame.frame-ornate::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 3px solid var(--frame-c, #000);
+.page-frame.frame-ornate::after{
+  content:'';position:absolute;inset:0;
+  border:3px solid var(--frame-c,#000);
 }
-.page-frame.frame-ornate::before {
-  inset: 6px;
-  border-width: 1px;
+.page-frame.frame-ornate::before{inset:6px;border-width:1px;}
+
+.page-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  flex:1;min-height:0;
+}
+.page-main{flex:1;min-height:0;}
+
+/* watermark */
+.watermark{
+  position:absolute;inset:0;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;overflow:hidden;
+}
+.watermark-text{font-weight:bold;white-space:nowrap;font-family:var(--font);}
+.watermark-img{max-width:80%;max-height:80%;object-fit:contain;}
+
+/* header */
+.page-header{margin-bottom:8px;}
+.header-grid{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1fr;
+  gap:8px;align-items:start;
+}
+.hcol{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.hcol-right{text-align:right;}
+.hcol-center{text-align:center;align-items:center;}
+.hcol-left{text-align:left;align-items:flex-start;}
+.hfield{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.2em;line-height:1.4;}
+.header-extra{
+  text-align:center;margin-top:5px;
+  white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.header-line{border-top:2px solid currentColor;margin:8px 0 6px 0;color:#111827;}
+.header-note{
+  text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
+  margin-bottom:10px;
+}
+.header-note:empty{display:none;}
+
+/* questions */
+.q-item{
+  margin-bottom:8px;white-space:pre-wrap;overflow-wrap:anywhere;
+  page-break-inside:avoid;break-inside:avoid;
 }
 
-/* Content */
-.page-content {
-  position: relative; z-index: 2;
-  display: flex; flex-direction: column;
-  flex: 1; min-height: 0;
+/* footer — ثابتة بأسفل الصفحة الأخيرة */
+.page-footer{
+  margin-top:auto;
+  padding-top:14px;
+  display:flex;flex-direction:column;gap:6px;
 }
-.page-main { flex: 1; min-height: 0; }
-
-/* Watermark */
-.watermark {
-  position: absolute; inset: 0; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none; overflow: hidden;
+.footer-wish{
+  text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
 }
-.watermark-text {
-  font-weight: bold;
-  white-space: nowrap;
-  font-family: var(--font);
+.footer-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  align-items:end;
 }
-.watermark-img {
-  max-width: 80%; max-height: 80%;
-  object-fit: contain;
+.footer-grid .fcol{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;}
+.footer-grid .fcol.right{text-align:right;}
+.footer-grid .fcol.center{text-align:center;}
+.footer-grid .fcol.left{text-align:left;}
+.footer-teachers{
+  display:flex;flex-direction:column;gap:2px;
 }
 
-/* Header */
-.page-header { margin-bottom: 8px; }
-.header-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr 1fr;
-  gap: 8px;
-  align-items: start;
-}
-.hcol {
-  display: flex; flex-direction: column; gap: 3px;
-  min-width: 0;
-}
-.hcol-right { text-align: right; }
-.hcol-center { text-align: center; align-items: center; }
-.hcol-left { text-align: left; align-items: flex-start; }
-.hfield {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  min-height: 1.2em;
-}
-.header-extra {
-  text-align: center;
-  margin-top: 5px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.header-line {
-  border-top: 2px solid currentColor;
-  margin: 8px 0 6px 0;
-  color: #111827;
-}
-.header-note {
-  text-align: center;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  margin-bottom: 10px;
-}
-
-/* Questions */
-.q-item {
-  margin-bottom: 8px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-/* Footer */
-.page-footer {
-  margin-top: auto;
-  padding-top: 14px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.footer-wish {
-  text-align: center;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  align-items: start;
-}
-.footer-grid .fcol {
-  min-width: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.footer-grid .fcol.right { text-align: right; }
-.footer-grid .fcol.center { text-align: center; }
-.footer-grid .fcol.left { text-align: left; }
-
-@media (max-width: 900px) {
-  .page {
-    width: 100%;
-    height: auto;
-    min-height: auto;
-    padding: 5vw 4vw;
-    box-shadow: var(--shadow);
-  }
-  .page-frame { inset: 2vw; }
-}
-
-/* ============================================================
+/* ==================================================
    Control panel
-   ============================================================ */
-.subtabs {
-  display: flex; gap: 5px;
-  overflow-x: auto;
-  padding: 5px;
-  background: var(--bg-1);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  margin-bottom: 12px;
-  scrollbar-width: none;
-  box-shadow: var(--shadow-xs);
+   ================================================== */
+.subtabs{
+  display:flex;gap:5px;overflow-x:auto;padding:5px;
+  background:var(--bg-1);border-radius:var(--radius);
+  border:1px solid var(--border);margin-bottom:12px;
+  scrollbar-width:none;box-shadow:var(--shadow-xs);
 }
-.subtabs::-webkit-scrollbar { display: none; }
-.subtab {
-  flex: 1 0 auto;
-  border: none; background: transparent;
-  color: var(--text-2);
-  padding: 9px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12.5px; font-weight: bold;
-  white-space: nowrap;
-  display: flex; align-items: center; gap: 5px;
-  justify-content: center;
-  transition: background .15s, color .15s;
+.subtabs::-webkit-scrollbar{display:none;}
+.subtab{
+  flex:1 0 auto;border:none;background:transparent;color:var(--text-2);
+  padding:9px 12px;border-radius:8px;cursor:pointer;
+  font-size:12.5px;font-weight:bold;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;justify-content:center;
+  transition:background .15s,color .15s;
 }
-.subtab:hover { background: var(--bg-2); color: var(--text-1); }
-.subtab.active {
-  background: var(--accent);
-  color: #ffffff;
-  box-shadow: 0 2px 8px var(--accent-ring);
-}
-.subtab .em { font-size: 14px; }
+.subtab:hover{background:var(--bg-2);color:var(--text-1);}
+.subtab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-ring);}
+.subtab .em{font-size:14px;}
 
-.subview { display: none; }
-.subview.active { display: block; animation: fadeIn .18s ease-out; }
+.subview{display:none;}
+.subview.active{display:block;animation:fadeIn .18s ease-out;}
 
-.card {
-  background: var(--bg-1);
-  border-radius: var(--radius);
-  padding: 14px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-xs);
-  border: 1px solid var(--border);
+.card{
+  background:var(--bg-1);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px;
+  box-shadow:var(--shadow-xs);border:1px solid var(--border);
 }
-.card h3 {
-  margin: 0 0 12px;
-  font-size: 14px;
-  display: flex; align-items: center; gap: 8px;
-  font-weight: bold;
+.card h3{
+  margin:0 0 12px;font-size:14px;
+  display:flex;align-items:center;gap:8px;font-weight:bold;
 }
-.card h3 .em { font-size: 16px; }
-.card .hint {
-  margin: 8px 0 0;
-  font-size: 11.5px;
-  color: var(--text-3);
-  line-height: 1.7;
-}
+.card h3 .em{font-size:16px;}
+.card .hint{margin:8px 0 0;font-size:11.5px;color:var(--text-3);line-height:1.7;}
 
-.section-title {
-  font-size: 11.5px;
-  color: var(--text-3);
-  font-weight: bold;
-  margin: 12px 0 6px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--border);
-  text-transform: uppercase;
-  letter-spacing: .3px;
+.section-title{
+  font-size:11.5px;color:var(--text-3);font-weight:bold;
+  margin:12px 0 6px;padding-bottom:4px;
+  border-bottom:1px solid var(--border);
+  text-transform:uppercase;letter-spacing:.3px;
 }
-.section-title:first-child { margin-top: 0; }
+.section-title:first-child{margin-top:0;}
 
-/* Field group */
-.field-group {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  margin-bottom: 8px;
-  background: var(--bg-2);
-  transition: border-color .15s;
+.field-group{
+  display:flex;flex-direction:column;gap:4px;padding:10px;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  margin-bottom:8px;background:var(--bg-2);
+  transition:border-color .15s;
 }
-.field-group:focus-within { border-color: var(--accent); }
-.field-group > label {
-  font-size: 11.5px;
-  font-weight: bold;
-  color: var(--text-2);
-}
+.field-group:focus-within{border-color:var(--accent);}
+.field-group > label{font-size:11.5px;font-weight:bold;color:var(--text-2);}
 .field-group input[type="text"],
-.field-group input[type="number"] {
-  border: 1.5px solid var(--border-strong);
-  border-radius: 7px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background: var(--bg-1);
-  outline: none;
-  width: 100%;
-  transition: border-color .15s, box-shadow .15s;
+.field-group input[type="number"],
+.field-group select{
+  border:1.5px solid var(--border-strong);border-radius:7px;
+  padding:8px 10px;font-size:13px;background:var(--bg-1);
+  outline:none;width:100%;transition:border-color .15s,box-shadow .15s;
 }
-.field-group input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
+.field-group input:focus,.field-group select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-ring);
 }
-.field-group textarea {
-  border: 1.5px solid var(--border-strong);
-  border-radius: 7px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background: var(--bg-1);
-  outline: none;
-  width: 100%;
-  min-height: 50px;
-  resize: vertical;
-  transition: border-color .15s, box-shadow .15s;
+.field-group textarea{
+  border:1.5px solid var(--border-strong);border-radius:7px;
+  padding:8px 10px;font-size:13px;background:var(--bg-1);
+  outline:none;width:100%;min-height:50px;resize:vertical;
+  transition:border-color .15s,box-shadow .15s;
 }
-.field-group textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
+.field-group textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-ring);
 }
 
-/* Font row: [font] [size] [weight] [color] */
-.font-row {
-  display: grid;
-  grid-template-columns: 1.5fr 55px 80px 40px;
-  gap: 5px;
-  margin-top: 4px;
+.font-row{
+  display:grid;grid-template-columns:1.5fr 55px 80px 40px;gap:5px;margin-top:4px;
 }
 .font-row select,
-.font-row input[type="number"] {
-  border: 1.5px solid var(--border-strong);
-  border-radius: 7px;
-  padding: 6px 6px;
-  font-size: 12px;
-  background: var(--bg-1);
-  outline: none;
-  width: 100%;
-  min-width: 0;
-  transition: border-color .15s;
+.font-row input[type="number"]{
+  border:1.5px solid var(--border-strong);border-radius:7px;
+  padding:6px;font-size:12px;background:var(--bg-1);
+  outline:none;width:100%;min-width:0;
 }
-.font-row select:focus,
-.font-row input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
+.font-row input[type="color"]{
+  border:1.5px solid var(--border-strong);border-radius:7px;
+  padding:2px;background:var(--bg-1);width:100%;min-height:30px;cursor:pointer;
 }
-.font-row input[type="color"] {
-  border: 1.5px solid var(--border-strong);
-  border-radius: 7px;
-  padding: 2px;
-  background: var(--bg-1);
-  width: 100%; height: auto; min-height: 30px;
-  cursor: pointer;
-}
-.font-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-.font-row input[type="color"]::-webkit-color-swatch {
-  border: none; border-radius: 5px;
+.font-row input[type="color"]::-webkit-color-swatch-wrapper{padding:0;}
+.font-row input[type="color"]::-webkit-color-swatch{border:none;border-radius:5px;}
+
+@media (max-width:520px){
+  .font-row{grid-template-columns:1fr 50px 70px 36px;}
 }
 
-@media (max-width: 500px) {
-  .font-row {
-    grid-template-columns: 1fr 50px 70px 36px;
+/* buttons */
+.btn{
+  border:none;border-radius:8px;padding:9px 14px;
+  font-size:13px;font-weight:bold;cursor:pointer;color:#fff;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:filter .15s,transform .1s,background .15s;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:active{transform:translateY(1px);}
+.btn.blue{background:var(--accent);}
+.btn.green{background:var(--success);}
+.btn.red{background:var(--danger);}
+.btn.ghost{background:var(--bg-2);color:var(--text-1);border:1px solid var(--border);}
+.btn.ghost:hover{background:var(--bg-3);filter:none;}
+.btn.sm{padding:7px 11px;font-size:12px;}
+
+.toggle-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border:1px solid var(--border);
+  border-radius:var(--radius-sm);margin-bottom:8px;
+  background:var(--bg-2);font-size:13px;cursor:pointer;user-select:none;
+}
+.toggle-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
+
+/* question cards */
+.q-card{
+  background:var(--bg-1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px;margin-bottom:10px;
+  box-shadow:var(--shadow-xs);
+}
+.q-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.q-card-head .num{
+  font-weight:bold;color:var(--accent);font-size:13px;
+  padding:3px 8px;background:var(--accent-light);border-radius:20px;
+}
+.q-card-head .spacer{flex:1;}
+.mini-btn{
+  width:32px;height:32px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg-2);color:var(--text-1);
+  font-size:13px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0;transition:background .15s,transform .1s,border-color .15s;
+}
+.mini-btn:hover{background:var(--bg-3);border-color:var(--border-strong);}
+.mini-btn:active{transform:scale(.94);}
+.mini-btn:disabled{opacity:.35;cursor:default;}
+.mini-btn.danger{color:var(--danger);}
+.mini-btn.danger:hover{background:var(--danger-light);border-color:var(--danger);}
+
+.add-q-btn{
+  width:100%;border:2px dashed var(--border-strong);background:var(--bg-2);
+  padding:14px;border-radius:var(--radius);cursor:pointer;
+  font-size:13px;font-weight:bold;color:var(--text-2);
+  transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.add-q-btn:hover:not(:disabled){
+  border-color:var(--accent);background:var(--accent-light);color:var(--accent);
+}
+.add-q-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* teachers list */
+.teacher-item{
+  display:flex;align-items:center;gap:6px;margin-bottom:6px;
+}
+.teacher-item input{
+  flex:1;border:1.5px solid var(--border-strong);border-radius:7px;
+  padding:8px 10px;font-size:13px;background:var(--bg-1);
+  outline:none;min-width:0;
+}
+.teacher-item input:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);
+}
+
+/* tools */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+.tool-btn{
+  border:1px solid var(--border);background:var(--bg-1);
+  padding:14px 12px;border-radius:var(--radius);cursor:pointer;
+  font-size:12.5px;font-weight:bold;color:var(--text-1);
+  display:flex;align-items:center;gap:8px;justify-content:flex-start;
+  transition:all .15s;text-align:right;
+}
+.tool-btn:hover{background:var(--bg-2);border-color:var(--border-strong);transform:translateY(-1px);box-shadow:var(--shadow);}
+.tool-btn .em{font-size:18px;}
+.tool-btn.danger{color:var(--danger);border-color:#fecaca;}
+.tool-btn.danger:hover{background:var(--danger-light);}
+
+/* frame picker */
+.frame-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;}
+.frame-opt{
+  border:1.5px solid var(--border);background:var(--bg-2);
+  border-radius:10px;padding:10px 6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all .15s;font-size:11px;color:var(--text-2);
+}
+.frame-opt:hover{border-color:var(--accent);background:var(--bg-1);}
+.frame-opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);}
+.frame-opt .preview{
+  width:54px;height:40px;border-radius:3px;background:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.frame-opt .preview .box{width:42px;height:30px;border-radius:2px;}
+
+.theme-picker{display:flex;gap:8px;}
+.theme-opt{
+  flex:1;border:1.5px solid var(--border);background:var(--bg-2);
+  border-radius:10px;padding:12px 8px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  font-size:13px;font-weight:bold;color:var(--text-2);transition:all .15s;
+}
+.theme-opt:hover{border-color:var(--accent);}
+.theme-opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+
+#toast{
+  position:fixed;
+  bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
+  left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--text-1);color:var(--bg-1);padding:10px 20px;
+  border-radius:10px;font-size:13px;opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;z-index:999;
+  max-width:90vw;text-align:center;box-shadow:var(--shadow-lg);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ==================================================
+   Print
+   ================================================== */
+@media print{
+  @page{size:A4;margin:0;}
+  html,body{background:#fff !important;padding:0 !important;margin:0 !important;}
+  .topbar,.bottomnav,.no-print,#toast,.subtabs,.control-panel{display:none !important;}
+  main{padding:0 !important;}
+  .view{display:none !important;}
+  #view-preview{display:block !important;}
+  .preview-wrap{display:block !important;padding:0 !important;gap:0 !important;}
+  .page-scaler{
+    width:auto !important;
+    height:auto !important;
   }
-}
-
-/* Buttons */
-.btn {
-  border: none;
-  border-radius: 8px;
-  padding: 9px 14px;
-  font-size: 13px; font-weight: bold;
-  cursor: pointer;
-  color: #fff;
-  display: inline-flex; align-items: center; gap: 6px;
-  transition: filter .15s, transform .1s, background .15s;
-}
-.btn:hover { filter: brightness(1.08); }
-.btn:active { transform: translateY(1px); }
-.btn.blue { background: var(--accent); }
-.btn.green { background: var(--success); }
-.btn.gray { background: var(--text-2); }
-.btn.red { background: var(--danger); }
-.btn.ghost {
-  background: var(--bg-2); color: var(--text-1);
-  border: 1px solid var(--border);
-}
-.btn.ghost:hover { background: var(--bg-3); filter: none; }
-.btn.sm { padding: 7px 11px; font-size: 12px; }
-
-/* Toggle */
-.toggle-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  margin-bottom: 8px;
-  background: var(--bg-2);
-  font-size: 13px;
-  cursor: pointer;
-  user-select: none;
-}
-.toggle-row input[type="checkbox"] {
-  width: 18px; height: 18px;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-/* Question cards */
-.q-card {
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-xs);
-}
-.q-card-head {
-  display: flex; align-items: center;
-  gap: 8px; margin-bottom: 8px;
-}
-.q-card-head .num {
-  font-weight: bold;
-  color: var(--accent);
-  font-size: 13px;
-  padding: 3px 8px;
-  background: var(--accent-light);
-  border-radius: 20px;
-}
-.q-card-head .spacer { flex: 1; }
-
-.mini-btn {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg-2);
-  color: var(--text-1);
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0;
-  transition: background .15s, transform .1s, border-color .15s;
-}
-.mini-btn:hover {
-  background: var(--bg-3);
-  border-color: var(--border-strong);
-}
-.mini-btn:active { transform: scale(.94); }
-.mini-btn:disabled { opacity: .35; cursor: default; }
-.mini-btn.danger { color: var(--danger); }
-.mini-btn.danger:hover {
-  background: var(--danger-light);
-  border-color: var(--danger);
-}
-
-.add-q-btn {
-  width: 100%;
-  border: 2px dashed var(--border-strong);
-  background: var(--bg-2);
-  padding: 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 13px; font-weight: bold;
-  color: var(--text-2);
-  transition: all .15s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.add-q-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent-light);
-  color: var(--accent);
-}
-.add-q-btn:disabled { opacity: .5; cursor: not-allowed; }
-
-/* Tools grid */
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-}
-.tool-btn {
-  border: 1px solid var(--border);
-  background: var(--bg-1);
-  padding: 14px 12px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 12.5px; font-weight: bold;
-  color: var(--text-1);
-  display: flex; align-items: center; gap: 8px;
-  justify-content: flex-start;
-  transition: all .15s;
-  text-align: right;
-}
-.tool-btn:hover {
-  background: var(--bg-2);
-  border-color: var(--border-strong);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-.tool-btn .em { font-size: 18px; }
-.tool-btn.danger { color: var(--danger); border-color: var(--danger-light); }
-.tool-btn.danger:hover { background: var(--danger-light); }
-
-/* Frame picker */
-.frame-picker {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 8px;
-}
-.frame-opt {
-  border: 1.5px solid var(--border);
-  background: var(--bg-2);
-  border-radius: 10px;
-  padding: 10px 6px;
-  cursor: pointer;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 6px;
-  transition: all .15s;
-  font-size: 11px; color: var(--text-2);
-}
-.frame-opt:hover {
-  border-color: var(--accent);
-  background: var(--bg-1);
-}
-.frame-opt.active {
-  border-color: var(--accent);
-  background: var(--accent-light);
-  color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
-}
-.frame-opt .preview {
-  width: 54px; height: 40px;
-  border-radius: 3px;
-  background: #fff;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-.frame-opt .preview .box {
-  width: 42px; height: 30px;
-  border-radius: 2px;
-}
-
-/* Theme quick picker */
-.theme-picker {
-  display: flex; gap: 8px;
-}
-.theme-opt {
-  flex: 1;
-  border: 1.5px solid var(--border);
-  background: var(--bg-2);
-  border-radius: 10px;
-  padding: 12px 8px;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
-  justify-content: center;
-  font-size: 13px; font-weight: bold;
-  color: var(--text-2);
-  transition: all .15s;
-}
-.theme-opt:hover { border-color: var(--accent); }
-.theme-opt.active {
-  border-color: var(--accent);
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-/* Toast */
-#toast {
-  position: fixed;
-  bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--text-1);
-  color: var(--bg-1);
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-size: 13px;
-  opacity: 0; pointer-events: none;
-  transition: opacity .25s, transform .25s;
-  z-index: 999;
-  max-width: 90vw;
-  text-align: center;
-  box-shadow: var(--shadow-lg);
-}
-#toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Print */
-@media print {
-  @page { size: A4; margin: 0; }
-  html, body {
-    background: #fff !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  .page{
+    position:static !important;
+    transform:none !important;
+    box-shadow:none !important;
+    margin:0 !important;
+    page-break-after:always;
+    break-after:page;
+    page-break-inside:avoid;
   }
-  .topbar, .bottomnav, .no-print, #toast, .subtabs, .control-panel {
-    display: none !important;
-  }
-  main { padding: 0 !important; }
-  .view { display: none !important; }
-  #view-preview { display: block !important; }
-  .preview-wrap {
-    display: block !important;
-    padding: 0 !important;
-    gap: 0 !important;
-  }
-  .page {
-    box-shadow: none !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    page-break-after: always;
-    break-after: page;
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-  .page:last-child {
-    page-break-after: auto;
-    break-after: auto;
-  }
+  .page:last-child{page-break-after:auto;break-after:auto;}
 }
 </style>
 </head>
 <body>
 
-<!-- ================= Topbar ================= -->
 <header class="topbar no-print">
   <div class="brand">
     <div class="brand-icon">📝</div>
@@ -928,13 +548,10 @@ main {
 </header>
 
 <main>
-
-  <!-- ========== Preview ========== -->
   <section class="view active" id="view-preview">
     <div class="preview-wrap" id="pages-container"></div>
   </section>
 
-  <!-- ========== Control Panel ========== -->
   <section class="view control-panel" id="view-control">
 
     <div class="subtabs no-print">
@@ -946,67 +563,55 @@ main {
       <button class="subtab" data-sub="tools"><span class="em">🧰</span> أدوات</button>
     </div>
 
-    <!-- ========== Sub: Header ========== -->
+    <!-- Sub: Header -->
     <div class="subview active" id="sub-header">
       <div class="card">
         <h3><span class="em">📍</span> الجهة اليمنى</h3>
 
         <div class="field-group">
           <label>اسم المدرسة</label>
-          <input type="text" data-key="h.school.text" placeholder="اسم المدرسة">
+          <input type="text" data-key="h.school.text">
           <div class="font-row">
             <select data-key="h.school.family" data-font></select>
             <input type="number" data-key="h.school.size" min="8" max="72">
-            <select data-key="h.school.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.school.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.school.color">
           </div>
         </div>
 
         <div class="field-group">
           <label>المديرية / العنوان الأعلى</label>
-          <input type="text" data-key="h.dir.text" placeholder="المديرية العامة للتربية">
+          <input type="text" data-key="h.dir.text">
           <div class="font-row">
             <select data-key="h.dir.family" data-font></select>
             <input type="number" data-key="h.dir.size" min="8" max="72">
-            <select data-key="h.dir.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.dir.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.dir.color">
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h3><span class="em">🎯</span> الوسط</h3>
+        <h3><span class="em">🎯</span> الوسط (العنوان الرئيسي)</h3>
 
         <div class="field-group">
-          <label>المادة / العنوان الرئيسي</label>
-          <input type="text" data-key="h.subject.text" placeholder="أسئلة الرياضيات">
+          <label>العنوان الرئيسي</label>
+          <input type="text" data-key="h.subject.text">
           <div class="font-row">
             <select data-key="h.subject.family" data-font></select>
             <input type="number" data-key="h.subject.size" min="8" max="72">
-            <select data-key="h.subject.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.subject.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.subject.color">
           </div>
         </div>
 
         <div class="field-group">
-          <label>السنة الدراسية</label>
-          <input type="text" data-key="h.year.text" placeholder="العام الدراسي 2025 - 2026">
+          <label>السنة الدراسية / سطر ثاني</label>
+          <input type="text" data-key="h.year.text">
           <div class="font-row">
             <select data-key="h.year.family" data-font></select>
             <input type="number" data-key="h.year.size" min="8" max="72">
-            <select data-key="h.year.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.year.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.year.color">
           </div>
         </div>
@@ -1017,42 +622,33 @@ main {
 
         <div class="field-group">
           <label>الوقت</label>
-          <input type="text" data-key="h.time.text" placeholder="الوقت: ساعة">
+          <input type="text" data-key="h.time.text">
           <div class="font-row">
             <select data-key="h.time.family" data-font></select>
             <input type="number" data-key="h.time.size" min="8" max="72">
-            <select data-key="h.time.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.time.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.time.color">
           </div>
         </div>
 
         <div class="field-group">
           <label>المادة (اليسار)</label>
-          <input type="text" data-key="h.subjectLeft.text" placeholder="المادة: ...">
+          <input type="text" data-key="h.subjectLeft.text">
           <div class="font-row">
             <select data-key="h.subjectLeft.family" data-font></select>
             <input type="number" data-key="h.subjectLeft.size" min="8" max="72">
-            <select data-key="h.subjectLeft.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.subjectLeft.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.subjectLeft.color">
           </div>
         </div>
 
         <div class="field-group">
           <label>الصف</label>
-          <input type="text" data-key="h.grade.text" placeholder="الصف: ...">
+          <input type="text" data-key="h.grade.text">
           <div class="font-row">
             <select data-key="h.grade.family" data-font></select>
             <input type="number" data-key="h.grade.size" min="8" max="72">
-            <select data-key="h.grade.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.grade.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.grade.color">
           </div>
         </div>
@@ -1060,22 +656,17 @@ main {
 
       <div class="card">
         <h3><span class="em">➕</span> حقل إضافي (اختياري)</h3>
-
         <label class="toggle-row">
           <input type="checkbox" data-key="h.extra.enabled">
           <span>تفعيل الحقل الإضافي</span>
         </label>
-
         <div class="field-group">
           <label>النص</label>
-          <input type="text" data-key="h.extra.text" placeholder="نص اختياري">
+          <input type="text" data-key="h.extra.text">
           <div class="font-row">
             <select data-key="h.extra.family" data-font></select>
             <input type="number" data-key="h.extra.size" min="8" max="72">
-            <select data-key="h.extra.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.extra.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.extra.color">
           </div>
         </div>
@@ -1083,185 +674,142 @@ main {
 
       <div class="card">
         <h3><span class="em">📌</span> الملاحظة (تحت الخط)</h3>
-
         <div class="field-group">
           <label>نص الملاحظة</label>
-          <input type="text" data-key="h.note.text" placeholder="أجب عن أربعة أسئلة فقط">
+          <input type="text" data-key="h.note.text">
           <div class="font-row">
             <select data-key="h.note.family" data-font></select>
             <input type="number" data-key="h.note.size" min="8" max="72">
-            <select data-key="h.note.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="h.note.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.note.color">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== Sub: Questions ========== -->
+    <!-- Sub: Questions -->
     <div class="subview" id="sub-questions">
       <div class="card">
         <h3>
           <span class="em">📝</span> الأسئلة
           <span id="q-counter" style="font-size:11px;color:var(--text-3);font-weight:normal;margin-inline-start:auto;">0/8</span>
         </h3>
-
         <button class="add-q-btn" id="addQuestionBtn" onclick="addQuestion()">
           <span style="font-size:16px;">➕</span> إضافة سؤال
         </button>
-
         <p class="hint">الحد الأقصى 8 أسئلة. كل سؤال له خط وحجم وسماكة ولون مستقل.</p>
       </div>
-
       <div id="questions-editor"></div>
     </div>
 
-    <!-- ========== Sub: Footer ========== -->
+    <!-- Sub: Footer -->
     <div class="subview" id="sub-footer">
       <div class="card">
-        <h3><span class="em">💬</span> العبارة العلوية (وسط)</h3>
-
+        <h3><span class="em">💬</span> العبارة العلوية (تظهر أعلى التذييل)</h3>
         <div class="field-group">
           <label>النص</label>
-          <input type="text" data-key="f.wish.text" placeholder="مع تمنياتنا لكم بالنجاح">
+          <input type="text" data-key="f.wish.text">
           <div class="font-row">
             <select data-key="f.wish.family" data-font></select>
             <input type="number" data-key="f.wish.size" min="8" max="72">
-            <select data-key="f.wish.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="f.wish.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="f.wish.color">
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h3><span class="em">📊</span> الصف السفلي (3 أعمدة)</h3>
+        <h3><span class="em">👥</span> أسماء المعلمين (الجهة اليمنى)</h3>
+        <div id="teachersEditor"></div>
+        <button class="btn blue sm" onclick="addTeacher()" style="margin-top:8px;">➕ إضافة معلم</button>
 
-        <div class="field-group">
-          <label>اليمين (اسم المعلم)</label>
-          <input type="text" data-key="f.right.text" placeholder="اسم المعلم">
+        <div class="field-group" style="margin-top:12px;">
+          <label>الخط والحجم واللون</label>
           <div class="font-row">
-            <select data-key="f.right.family" data-font></select>
-            <input type="number" data-key="f.right.size" min="8" max="72">
-            <select data-key="f.right.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
-            <input type="color" data-key="f.right.color">
+            <select data-key="f.teachers.family" data-font></select>
+            <input type="number" data-key="f.teachers.size" min="8" max="72">
+            <select data-key="f.teachers.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
+            <input type="color" data-key="f.teachers.color">
           </div>
         </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="em">📊</span> الصف السفلي</h3>
 
         <div class="field-group">
           <label>الوسط</label>
-          <input type="text" data-key="f.center.text" placeholder="نص اختياري">
+          <input type="text" data-key="f.center.text">
           <div class="font-row">
             <select data-key="f.center.family" data-font></select>
             <input type="number" data-key="f.center.size" min="8" max="72">
-            <select data-key="f.center.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="f.center.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="f.center.color">
           </div>
         </div>
 
         <div class="field-group">
           <label>اليسار</label>
-          <input type="text" data-key="f.left.text" placeholder="نص اختياري">
+          <input type="text" data-key="f.left.text">
           <div class="font-row">
             <select data-key="f.left.family" data-font></select>
             <input type="number" data-key="f.left.size" min="8" max="72">
-            <select data-key="f.left.weight">
-              <option value="normal">عادي</option>
-              <option value="bold">عريض</option>
-            </select>
+            <select data-key="f.left.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="f.left.color">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ========== Sub: Watermark ========== -->
+    <!-- Sub: Watermark -->
     <div class="subview" id="sub-watermark">
       <div class="card">
         <h3><span class="em">💧</span> العلامة المائية</h3>
-
         <div class="field-group">
           <label>النوع</label>
-          <select data-key="wm.type" style="border:1.5px solid var(--border-strong);border-radius:7px;padding:8px;background:var(--bg-1);">
+          <select data-key="wm.type">
             <option value="none">بدون</option>
             <option value="text">نص</option>
             <option value="image">صورة</option>
           </select>
         </div>
-
         <div class="field-group">
           <label>نص العلامة المائية</label>
-          <input type="text" data-key="wm.text" placeholder="نموذج امتحان">
+          <input type="text" data-key="wm.text">
         </div>
-
         <div class="field-group">
           <label>صورة العلامة المائية</label>
           <input type="file" id="wmImageInput" accept="image/*" style="border:1.5px solid var(--border-strong);border-radius:7px;padding:8px;background:var(--bg-1);font-size:12px;">
           <button class="btn ghost sm" onclick="removeWatermarkImage()" style="margin-top:6px;">حذف الصورة</button>
         </div>
-
-        <div class="field-group">
-          <label>الحجم (px للنص / % للصورة)</label>
-          <input type="number" data-key="wm.size" min="20" max="400">
-        </div>
-
-        <div class="field-group">
-          <label>اللون (للنص)</label>
-          <input type="color" data-key="wm.color" style="width:60px;height:38px;border:1.5px solid var(--border-strong);border-radius:7px;padding:2px;background:var(--bg-1);cursor:pointer;">
-        </div>
-
-        <div class="field-group">
-          <label>الشفافية (0.01 → 1)</label>
-          <input type="number" data-key="wm.opacity" min="0.01" max="1" step="0.05">
-        </div>
-
-        <div class="field-group">
-          <label>الدوران (بالدرجات)</label>
-          <input type="number" data-key="wm.rotate" min="-90" max="90" step="5">
-        </div>
+        <div class="field-group"><label>الحجم</label><input type="number" data-key="wm.size" min="20" max="400"></div>
+        <div class="field-group"><label>اللون</label><input type="color" data-key="wm.color" style="width:60px;height:38px;border:1.5px solid var(--border-strong);border-radius:7px;padding:2px;background:var(--bg-1);cursor:pointer;"></div>
+        <div class="field-group"><label>الشفافية</label><input type="number" data-key="wm.opacity" min="0.01" max="1" step="0.05"></div>
+        <div class="field-group"><label>الدوران (بالدرجات)</label><input type="number" data-key="wm.rotate" min="-90" max="90" step="5"></div>
       </div>
     </div>
 
-    <!-- ========== Sub: Design ========== -->
+    <!-- Sub: Design -->
     <div class="subview" id="sub-design">
       <div class="card">
         <h3><span class="em">🌓</span> الوضع</h3>
-
         <div class="theme-picker">
-          <button class="theme-opt" data-theme-pick="light" onclick="setTheme('light')">
-            ☀️ فاتح
-          </button>
-          <button class="theme-opt" data-theme-pick="dark" onclick="setTheme('dark')">
-            🌙 داكن
-          </button>
+          <button class="theme-opt" data-theme-pick="light" onclick="setTheme('light')">☀️ فاتح</button>
+          <button class="theme-opt" data-theme-pick="dark" onclick="setTheme('dark')">🌙 داكن</button>
         </div>
       </div>
 
       <div class="card">
         <h3><span class="em">🖼️</span> إطار الورقة</h3>
-
         <div class="frame-picker" id="framePicker"></div>
-
         <div class="field-group" style="margin-top:12px;">
           <label>لون الإطار</label>
-          <div class="font-row" style="grid-template-columns:1fr;">
-            <input type="color" data-key="frame.color" style="height:40px;">
-          </div>
+          <input type="color" data-key="frame.color" style="height:40px;">
         </div>
       </div>
     </div>
 
-    <!-- ========== Sub: Tools ========== -->
+    <!-- Sub: Tools -->
     <div class="subview" id="sub-tools">
       <div class="card">
         <h3><span class="em">💾</span> التصدير والحفظ</h3>
@@ -1279,22 +827,10 @@ main {
           <button class="tool-btn danger" onclick="clearAll()"><span class="em">🗑️</span> حذف الكل</button>
         </div>
       </div>
-
-      <div class="card">
-        <h3><span class="em">💡</span> ملاحظات</h3>
-        <p class="hint">
-          • كل شي ينحفظ تلقائياً بالمتصفح.<br>
-          • الطباعة تعرض صفحات A4 فقط.<br>
-          • الترويسة والملاحظة تظهران بالصفحة الأولى فقط.<br>
-          • التذييل يظهر بأسفل الصفحة الأخيرة فقط.<br>
-          • الوضع الداكن لا يؤثر على الورقة المطبوعة.
-        </p>
-      </div>
     </div>
   </section>
 </main>
 
-<!-- ================= Bottom Nav ================= -->
 <nav class="bottomnav no-print">
   <button class="navbtn active" data-view="preview">
     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1323,925 +859,705 @@ main {
 
 <script>
 "use strict";
-
-/* ============================================================
-   الثوابت
-   ============================================================ */
-const STORAGE_KEY = 'qform_v6';
-const THEME_KEY = 'qform_theme';
-const MAX_QUESTIONS = 8;
-
-const FONTS = [
-  'Arial',
-  'Tahoma',
-  'Times New Roman',
-  'Traditional Arabic',
-  'Simplified Arabic',
-  'Sakkal Majalla',
-  'Andalus',
-  'Diwani',
-  'Arabic Typesetting',
-  'Calibri',
-  'Courier New'
+const STORAGE_KEY='qform_v7';
+const THEME_KEY='qform_theme';
+const MAX_QUESTIONS=8;
+const FONTS=['Arial','Tahoma','Times New Roman','Traditional Arabic','Simplified Arabic','Sakkal Majalla','Andalus','Diwani','Arabic Typesetting','Calibri','Courier New'];
+const FRAMES=[
+  {id:'none',label:'بدون',css:'frame-none'},
+  {id:'solid',label:'عادي',css:'frame-solid'},
+  {id:'double',label:'مزدوج',css:'frame-double'},
+  {id:'dashed',label:'متقطع',css:'frame-dashed'},
+  {id:'dotted',label:'منقط',css:'frame-dotted'},
+  {id:'thick',label:'سميك',css:'frame-thick'},
+  {id:'elegant',label:'أنيق',css:'frame-elegant'},
+  {id:'rounded',label:'مستدير',css:'frame-rounded'},
+  {id:'double-thin',label:'داخلي',css:'frame-double-thin'},
+  {id:'ornate',label:'مزخرف',css:'frame-ornate'}
 ];
 
-const FRAMES = [
-  { id: 'none',        label: 'بدون',       css: 'frame-none' },
-  { id: 'solid',       label: 'عادي',       css: 'frame-solid' },
-  { id: 'double',      label: 'مزدوج',      css: 'frame-double' },
-  { id: 'dashed',      label: 'متقطع',      css: 'frame-dashed' },
-  { id: 'dotted',      label: 'منقط',       css: 'frame-dotted' },
-  { id: 'thick',       label: 'سميك',       css: 'frame-thick' },
-  { id: 'elegant',     label: 'أنيق',       css: 'frame-elegant' },
-  { id: 'rounded',     label: 'مستدير',     css: 'frame-rounded' },
-  { id: 'double-thin', label: 'داخلي',      css: 'frame-double-thin' },
-  { id: 'ornate',      label: 'مزخرف',      css: 'frame-ornate' }
-];
+function defaultFont(){return{text:'',family:'Arial',size:12,weight:'normal',color:'#111827'};}
 
-/* ============================================================
-   الحالة الافتراضية
-   ============================================================ */
-function defaultFont() {
-  return { text: '', family: 'Arial', size: 12, weight: 'normal', color: '#111827' };
-}
-
-const defaultState = {
-  h: {
-    school:      Object.assign(defaultFont(), { text: 'اسم المدرسة',                 size: 16, weight: 'bold'   }),
-    dir:         Object.assign(defaultFont(), { text: 'المديرية العامة للتربية',      size: 12 }),
-    subject:     Object.assign(defaultFont(), { text: 'المادة / عنوان الأسئلة',       size: 18, weight: 'bold'   }),
-    year:        Object.assign(defaultFont(), { text: 'العام الدراسي 2025 - 2026',   size: 12 }),
-    time:        Object.assign(defaultFont(), { text: 'الوقت: ساعة',                  size: 12 }),
-    subjectLeft: Object.assign(defaultFont(), { text: 'المادة: ...',                  size: 12 }),
-    grade:       Object.assign(defaultFont(), { text: 'الصف: ...',                    size: 12 }),
-    extra:       Object.assign(defaultFont(), { enabled: false, text: 'حقل إضافي',    size: 12 }),
-    note:        Object.assign(defaultFont(), { text: 'أجب عن أربعة أسئلة فقط',       size: 14, weight: 'bold'   })
+const defaultState={
+  h:{
+    school:Object.assign(defaultFont(),{text:'اسم المدرسة',size:16,weight:'bold'}),
+    dir:Object.assign(defaultFont(),{text:'المديرية العامة للتربية',size:11}),
+    subject:Object.assign(defaultFont(),{text:'المادة / عنوان الأسئلة',size:18,weight:'bold'}),
+    year:Object.assign(defaultFont(),{text:'العام الدراسي 2025 - 2026',size:12}),
+    time:Object.assign(defaultFont(),{text:'الوقت: ساعة',size:12}),
+    subjectLeft:Object.assign(defaultFont(),{text:'المادة: ...',size:12}),
+    grade:Object.assign(defaultFont(),{text:'الصف: ...',size:12}),
+    extra:Object.assign(defaultFont(),{enabled:false,text:'حقل إضافي',size:12}),
+    note:Object.assign(defaultFont(),{text:'أجب عن أربعة أسئلة فقط',size:14,weight:'bold'})
   },
-  wm: {
-    type: 'none',
-    text: 'نموذج امتحان',
-    image: null,
-    size: 100,
-    color: '#000000',
-    opacity: 0.08,
-    rotate: -30
+  wm:{type:'none',text:'نموذج امتحان',image:null,size:100,color:'#000000',opacity:0.08,rotate:-30},
+  f:{
+    wish:Object.assign(defaultFont(),{text:'مع تمنياتنا لكم بالنجاح',size:14,weight:'bold'}),
+    teachers:Object.assign(defaultFont(),{size:12}),
+    teacherList:['اسم المعلم'],
+    center:Object.assign(defaultFont(),{text:'',size:12}),
+    left:Object.assign(defaultFont(),{text:'',size:12})
   },
-  f: {
-    wish:   Object.assign(defaultFont(), { text: 'مع تمنياتنا لكم بالنجاح', size: 14, weight: 'bold' }),
-    right:  Object.assign(defaultFont(), { text: 'اسم المعلم',              size: 12 }),
-    center: Object.assign(defaultFont(), { text: '',                        size: 12 }),
-    left:   Object.assign(defaultFont(), { text: '',                        size: 12 })
-  },
-  frame: {
-    style: 'none',
-    color: '#111827'
-  },
-  questions: []
+  frame:{style:'none',color:'#111827'},
+  questions:[]
 };
 
-let state = JSON.parse(JSON.stringify(defaultState));
+let state=JSON.parse(JSON.stringify(defaultState));
 
-/* ============================================================
-   أدوات
-   ============================================================ */
-function $(id) { return document.getElementById(id); }
+function $(id){return document.getElementById(id);}
+function setNested(obj,path,val){const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++){if(!(p[i] in c))c[p[i]]={};c=c[p[i]];}c[p[p.length-1]]=val;}
+function getNested(obj,path){return path.split('.').reduce((o,k)=>o==null?undefined:o[k],obj);}
 
-function setNested(obj, path, val) {
-  const parts = path.split('.');
-  let cur = obj;
-  for (let i = 0; i < parts.length - 1; i++) {
-    if (!(parts[i] in cur)) cur[parts[i]] = {};
-    cur = cur[parts[i]];
-  }
-  cur[parts[parts.length - 1]] = val;
-}
+let saveTimer=null;
+function save(){if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}},250);}
+let renderTimer=null;
+function scheduleRender(){if(renderTimer)clearTimeout(renderTimer);renderTimer=setTimeout(render,180);}
+function toast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');if(t._timer)clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000);}
+function deepMerge(t,s){const o=Object.assign({},t);for(const k in s){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])&&t[k]&&typeof t[k]==='object'&&!Array.isArray(t[k])){o[k]=deepMerge(t[k],s[k]);}else{o[k]=s[k];}}return o;}
 
-function getNested(obj, path) {
-  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
-}
-
-let saveTimer = null;
-function save() {
-  if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  }, 250);
-}
-
-let renderTimer = null;
-function scheduleRender() {
-  if (renderTimer) clearTimeout(renderTimer);
-  renderTimer = setTimeout(render, 180);
-}
-
-function toast(msg) {
-  const t = $('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  if (t._timer) clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-function deepMerge(target, source) {
-  const out = Object.assign({}, target);
-  for (const k in source) {
-    if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k]) &&
-        target[k] && typeof target[k] === 'object' && !Array.isArray(target[k])) {
-      out[k] = deepMerge(target[k], source[k]);
-    } else {
-      out[k] = source[k];
-    }
-  }
-  return out;
-}
-
-/* ============================================================
+/* ==================================================
    بناء عناصر الورقة
-   ============================================================ */
-function applyStyle(el, obj) {
-  if (!obj) return;
-  el.style.fontFamily = (obj.family || 'Arial') + ', Arial, sans-serif';
-  el.style.fontSize = (obj.size || 12) + 'pt';
-  el.style.fontWeight = obj.weight || 'normal';
-  el.style.color = obj.color || '#111827';
-  el.textContent = obj.text || '';
+   ================================================== */
+function applyStyle(el,obj){
+  if(!obj)return;
+  el.style.fontFamily=(obj.family||'Arial')+', Arial, sans-serif';
+  el.style.fontSize=(obj.size||12)+'pt';
+  el.style.fontWeight=obj.weight||'normal';
+  el.style.color=obj.color||'#111827';
+  el.textContent=obj.text||'';
 }
 
-function buildHeaderElement() {
-  const header = document.createElement('div');
-  header.className = 'page-header';
+function buildHeaderElement(){
+  const header=document.createElement('div');
+  header.className='page-header';
 
-  const grid = document.createElement('div');
-  grid.className = 'header-grid';
+  const grid=document.createElement('div');
+  grid.className='header-grid';
 
-  // Right column
-  const colR = document.createElement('div');
-  colR.className = 'hcol hcol-right';
-  const r1 = document.createElement('div'); r1.className = 'hfield'; applyStyle(r1, state.h.school);
-  colR.appendChild(r1);
-  const r2 = document.createElement('div'); r2.className = 'hfield'; applyStyle(r2, state.h.dir);
-  colR.appendChild(r2);
+  const colR=document.createElement('div');colR.className='hcol hcol-right';
+  const r1=document.createElement('div');r1.className='hfield';applyStyle(r1,state.h.school);colR.appendChild(r1);
+  const r2=document.createElement('div');r2.className='hfield';applyStyle(r2,state.h.dir);colR.appendChild(r2);
   grid.appendChild(colR);
 
-  // Center
-  const colC = document.createElement('div');
-  colC.className = 'hcol hcol-center';
-  const c1 = document.createElement('div'); c1.className = 'hfield'; applyStyle(c1, state.h.subject);
-  colC.appendChild(c1);
-  const c2 = document.createElement('div'); c2.className = 'hfield'; applyStyle(c2, state.h.year);
-  colC.appendChild(c2);
+  const colC=document.createElement('div');colC.className='hcol hcol-center';
+  const c1=document.createElement('div');c1.className='hfield';applyStyle(c1,state.h.subject);colC.appendChild(c1);
+  const c2=document.createElement('div');c2.className='hfield';applyStyle(c2,state.h.year);colC.appendChild(c2);
   grid.appendChild(colC);
 
-  // Left
-  const colL = document.createElement('div');
-  colL.className = 'hcol hcol-left';
-  const l1 = document.createElement('div'); l1.className = 'hfield'; applyStyle(l1, state.h.time);
-  colL.appendChild(l1);
-  const l2 = document.createElement('div'); l2.className = 'hfield'; applyStyle(l2, state.h.subjectLeft);
-  colL.appendChild(l2);
-  const l3 = document.createElement('div'); l3.className = 'hfield'; applyStyle(l3, state.h.grade);
-  colL.appendChild(l3);
+  const colL=document.createElement('div');colL.className='hcol hcol-left';
+  const l1=document.createElement('div');l1.className='hfield';applyStyle(l1,state.h.time);colL.appendChild(l1);
+  const l2=document.createElement('div');l2.className='hfield';applyStyle(l2,state.h.subjectLeft);colL.appendChild(l2);
+  const l3=document.createElement('div');l3.className='hfield';applyStyle(l3,state.h.grade);colL.appendChild(l3);
   grid.appendChild(colL);
 
   header.appendChild(grid);
 
-  // Extra
-  if (state.h.extra.enabled && state.h.extra.text) {
-    const extra = document.createElement('div');
-    extra.className = 'header-extra';
-    applyStyle(extra, state.h.extra);
+  if(state.h.extra.enabled&&state.h.extra.text){
+    const extra=document.createElement('div');
+    extra.className='header-extra';
+    applyStyle(extra,state.h.extra);
     header.appendChild(extra);
   }
 
-  // Line
-  const line = document.createElement('div');
-  line.className = 'header-line';
+  const line=document.createElement('div');
+  line.className='header-line';
   header.appendChild(line);
 
-  // Note
-  if (state.h.note.text) {
-    const note = document.createElement('div');
-    note.className = 'header-note';
-    applyStyle(note, state.h.note);
+  if(state.h.note.text){
+    const note=document.createElement('div');
+    note.className='header-note';
+    applyStyle(note,state.h.note);
     header.appendChild(note);
   }
 
   return header;
 }
 
-function buildFooterElement() {
-  const footer = document.createElement('div');
-  footer.className = 'page-footer';
+function buildFooterElement(){
+  const footer=document.createElement('div');
+  footer.className='page-footer';
 
-  if (state.f.wish.text) {
-    const wish = document.createElement('div');
-    wish.className = 'footer-wish';
-    applyStyle(wish, state.f.wish);
+  if(state.f.wish.text){
+    const wish=document.createElement('div');
+    wish.className='footer-wish';
+    applyStyle(wish,state.f.wish);
     footer.appendChild(wish);
   }
 
-  const grid = document.createElement('div');
-  grid.className = 'footer-grid';
+  const grid=document.createElement('div');
+  grid.className='footer-grid';
 
-  const cR = document.createElement('div'); cR.className = 'fcol right'; applyStyle(cR, state.f.right);
+  // Right — teacher names (multiple)
+  const cR=document.createElement('div');
+  cR.className='fcol right';
+  const tWrap=document.createElement('div');
+  tWrap.className='footer-teachers';
+  state.f.teacherList.forEach(name=>{
+    if(!name)return;
+    const t=document.createElement('div');
+    applyStyle(t,Object.assign({},state.f.teachers,{text:name}));
+    tWrap.appendChild(t);
+  });
+  if(tWrap.childNodes.length) cR.appendChild(tWrap);
   grid.appendChild(cR);
-  const cC = document.createElement('div'); cC.className = 'fcol center'; applyStyle(cC, state.f.center);
+
+  const cC=document.createElement('div');cC.className='fcol center';applyStyle(cC,state.f.center);
   grid.appendChild(cC);
-  const cL = document.createElement('div'); cL.className = 'fcol left'; applyStyle(cL, state.f.left);
+
+  const cL=document.createElement('div');cL.className='fcol left';applyStyle(cL,state.f.left);
   grid.appendChild(cL);
 
   footer.appendChild(grid);
   return footer;
 }
 
-function buildQuestionElement(q) {
-  const el = document.createElement('div');
-  el.className = 'q-item';
-  applyStyle(el, q);
+function buildQuestionElement(q){
+  const el=document.createElement('div');
+  el.className='q-item';
+  applyStyle(el,q);
   return el;
 }
 
-function buildWatermarkElement() {
-  if (!state.wm || state.wm.type === 'none') return null;
-  const wrap = document.createElement('div');
-  wrap.className = 'watermark';
+function buildWatermarkElement(){
+  if(!state.wm||state.wm.type==='none')return null;
+  const wrap=document.createElement('div');
+  wrap.className='watermark';
 
-  if (state.wm.type === 'text' && state.wm.text) {
-    const t = document.createElement('div');
-    t.className = 'watermark-text';
-    t.textContent = state.wm.text;
-    t.style.color = state.wm.color || '#000';
-    t.style.opacity = state.wm.opacity || 0.08;
-    t.style.fontSize = (state.wm.size || 100) + 'px';
-    t.style.transform = `rotate(${state.wm.rotate || -30}deg)`;
+  if(state.wm.type==='text'&&state.wm.text){
+    const t=document.createElement('div');
+    t.className='watermark-text';
+    t.textContent=state.wm.text;
+    t.style.color=state.wm.color||'#000';
+    t.style.opacity=state.wm.opacity||0.08;
+    t.style.fontSize=(state.wm.size||100)+'px';
+    t.style.transform='rotate('+(state.wm.rotate||-30)+'deg)';
     wrap.appendChild(t);
-  } else if (state.wm.type === 'image' && state.wm.image) {
-    const img = document.createElement('img');
-    img.className = 'watermark-img';
-    img.src = state.wm.image;
-    img.style.opacity = state.wm.opacity || 0.1;
-    img.style.transform = `rotate(${state.wm.rotate || -30}deg)`;
-    if (state.wm.size) img.style.maxWidth = state.wm.size + '%';
+  }else if(state.wm.type==='image'&&state.wm.image){
+    const img=document.createElement('img');
+    img.className='watermark-img';
+    img.src=state.wm.image;
+    img.style.opacity=state.wm.opacity||0.1;
+    img.style.transform='rotate('+(state.wm.rotate||-30)+'deg)';
+    if(state.wm.size)img.style.maxWidth=state.wm.size+'%';
     wrap.appendChild(img);
-  } else {
-    return null;
-  }
+  }else{return null;}
   return wrap;
 }
 
-function buildFrameElement() {
-  const frame = document.createElement('div');
-  const style = state.frame.style || 'none';
-  const found = FRAMES.find(f => f.id === style);
-  frame.className = 'page-frame ' + (found ? found.css : 'frame-none');
-  frame.style.setProperty('--frame-c', state.frame.color || '#000');
+function buildFrameElement(){
+  const frame=document.createElement('div');
+  const style=state.frame.style||'none';
+  const found=FRAMES.find(f=>f.id===style);
+  frame.className='page-frame '+(found?found.css:'frame-none');
+  frame.style.setProperty('--frame-c',state.frame.color||'#000');
   return frame;
 }
 
-/* ============================================================
+/* ==================================================
    القياس والترقيم
-   ============================================================ */
-const PAGE_PADDING_MM = 12;
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
-const CONTENT_WIDTH_MM = A4_WIDTH_MM - 2 * PAGE_PADDING_MM;
-const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - 2 * PAGE_PADDING_MM;
+   ================================================== */
+const PAGE_PADDING_MM=12;
+const A4_WIDTH_MM=210;
+const A4_HEIGHT_MM=297;
+const CONTENT_WIDTH_MM=A4_WIDTH_MM-2*PAGE_PADDING_MM;
+const CONTENT_HEIGHT_MM=A4_HEIGHT_MM-2*PAGE_PADDING_MM;
 
-function mmToPx(mm) { return mm * 96 / 25.4; }
+function mmToPx(mm){return mm*96/25.4;}
 
-function measure(el) {
-  const temp = document.createElement('div');
-  temp.style.cssText = `position:absolute;top:-99999px;left:-99999px;visibility:hidden;width:${CONTENT_WIDTH_MM}mm;padding:0;margin:0;font-family:var(--font);`;
+function measure(el){
+  const temp=document.createElement('div');
+  temp.style.cssText='position:absolute;top:-99999px;left:-99999px;visibility:hidden;width:'+CONTENT_WIDTH_MM+'mm;padding:0;margin:0;';
   temp.appendChild(el);
   document.body.appendChild(temp);
-  const h = el.getBoundingClientRect().height;
+  const h=el.getBoundingClientRect().height;
   document.body.removeChild(temp);
   return h;
 }
 
-function buildPages() {
-  const container = $('pages-container');
-  if (!container) return;
-  container.innerHTML = '';
+function buildPages(){
+  const container=$('pages-container');
+  if(!container)return;
+  container.innerHTML='';
 
-  const headerEl = buildHeaderElement();
-  const headerH = measure(headerEl);
+  const headerEl=buildHeaderElement();
+  const headerH=measure(headerEl);
 
-  const footerEl = buildFooterElement();
-  const footerH = measure(footerEl);
+  const footerEl=buildFooterElement();
+  const footerH=measure(footerEl);
 
-  const qHeights = state.questions.map(q => measure(buildQuestionElement(q)));
+  const qHeights=state.questions.map(q=>measure(buildQuestionElement(q)));
 
-  const contentHeightPx = mmToPx(CONTENT_HEIGHT_MM);
-  const GAP = 8;
+  const contentHeightPx=mmToPx(CONTENT_HEIGHT_MM);
+  const GAP=8;
 
-  const pages = [];
-  let usedH = headerH;
-  let current = { isFirst: true, questions: [] };
+  const pages=[];
+  let usedH=headerH;
+  let current={isFirst:true,questions:[]};
 
-  for (let i = 0; i < qHeights.length; i++) {
-    const need = qHeights[i] + GAP;
-    if (usedH + need > contentHeightPx && current.questions.length > 0) {
+  for(let i=0;i<qHeights.length;i++){
+    const need=qHeights[i]+GAP;
+    if(usedH+need>contentHeightPx&&current.questions.length>0){
       pages.push(current);
-      current = { isFirst: false, questions: [] };
-      usedH = 0;
+      current={isFirst:false,questions:[]};
+      usedH=0;
     }
     current.questions.push(i);
-    usedH += need;
+    usedH+=need;
   }
   pages.push(current);
 
-  // Adjust footer on last page
-  const last = pages[pages.length - 1];
-  let lastUsed = last.isFirst ? headerH : 0;
-  last.questions.forEach(qi => { lastUsed += qHeights[qi] + GAP; });
+  // تأكد أن التذييل يلحق بالصفحة الأخيرة
+  const last=pages[pages.length-1];
+  let lastUsed=last.isFirst?headerH:0;
+  last.questions.forEach(qi=>{lastUsed+=qHeights[qi]+GAP;});
 
-  if (lastUsed + footerH + GAP > contentHeightPx && last.questions.length > 1) {
-    const moved = last.questions.pop();
-    pages.push({ isFirst: false, questions: [moved] });
+  if(lastUsed+footerH+GAP>contentHeightPx&&last.questions.length>1){
+    const moved=last.questions.pop();
+    pages.push({isFirst:false,questions:[moved]});
   }
 
-  // Render
-  pages.forEach((p, idx) => {
-    const pageEl = document.createElement('div');
-    pageEl.className = 'page';
+  const pageWidthPx=mmToPx(A4_WIDTH_MM);
+  const pageHeightPx=mmToPx(A4_HEIGHT_MM);
 
-    const wmEl = buildWatermarkElement();
-    if (wmEl) pageEl.appendChild(wmEl);
+  pages.forEach((p,idx)=>{
+    const scaler=document.createElement('div');
+    scaler.className='page-scaler';
+    scaler.style.width=pageWidthPx+'px';
+    scaler.style.height=pageHeightPx+'px';
 
-    const frameEl = buildFrameElement();
+    const pageEl=document.createElement('div');
+    pageEl.className='page';
+
+    const wmEl=buildWatermarkElement();
+    if(wmEl)pageEl.appendChild(wmEl);
+
+    const frameEl=buildFrameElement();
     pageEl.appendChild(frameEl);
 
-    const content = document.createElement('div');
-    content.className = 'page-content';
+    const content=document.createElement('div');
+    content.className='page-content';
 
-    if (p.isFirst) content.appendChild(buildHeaderElement());
+    if(p.isFirst)content.appendChild(buildHeaderElement());
 
-    const main = document.createElement('div');
-    main.className = 'page-main';
-    p.questions.forEach(qi => main.appendChild(buildQuestionElement(state.questions[qi])));
+    const main=document.createElement('div');
+    main.className='page-main';
+    p.questions.forEach(qi=>main.appendChild(buildQuestionElement(state.questions[qi])));
     content.appendChild(main);
 
-    if (idx === pages.length - 1) content.appendChild(buildFooterElement());
+    if(idx===pages.length-1)content.appendChild(buildFooterElement());
 
     pageEl.appendChild(content);
-    container.appendChild(pageEl);
+    scaler.appendChild(pageEl);
+    container.appendChild(scaler);
+  });
+
+  fitPages();
+}
+
+/* ملاءمة الورقة لحجم الشاشة */
+function fitPages(){
+  const container=$('pages-container');
+  if(!container)return;
+  const available=container.clientWidth-16;
+  const pageWidthPx=mmToPx(A4_WIDTH_MM);
+  const pageHeightPx=mmToPx(A4_HEIGHT_MM);
+  const scale=Math.min(1,available/pageWidthPx);
+
+  container.querySelectorAll('.page-scaler').forEach(s=>{
+    s.style.width=(pageWidthPx*scale)+'px';
+    s.style.height=(pageHeightPx*scale)+'px';
+    const p=s.querySelector('.page');
+    if(p){
+      p.style.transform='scale('+scale+')';
+      p.style.transformOrigin='top right';
+      // in RTL, we need to shift to center; use top right for RTL content
+      p.style.right='0';
+      p.style.left='auto';
+    }
   });
 }
 
-/* ============================================================
-   الرندر الكامل
-   ============================================================ */
-function render() {
+window.addEventListener('resize',fitPages);
+
+/* ==================================================
+   الرندر
+   ================================================== */
+function render(){
   buildPages();
   renderQuestionsEditor();
+  renderTeachersEditor();
   updateQuestionCounter();
   updateFramePicker();
   updateThemePicker();
 }
 
-/* ============================================================
-   محرر الأسئلة
-   ============================================================ */
-function renderQuestionsEditor() {
-  const cont = $('questions-editor');
-  if (!cont) return;
-  cont.innerHTML = '';
-
-  if (!state.questions.length) {
-    const empty = document.createElement('div');
-    empty.style.cssText = 'text-align:center;color:var(--text-3);font-size:12px;padding:20px;';
-    empty.textContent = 'لم تضف أي سؤال بعد.';
+function renderQuestionsEditor(){
+  const cont=$('questions-editor');
+  if(!cont)return;
+  cont.innerHTML='';
+  if(!state.questions.length){
+    const empty=document.createElement('div');
+    empty.style.cssText='text-align:center;color:var(--text-3);font-size:12px;padding:20px;';
+    empty.textContent='لم تضف أي سؤال بعد.';
     cont.appendChild(empty);
     return;
   }
-
-  state.questions.forEach((q, i) => cont.appendChild(buildQuestionCard(q, i)));
+  state.questions.forEach((q,i)=>cont.appendChild(buildQuestionCard(q,i)));
 }
 
-function buildQuestionCard(q, idx) {
-  const card = document.createElement('div');
-  card.className = 'q-card';
+function buildQuestionCard(q,idx){
+  const card=document.createElement('div');
+  card.className='q-card';
 
-  const head = document.createElement('div');
-  head.className = 'q-card-head';
-
-  const num = document.createElement('span');
-  num.className = 'num';
-  num.textContent = 'سؤال ' + (idx + 1);
+  const head=document.createElement('div');
+  head.className='q-card-head';
+  const num=document.createElement('span');
+  num.className='num';
+  num.textContent='سؤال '+(idx+1);
   head.appendChild(num);
-
-  const sp = document.createElement('span');
-  sp.className = 'spacer';
+  const sp=document.createElement('span');sp.className='spacer';
   head.appendChild(sp);
-
-  const up = miniBtn('▲', 'نقل للأعلى', () => moveQuestion(idx, -1));
-  if (idx === 0) up.disabled = true;
-  head.appendChild(up);
-
-  const dn = miniBtn('▼', 'نقل للأسفل', () => moveQuestion(idx, 1));
-  if (idx === state.questions.length - 1) dn.disabled = true;
-  head.appendChild(dn);
-
-  const del = miniBtn('✕', 'حذف', () => deleteQuestion(idx));
-  del.classList.add('danger');
-  head.appendChild(del);
-
+  const up=miniBtn('▲','نقل للأعلى',()=>moveQuestion(idx,-1));if(idx===0)up.disabled=true;head.appendChild(up);
+  const dn=miniBtn('▼','نقل للأسفل',()=>moveQuestion(idx,1));if(idx===state.questions.length-1)dn.disabled=true;head.appendChild(dn);
+  const del=miniBtn('✕','حذف',()=>deleteQuestion(idx));del.classList.add('danger');head.appendChild(del);
   card.appendChild(head);
 
-  // Textarea
-  const ta = document.createElement('textarea');
-  ta.placeholder = 'نص السؤال...';
-  ta.value = q.text || '';
-  ta.style.cssText = 'border:1.5px solid var(--border-strong);border-radius:7px;padding:8px 10px;font-family:inherit;font-size:13px;background:var(--bg-2);outline:none;width:100%;min-height:56px;resize:vertical;color:var(--text-1);';
-  ta.addEventListener('input', () => {
-    q.text = ta.value;
-    save();
-    scheduleRender();
-  });
-  ta.addEventListener('focus', () => ta.style.borderColor = 'var(--accent)');
-  ta.addEventListener('blur', () => ta.style.borderColor = 'var(--border-strong)');
+  const ta=document.createElement('textarea');
+  ta.placeholder='نص السؤال...';
+  ta.value=q.text||'';
+  ta.style.cssText='border:1.5px solid var(--border-strong);border-radius:7px;padding:8px 10px;font-family:inherit;font-size:13px;background:var(--bg-1);outline:none;width:100%;min-height:56px;resize:vertical;color:var(--text-1);';
+  ta.addEventListener('input',()=>{q.text=ta.value;save();scheduleRender();});
   card.appendChild(ta);
 
-  // Font row
-  const fontRow = document.createElement('div');
-  fontRow.className = 'font-row';
-  fontRow.style.marginTop = '6px';
+  const fontRow=document.createElement('div');
+  fontRow.className='font-row';fontRow.style.marginTop='6px';
 
-  const famSel = document.createElement('select');
-  FONTS.forEach(f => {
-    const o = document.createElement('option');
-    o.value = f; o.textContent = f;
-    if (f === q.family) o.selected = true;
-    famSel.appendChild(o);
-  });
-  famSel.addEventListener('change', () => { q.family = famSel.value; save(); scheduleRender(); });
+  const famSel=document.createElement('select');
+  FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;if(f===q.family)o.selected=true;famSel.appendChild(o);});
+  famSel.addEventListener('change',()=>{q.family=famSel.value;save();scheduleRender();});
   fontRow.appendChild(famSel);
 
-  const szInp = document.createElement('input');
-  szInp.type = 'number'; szInp.min = 8; szInp.max = 72;
-  szInp.value = q.size || 14;
-  szInp.addEventListener('input', () => { q.size = Number(szInp.value) || 14; save(); scheduleRender(); });
+  const szInp=document.createElement('input');
+  szInp.type='number';szInp.min=8;szInp.max=72;szInp.value=q.size||14;
+  szInp.addEventListener('input',()=>{q.size=Number(szInp.value)||14;save();scheduleRender();});
   fontRow.appendChild(szInp);
 
-  const wSel = document.createElement('select');
-  [['normal','عادي'],['bold','عريض']].forEach(([v,l]) => {
-    const o = document.createElement('option');
-    o.value = v; o.textContent = l;
-    if (v === q.weight) o.selected = true;
-    wSel.appendChild(o);
-  });
-  wSel.addEventListener('change', () => { q.weight = wSel.value; save(); scheduleRender(); });
+  const wSel=document.createElement('select');
+  [['normal','عادي'],['bold','عريض']].forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===q.weight)o.selected=true;wSel.appendChild(o);});
+  wSel.addEventListener('change',()=>{q.weight=wSel.value;save();scheduleRender();});
   fontRow.appendChild(wSel);
 
-  const colInp = document.createElement('input');
-  colInp.type = 'color';
-  colInp.value = q.color || '#111827';
-  colInp.addEventListener('input', () => { q.color = colInp.value; save(); scheduleRender(); });
+  const colInp=document.createElement('input');
+  colInp.type='color';colInp.value=q.color||'#111827';
+  colInp.addEventListener('input',()=>{q.color=colInp.value;save();scheduleRender();});
   fontRow.appendChild(colInp);
 
   card.appendChild(fontRow);
   return card;
 }
 
-function miniBtn(txt, title, fn) {
-  const b = document.createElement('button');
-  b.type = 'button';
-  b.className = 'mini-btn';
-  b.textContent = txt;
-  b.title = title;
-  b.onclick = fn;
+function miniBtn(txt,title,fn){
+  const b=document.createElement('button');
+  b.type='button';b.className='mini-btn';b.textContent=txt;b.title=title;b.onclick=fn;
   return b;
 }
 
-function updateQuestionCounter() {
-  const c = $('q-counter');
-  if (c) c.textContent = state.questions.length + '/' + MAX_QUESTIONS;
-  const btn = $('addQuestionBtn');
-  if (btn) btn.disabled = state.questions.length >= MAX_QUESTIONS;
+function updateQuestionCounter(){
+  const c=$('q-counter');
+  if(c)c.textContent=state.questions.length+'/'+MAX_QUESTIONS;
+  const btn=$('addQuestionBtn');
+  if(btn)btn.disabled=state.questions.length>=MAX_QUESTIONS;
 }
 
-function addQuestion() {
-  if (state.questions.length >= MAX_QUESTIONS) {
-    toast('وصلت للحد الأقصى (' + MAX_QUESTIONS + ')');
-    return;
-  }
-  state.questions.push({
-    text: '',
-    family: 'Arial',
-    size: 14,
-    weight: 'normal',
-    color: '#111827'
-  });
-  save();
-  render();
-  setTimeout(() => {
-    const tas = document.querySelectorAll('#questions-editor textarea');
-    if (tas.length) {
-      const last = tas[tas.length - 1];
-      last.focus();
-      last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function addQuestion(){
+  if(state.questions.length>=MAX_QUESTIONS){toast('وصلت للحد الأقصى');return;}
+  state.questions.push({text:'',family:'Arial',size:14,weight:'normal',color:'#111827'});
+  save();render();
+  setTimeout(()=>{
+    const tas=document.querySelectorAll('#questions-editor textarea');
+    if(tas.length){const last=tas[tas.length-1];last.focus();last.scrollIntoView({behavior:'smooth',block:'center'});}
+  },100);
+}
+
+function moveQuestion(idx,dir){
+  const ni=idx+dir;
+  if(ni<0||ni>=state.questions.length)return;
+  const tmp=state.questions[idx];
+  state.questions[idx]=state.questions[ni];
+  state.questions[ni]=tmp;
+  save();render();
+}
+
+function deleteQuestion(idx){
+  if(!confirm('حذف السؤال '+(idx+1)+'؟'))return;
+  state.questions.splice(idx,1);save();render();
+}
+
+/* ==================================================
+   المعلمون
+   ================================================== */
+function renderTeachersEditor(){
+  const cont=$('teachersEditor');
+  if(!cont)return;
+  cont.innerHTML='';
+  state.f.teacherList.forEach((name,i)=>{
+    const row=document.createElement('div');
+    row.className='teacher-item';
+
+    const inp=document.createElement('input');
+    inp.type='text';
+    inp.placeholder='اسم المعلم '+(i+1);
+    inp.value=name;
+    inp.addEventListener('input',()=>{state.f.teacherList[i]=inp.value;save();scheduleRender();});
+    row.appendChild(inp);
+
+    if(state.f.teacherList.length>1){
+      const rm=miniBtn('✕','حذف',()=>{
+        state.f.teacherList.splice(i,1);save();render();
+      });
+      rm.classList.add('danger');
+      row.appendChild(rm);
     }
-  }, 100);
+
+    cont.appendChild(row);
+  });
 }
 
-function moveQuestion(idx, dir) {
-  const ni = idx + dir;
-  if (ni < 0 || ni >= state.questions.length) return;
-  const tmp = state.questions[idx];
-  state.questions[idx] = state.questions[ni];
-  state.questions[ni] = tmp;
-  save();
-  render();
+function addTeacher(){
+  state.f.teacherList.push('');
+  save();render();
+  setTimeout(()=>{
+    const inp=document.querySelectorAll('#teachersEditor input');
+    if(inp.length){inp[inp.length-1].focus();}
+  },100);
 }
 
-function deleteQuestion(idx) {
-  if (!confirm('حذف السؤال ' + (idx + 1) + '؟')) return;
-  state.questions.splice(idx, 1);
-  save();
-  render();
-}
-
-/* ============================================================
+/* ==================================================
    ربط الحقول
-   ============================================================ */
-function fillFontSelects() {
-  document.querySelectorAll('[data-font]').forEach(sel => {
-    if (sel.options.length > 0) return;
-    FONTS.forEach(f => {
-      const o = document.createElement('option');
-      o.value = f; o.textContent = f;
-      sel.appendChild(o);
-    });
+   ================================================== */
+function fillFontSelects(){
+  document.querySelectorAll('[data-font]').forEach(sel=>{
+    if(sel.options.length>0)return;
+    FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);});
   });
 }
 
-function loadStateIntoInputs() {
-  document.querySelectorAll('[data-key]').forEach(el => {
-    const key = el.getAttribute('data-key');
-    const val = getNested(state, key);
-    if (val === undefined || val === null) return;
-    if (el.type === 'checkbox') el.checked = !!val;
-    else el.value = val;
+function loadStateIntoInputs(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key=el.getAttribute('data-key');
+    const val=getNested(state,key);
+    if(val===undefined||val===null)return;
+    if(el.type==='checkbox')el.checked=!!val;else el.value=val;
   });
 }
 
-function bindAllInputs() {
-  document.querySelectorAll('[data-key]').forEach(el => {
-    if (el._bound) return;
-    el._bound = true;
-    const handler = () => {
-      const key = el.getAttribute('data-key');
+function bindAllInputs(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    if(el._bound)return;el._bound=true;
+    const handler=()=>{
+      const key=el.getAttribute('data-key');
       let val;
-      if (el.type === 'checkbox') val = el.checked;
-      else if (el.type === 'number') val = Number(el.value) || 0;
-      else val = el.value;
-      setNested(state, key, val);
-      save();
-      scheduleRender();
+      if(el.type==='checkbox')val=el.checked;
+      else if(el.type==='number')val=Number(el.value)||0;
+      else val=el.value;
+      setNested(state,key,val);save();scheduleRender();
     };
-    el.addEventListener('input', handler);
-    el.addEventListener('change', handler);
+    el.addEventListener('input',handler);
+    el.addEventListener('change',handler);
   });
 }
 
-/* ============================================================
-   التبويبات والتنقل
-   ============================================================ */
-function switchView(name) {
-  document.querySelectorAll('.navbtn').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-view') === name);
-  });
-  document.querySelectorAll('.view').forEach(v => {
-    v.classList.toggle('active', v.id === 'view-' + name);
-  });
-  const sub = $('topbar-sub');
-  if (sub) sub.textContent = (name === 'preview') ? 'صفحة المعاينة' : 'لوحة التحكم';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+/* ==================================================
+   التنقل والقائمة
+   ================================================== */
+function switchView(name){
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-view')===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  const sub=$('topbar-sub');
+  if(sub)sub.textContent=(name==='preview')?'صفحة المعاينة':'لوحة التحكم';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='preview')setTimeout(fitPages,50);
 }
+function switchSub(name){
+  document.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.getAttribute('data-sub')===name));
+  document.querySelectorAll('.subview').forEach(v=>v.classList.toggle('active',v.id==='sub-'+name));
+}
+function toggleMenu(e){if(e)e.stopPropagation();const m=$('moreMenu');if(m)m.classList.toggle('open');}
+function closeMenu(){const m=$('moreMenu');if(m)m.classList.remove('open');}
 
-function switchSub(name) {
-  document.querySelectorAll('.subtab').forEach(t => {
-    t.classList.toggle('active', t.getAttribute('data-sub') === name);
-  });
-  document.querySelectorAll('.subview').forEach(v => {
-    v.classList.toggle('active', v.id === 'sub-' + name);
-  });
-}
+/* ==================================================
+   الوضع
+   ================================================== */
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(THEME_KEY,t);}catch(e){}updateThemePicker();}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light';setTheme(c==='dark'?'light':'dark');}
+function updateThemePicker(){const c=document.documentElement.getAttribute('data-theme')||'light';document.querySelectorAll('[data-theme-pick]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-theme-pick')===c));}
 
-/* ============================================================
-   القائمة
-   ============================================================ */
-function toggleMenu(e) {
-  if (e) e.stopPropagation();
-  const m = $('moreMenu');
-  if (m) m.classList.toggle('open');
-}
-function closeMenu() {
-  const m = $('moreMenu');
-  if (m) m.classList.remove('open');
-}
-
-/* ============================================================
-   الوضع الداكن
-   ============================================================ */
-function setTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
-  updateThemePicker();
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
-  setTheme(current === 'dark' ? 'light' : 'dark');
-}
-
-function updateThemePicker() {
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
-  document.querySelectorAll('[data-theme-pick]').forEach(el => {
-    el.classList.toggle('active', el.getAttribute('data-theme-pick') === current);
-  });
-}
-
-/* ============================================================
+/* ==================================================
    منتقي الإطار
-   ============================================================ */
-function buildFramePicker() {
-  const picker = $('framePicker');
-  if (!picker) return;
-  picker.innerHTML = '';
-  FRAMES.forEach(f => {
-    const btn = document.createElement('button');
-    btn.className = 'frame-opt';
-    btn.dataset.frame = f.id;
-    btn.type = 'button';
-    btn.onclick = () => {
-      state.frame.style = f.id;
-      save(); render();
-    };
+   ================================================== */
+function buildFramePicker(){
+  const picker=$('framePicker');
+  if(!picker)return;
+  picker.innerHTML='';
+  FRAMES.forEach(f=>{
+    const btn=document.createElement('button');
+    btn.className='frame-opt';
+    btn.dataset.frame=f.id;
+    btn.type='button';
+    btn.onclick=()=>{state.frame.style=f.id;save();render();};
 
-    const prev = document.createElement('div');
-    prev.className = 'preview';
-
-    const box = document.createElement('div');
-    box.className = 'box';
-    // Mini preview styles
-    const c = state.frame.color || '#111827';
-    box.style.borderColor = c;
-    if (f.id === 'solid') box.style.border = '1.5px solid ' + c;
-    else if (f.id === 'double') box.style.border = '3px double ' + c;
-    else if (f.id === 'dashed') box.style.border = '2px dashed ' + c;
-    else if (f.id === 'dotted') box.style.border = '2px dotted ' + c;
-    else if (f.id === 'thick') box.style.border = '4px solid ' + c;
-    else if (f.id === 'elegant') {
-      box.style.border = '1px solid ' + c;
-      box.style.boxShadow = '0 0 0 2px #fff, 0 0 0 3px ' + c;
-    } else if (f.id === 'rounded') {
-      box.style.border = '2px solid ' + c;
-      box.style.borderRadius = '8px';
-    } else if (f.id === 'double-thin') {
-      box.style.border = '1px solid ' + c;
-      box.style.boxShadow = 'inset 0 0 0 3px #fff, inset 0 0 0 4px ' + c;
-    } else if (f.id === 'ornate') {
-      box.style.border = '3px solid ' + c;
-      box.style.outline = '1px solid ' + c;
-      box.style.outlineOffset = '2px';
-    } else if (f.id === 'none') {
-      box.style.border = '1px dashed ' + '#cbd5e1';
-    }
+    const prev=document.createElement('div');prev.className='preview';
+    const box=document.createElement('div');box.className='box';
+    const c=state.frame.color||'#111827';
+    if(f.id==='solid')box.style.border='1.5px solid '+c;
+    else if(f.id==='double')box.style.border='3px double '+c;
+    else if(f.id==='dashed')box.style.border='2px dashed '+c;
+    else if(f.id==='dotted')box.style.border='2px dotted '+c;
+    else if(f.id==='thick')box.style.border='4px solid '+c;
+    else if(f.id==='elegant'){box.style.border='1px solid '+c;box.style.boxShadow='0 0 0 2px #fff, 0 0 0 3px '+c;}
+    else if(f.id==='rounded'){box.style.border='2px solid '+c;box.style.borderRadius='8px';}
+    else if(f.id==='double-thin'){box.style.border='1px solid '+c;box.style.boxShadow='inset 0 0 0 3px #fff, inset 0 0 0 4px '+c;}
+    else if(f.id==='ornate'){box.style.border='3px solid '+c;box.style.outline='1px solid '+c;box.style.outlineOffset='2px';}
+    else if(f.id==='none')box.style.border='1px dashed #cbd5e1';
     prev.appendChild(box);
 
-    const label = document.createElement('span');
-    label.textContent = f.label;
+    const label=document.createElement('span');
+    label.textContent=f.label;
 
-    btn.appendChild(prev);
-    btn.appendChild(label);
+    btn.appendChild(prev);btn.appendChild(label);
     picker.appendChild(btn);
   });
 }
 
-function updateFramePicker() {
-  document.querySelectorAll('.frame-opt').forEach(el => {
-    el.classList.toggle('active', el.dataset.frame === state.frame.style);
-  });
+function updateFramePicker(){
+  document.querySelectorAll('.frame-opt').forEach(el=>el.classList.toggle('active',el.dataset.frame===state.frame.style));
 }
 
-/* ============================================================
-   العلامة المائية - الصورة
-   ============================================================ */
-function removeWatermarkImage() {
-  state.wm.image = null;
-  save();
-  render();
-  toast('تم حذف الصورة');
-}
+/* ==================================================
+   العلامة المائية
+   ================================================== */
+function removeWatermarkImage(){state.wm.image=null;save();render();toast('تم الحذف');}
 
-/* ============================================================
+/* ==================================================
    الطباعة والتصدير
-   ============================================================ */
-function doPrint() {
+   ================================================== */
+function doPrint(){closeMenu();switchView('preview');setTimeout(()=>window.print(),200);}
+function exportPDF(){closeMenu();toast('اختر "حفظ كـ PDF" من نافذة الطباعة');switchView('preview');setTimeout(()=>window.print(),300);}
+
+function exportWord(){
   closeMenu();
-  switchView('preview');
-  setTimeout(() => window.print(), 200);
-}
-
-function exportPDF() {
-  closeMenu();
-  toast('اختر "حفظ كـ PDF" من نافذة الطباعة');
-  switchView('preview');
-  setTimeout(() => window.print(), 300);
-}
-
-function exportWord() {
-  closeMenu();
-  const container = $('pages-container');
-  if (!container) return;
-
-  const pages = container.querySelectorAll('.page');
-  let bodyHtml = '';
-
-  pages.forEach(p => {
-    const clone = p.cloneNode(true);
-    // remove watermark and frame for word (optional - keep simple)
-    bodyHtml += '<div style="page-break-after:always;">' + clone.innerHTML + '</div>';
+  const container=$('pages-container');
+  if(!container)return;
+  const pages=container.querySelectorAll('.page');
+  let bodyHtml='';
+  pages.forEach(p=>{
+    const clone=p.cloneNode(true);
+    bodyHtml+='<div style="page-break-after:always;">'+clone.innerHTML+'</div>';
   });
-
-  const styles = `
-    @page { size:A4; margin:0; }
-    body { font-family:Arial,sans-serif; direction:rtl; }
-    .page-content { padding:12mm; box-sizing:border-box; }
-    .header-grid { display:table; width:100%; table-layout:fixed; border-collapse:collapse; }
-    .hcol { display:table-cell; vertical-align:top; width:33%; padding:2px; }
-    .hcol-center { text-align:center; }
-    .hcol-left { text-align:left; }
-    .header-line { border-top:2px solid #000; margin:8px 0; }
-    .header-extra, .header-note { text-align:center; }
-    .footer-grid { display:table; width:100%; table-layout:fixed; margin-top:20px; }
-    .fcol { display:table-cell; width:33%; padding:2px; }
-    .footer-wish { text-align:center; }
-    .q-item { margin-bottom:8px; }
-    .watermark { display:none; }
-  `;
-
-  const html = `<!DOCTYPE html>
-    <html xmlns:o="urn:schemas-microsoft-com:office:office"
-          xmlns:w="urn:schemas-microsoft-com:office:word"
-          xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar">
-    <head><meta charset="utf-8"><title>نموذج أسئلة</title>
-    <style>${styles}</style></head>
-    <body>${bodyHtml}</body></html>`;
-
-  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'نموذج-أسئلة.doc';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast('تم حفظ ملف Word ✅');
+  const styles='@page{size:A4;margin:0;}body{font-family:Arial,sans-serif;direction:rtl;}'
+    +'.page-content{padding:12mm;box-sizing:border-box;}'
+    +'.header-grid{display:table;width:100%;table-layout:fixed;border-collapse:collapse;}'
+    +'.hcol{display:table-cell;vertical-align:top;width:33%;padding:2px;}'
+    +'.hcol-center{text-align:center;}.hcol-left{text-align:left;}'
+    +'.header-line{border-top:2px solid #000;margin:8px 0;}'
+    +'.header-extra,.header-note{text-align:center;}'
+    +'.footer-grid{display:table;width:100%;table-layout:fixed;margin-top:20px;}'
+    +'.fcol{display:table-cell;width:33%;padding:2px;}'
+    +'.footer-wish{text-align:center;}.q-item{margin-bottom:8px;}.watermark{display:none;}';
+  const html='<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar"><head><meta charset="utf-8"><title>نموذج أسئلة</title><style>'+styles+'</style></head><body>'+bodyHtml+'</body></html>';
+  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نموذج-أسئلة.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('تم حفظ Word ✅');
 }
 
-/* ============================================================
-   نسخة احتياطية / استيراد / حذف
-   ============================================================ */
-function backup() {
+function backup(){
   closeMenu();
-  const data = JSON.stringify(state, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'نموذج-أسئلة.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast('تم حفظ نسخة احتياطية 💾');
+  const data=JSON.stringify(state,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='نموذج-أسئلة.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('تم حفظ نسخة 💾');
 }
 
-function triggerImport() {
-  closeMenu();
-  const el = $('importFile');
-  if (el) el.click();
-}
+function triggerImport(){closeMenu();const el=$('importFile');if(el)el.click();}
 
-function restore(input) {
-  const f = input.files && input.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    try {
-      const d = JSON.parse(e.target.result);
-      if (!d || !d.h || !Array.isArray(d.questions)) throw new Error('bad');
-      state = deepMerge(JSON.parse(JSON.stringify(defaultState)), d);
-      loadStateIntoInputs();
-      render();
-      save();
+function restore(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d||!d.h||!Array.isArray(d.questions))throw new Error('bad');
+      state=deepMerge(JSON.parse(JSON.stringify(defaultState)),d);
+      loadStateIntoInputs();render();save();
       switchView('preview');
       toast('تم الاستيراد ✅');
-    } catch(err) {
-      toast('الملف غير صالح ❌');
-    }
+    }catch(err){toast('الملف غير صالح ❌');}
   };
-  r.readAsText(f);
-  input.value = '';
+  r.readAsText(f);input.value='';
 }
 
-function clearAll() {
+function clearAll(){
   closeMenu();
-  if (!confirm('حذف كل الأسئلة؟')) return;
-  state.questions = [];
-  save();
-  render();
-  toast('تم الحذف 🗑️');
+  if(!confirm('حذف كل الأسئلة؟'))return;
+  state.questions=[];save();render();toast('تم الحذف 🗑️');
 }
 
-/* ============================================================
+/* ==================================================
    الإقلاع
-   ============================================================ */
-function boot() {
-  // 1. تحميل الوضع
-  try {
-    const t = localStorage.getItem(THEME_KEY);
-    if (t === 'dark' || t === 'light') {
-      document.documentElement.setAttribute('data-theme', t);
-    }
-  } catch(e) {}
-
-  // 2. تحميل الحالة
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const loaded = JSON.parse(raw);
-      if (loaded && loaded.h && Array.isArray(loaded.questions)) {
-        state = deepMerge(JSON.parse(JSON.stringify(defaultState)), loaded);
+   ================================================== */
+function boot(){
+  try{const t=localStorage.getItem(THEME_KEY);if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const loaded=JSON.parse(raw);
+      if(loaded&&loaded.h&&Array.isArray(loaded.questions)){
+        state=deepMerge(JSON.parse(JSON.stringify(defaultState)),loaded);
       }
     }
-  } catch(e) {}
+  }catch(e){}
 
-  // 3. تعبئة الخطوط
   fillFontSelects();
-
-  // 4. تعبئة الحقول
   loadStateIntoInputs();
-
-  // 5. ربط الحقول
   bindAllInputs();
-
-  // 6. اختيار الإطار
   buildFramePicker();
 
-  // 7. رفع صورة العلامة المائية
-  const wmInput = $('wmImageInput');
-  if (wmInput) {
-    wmInput.addEventListener('change', () => {
-      const f = wmInput.files && wmInput.files[0];
-      if (!f) return;
-      if (f.size > 3 * 1024 * 1024) {
-        toast('الصورة كبيرة (أقصى 3 ميغا)');
-        wmInput.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = e => {
-        state.wm.image = e.target.result;
-        state.wm.type = 'image';
-        save();
-        loadStateIntoInputs();
-        render();
-        toast('تم رفع الصورة ✅');
-      };
-      reader.readAsDataURL(f);
-      wmInput.value = '';
+  const wmInput=$('wmImageInput');
+  if(wmInput){
+    wmInput.addEventListener('change',()=>{
+      const f=wmInput.files&&wmInput.files[0];
+      if(!f)return;
+      if(f.size>3*1024*1024){toast('الصورة كبيرة');wmInput.value='';return;}
+      const reader=new FileReader();
+      reader.onload=e=>{state.wm.image=e.target.result;state.wm.type='image';save();loadStateIntoInputs();render();toast('تم الرفع ✅');};
+      reader.readAsDataURL(f);wmInput.value='';
     });
   }
 
-  // 8. أزرار التنقل السفلي
-  document.querySelectorAll('.navbtn').forEach(btn => {
-    btn.addEventListener('click', () => switchView(btn.getAttribute('data-view')));
+  document.querySelectorAll('.navbtn').forEach(btn=>{
+    btn.addEventListener('click',()=>switchView(btn.getAttribute('data-view')));
+  });
+  document.querySelectorAll('.subtab').forEach(tab=>{
+    tab.addEventListener('click',()=>switchSub(tab.getAttribute('data-sub')));
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.menu-wrap'))closeMenu();
   });
 
-  // 9. تبويبات لوحة التحكم
-  document.querySelectorAll('.subtab').forEach(tab => {
-    tab.addEventListener('click', () => switchSub(tab.getAttribute('data-sub')));
-  });
-
-  // 10. إغلاق القائمة
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.menu-wrap')) closeMenu();
-  });
-
-  // 11. رندر
   render();
-
-  // 12. قبل الطباعة
-  window.addEventListener('beforeprint', () => switchView('preview'));
+  window.addEventListener('beforeprint',()=>switchView('preview'));
+  // إعادة الحساب بعد تحميل الخطوط
+  setTimeout(fitPages,300);
+  setTimeout(fitPages,1000);
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', boot);
-} else {
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',boot);
+}else{
   boot();
 }
 </script>
