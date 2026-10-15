@@ -221,12 +221,8 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   margin-bottom:8px;overflow-wrap:anywhere;
   page-break-inside:avoid;break-inside:avoid;
 }
-.ans-title{
-  font-weight:bold;margin-bottom:2px;overflow-wrap:anywhere;
-}
-.ans-text{
-  white-space:pre-wrap;overflow-wrap:anywhere;
-}
+.ans-title{font-weight:bold;margin-bottom:2px;overflow-wrap:anywhere;}
+.ans-text{white-space:pre-wrap;overflow-wrap:anywhere;}
 
 /* Math */
 .math-frac{display:inline-flex;flex-direction:column;vertical-align:-0.55em;text-align:center;font-size:0.9em;line-height:1.05;margin:0 3px;}
@@ -245,14 +241,47 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .math-lim .ml-lim{font-size:0.8em;font-style:italic;}
 .math-lim .ml-sub{font-size:0.6em;margin-top:-2px;}
 
-/* Shapes */
+/* ============================================================
+   Shapes — مع إصلاح كامل للمواقع
+   ============================================================ */
 .shape-block{
-  position:relative;display:inline-block;vertical-align:middle;
-  margin:6px 4px;user-select:none;-webkit-user-select:none;
+  position:relative;
+  display:inline-block;
+  vertical-align:middle;
+  margin:6px 4px;
+  user-select:none;-webkit-user-select:none;
   transition:box-shadow .15s;
+  max-width:100%;
 }
 .shape-block svg{display:block;width:100%;height:100%;pointer-events:none;}
+
+/* الموقع: داخل النص */
+.shape-block[data-float="inline"]{
+  display:inline-block;
+  margin:6px 4px;
+  float:none;
+}
+/* الموقع: يسار */
+.shape-block[data-float="left"]{
+  display:block !important;
+  float:none !important;
+  margin:8px auto 8px 0 !important;
+}
+/* الموقع: وسط */
+.shape-block[data-float="center"]{
+  display:block !important;
+  float:none !important;
+  margin:8px auto !important;
+}
+/* الموقع: يمين */
+.shape-block[data-float="right"]{
+  display:block !important;
+  float:none !important;
+  margin:8px 0 8px auto !important;
+}
+
 .shape-block.selected{box-shadow:0 0 0 2px var(--accent);border-radius:3px;}
+
 .shape-lbl{
   position:absolute;text-align:center;
   font-family:inherit;color:inherit;font-weight:bold;
@@ -488,19 +517,20 @@ input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#
 .table-picker button.on{background:var(--accent);border-color:var(--accent);}
 .table-picker button:hover{background:var(--accent-light);}
 
+/* Shape toolbar — محدّث ليتحمل 4 أزرار موقع */
 .shape-toolbar{
   position:fixed;z-index:400;
   background:var(--bg-1);border:1px solid var(--border);
   border-radius:12px;padding:8px;
   box-shadow:var(--shadow-lg);
-  display:none;min-width:250px;
+  display:none;min-width:290px;
 }
 .shape-toolbar.open{display:block;}
-.st-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.st-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap;}
 .st-row:last-child{margin-bottom:0;}
 .st-label{font-size:11px;font-weight:700;color:var(--text-3);min-width:52px;}
-.st-row input[type=range]{flex:1;accent-color:var(--accent);min-width:0;}
-.st-row .st-value{font-size:11px;font-weight:800;color:var(--accent);min-width:38px;text-align:center;}
+.st-row input[type=range]{flex:1;accent-color:var(--accent);min-width:80px;}
+.st-row .st-value{font-size:11px;font-weight:800;color:var(--accent);min-width:36px;text-align:center;}
 .st-row button{
   padding:4px 8px;border:1px solid var(--border);background:var(--bg-2);
   border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
@@ -629,6 +659,11 @@ input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#
   .page{position:static !important;transform:none !important;box-shadow:none !important;margin:0 !important;page-break-after:always;break-after:page;page-break-inside:avoid;}
   .page:last-child{page-break-after:auto;break-after:auto;}
   .shape-block.selected{box-shadow:none !important;}
+  .shape-block[data-float="left"],
+  .shape-block[data-float="center"],
+  .shape-block[data-float="right"]{
+    display:block !important;
+  }
 }
 </style>
 </head>
@@ -1002,6 +1037,7 @@ input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#
 <div id="toast"></div>
 <div id="save-ind">✓ تم الحفظ</div>
 
+<!-- Shape toolbar (4 buttons for position) -->
 <div class="shape-toolbar no-print" id="shapeToolbar">
   <div class="st-row">
     <span class="st-label">📏 الحجم</span>
@@ -1020,6 +1056,7 @@ input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#
     <span class="st-label">📍 الموقع</span>
     <button data-pos="inline" onclick="setShapePosition('inline')">داخل النص</button>
     <button data-pos="left" onclick="setShapePosition('left')">يسار</button>
+    <button data-pos="center" onclick="setShapePosition('center')">وسط</button>
     <button data-pos="right" onclick="setShapePosition('right')">يمين</button>
   </div>
   <div class="st-divider"></div>
@@ -1038,7 +1075,7 @@ input.shape-lbl:focus{border-color:var(--accent);border-style:solid;background:#
 
 <script>
 "use strict";
-const STORAGE_KEY='qform_v15';
+const STORAGE_KEY='qform_v16';
 const THEME_KEY='qform_theme';
 const MAX_QUESTIONS=10;
 const FONTS=['Arial','Tahoma','Times New Roman','Traditional Arabic','Simplified Arabic','Sakkal Majalla','Andalus','Diwani','Arabic Typesetting','Calibri','Courier New'];
@@ -1461,7 +1498,6 @@ function buildPages(){
     container.appendChild(scaler);
   });
 
-  // Answers page
   if(state.showAnswers && state.questions.length){
     const ansPages=[];
     let ansCur={items:[]};
@@ -1562,14 +1598,28 @@ function shapeToHtml(sh){
          '</span>';
 }
 
-/* Migrate existing shapes to % labels */
 function migrateShapeLabels(html){
   if(!html) return html;
   const temp=document.createElement('div');
   temp.innerHTML=html;
   temp.querySelectorAll('.shape-block').forEach(shape=>{
-    const w=parseFloat(shape.dataset.baseW||shape.style.width)||100;
-    const h=parseFloat(shape.dataset.baseH||shape.style.height)||100;
+    // Add default data-float if missing
+    if(!shape.dataset.float){
+      shape.dataset.float='inline';
+      shape.setAttribute('data-float','inline');
+    }
+    if(!shape.dataset.scale) shape.dataset.scale='1';
+    if(!shape.dataset.rotate) shape.dataset.rotate='0';
+    if(!shape.dataset.baseW){
+      const w=parseFloat(shape.style.width)||100;
+      shape.dataset.baseW=w;
+    }
+    if(!shape.dataset.baseH){
+      const h=parseFloat(shape.style.height)||100;
+      shape.dataset.baseH=h;
+    }
+    const w=parseFloat(shape.dataset.baseW)||100;
+    const h=parseFloat(shape.dataset.baseH)||100;
     shape.querySelectorAll('.shape-lbl').forEach(lbl=>{
       const l=parseFloat(lbl.style.left)||0;
       const t=parseFloat(lbl.style.top)||0;
@@ -1873,7 +1923,6 @@ function buildQuestionCard(q,idx){
   return card;
 }
 
-/* Answers editor */
 function renderAnswersEditor(){
   const cont=$('answers-editor');
   if(!cont)return;
@@ -1898,7 +1947,6 @@ function buildAnswerCard(q,i){
   num.className='num';num.textContent='إجابة سؤال '+(i+1);head.appendChild(num);
   card.appendChild(head);
 
-  // Title block
   const titleBlock=document.createElement('div');titleBlock.className='style-block';
   const tHeader=document.createElement('div');tHeader.className='style-block-title';
   tHeader.innerHTML='<span>🏷️ عنوان السؤال (يظهر بصفحة الإجابات)</span>';
@@ -1919,7 +1967,6 @@ function buildAnswerCard(q,i){
   titleBlock.appendChild(buildFontRow(q.ansTitleStyle,()=>{save();if(state.showAnswers)schedulePaperUpdate();},false));
   card.appendChild(titleBlock);
 
-  // Answer block
   const ansBlock=document.createElement('div');ansBlock.className='style-block';
   const aHeader=document.createElement('div');aHeader.className='style-block-title';
   aHeader.innerHTML='<span>✅ نص الإجابة</span>';
@@ -2180,7 +2227,9 @@ function renderShapesPopover(popover, editor){
   popover.appendChild(grid);
 }
 
-/* Shape toolbar */
+/* ============================================================
+   Shape toolbar — v16 fixes
+   ============================================================ */
 function selectShape(shape, editor){
   document.querySelectorAll('.shape-block.selected').forEach(el=>el.classList.remove('selected'));
   shape.classList.add('selected');
@@ -2190,7 +2239,7 @@ function selectShape(shape, editor){
   tb.classList.add('open');
 
   const r=shape.getBoundingClientRect();
-  const tbW=260, tbH=210;
+  const tbW=290, tbH=220;
   let left=r.left;
   let top=r.bottom+8;
   if(left+tbW>window.innerWidth-8) left=window.innerWidth-tbW-8;
@@ -2204,14 +2253,17 @@ function selectShape(shape, editor){
 
 function syncShapeToolbar(){
   if(!selectedShape) return;
-  const s=parseFloat(selectedShape.dataset.scale||'1');
-  const r=parseFloat(selectedShape.dataset.rotate||'0');
+  const s=parseFloat(selectedShape.dataset.scale||'1')||1;
+  const r=parseFloat(selectedShape.dataset.rotate||'0')||0;
   const f=selectedShape.dataset.float||'inline';
-  $('stScale').value=s;
-  $('stScaleVal').textContent=Math.round(s*100)+'%';
-  $('stRotVal').textContent=r+'°';
+  const scaleEl=$('stScale');
+  const svEl=$('stScaleVal');
+  const rvEl=$('stRotVal');
+  if(scaleEl) scaleEl.value=s;
+  if(svEl) svEl.textContent=Math.round(s*100)+'%';
+  if(rvEl) rvEl.textContent=r+'°';
   document.querySelectorAll('#shapeToolbar [data-pos]').forEach(b=>{
-    b.classList.toggle('on', b.dataset.pos===f);
+    b.classList.toggle('on',b.dataset.pos===f);
   });
 }
 
@@ -2221,16 +2273,21 @@ function hideShapeToolbar(){
   $('shapeToolbar').classList.remove('open');
 }
 
-/* FIX: change width/height instead of zoom */
 function applyShapeScale(v){
-  if(!selectedShape) return;
-  const s=parseFloat(v);
+  if(!selectedShape){
+    console.warn('لا يوجد شكل محدد');
+    return;
+  }
+  const s=parseFloat(v)||1;
   selectedShape.dataset.scale=s;
-  const bw=parseFloat(selectedShape.dataset.baseW||'100');
-  const bh=parseFloat(selectedShape.dataset.baseH||'100');
-  selectedShape.style.width=(bw*s)+'px';
-  selectedShape.style.height=(bh*s)+'px';
-  $('stScaleVal').textContent=Math.round(s*100)+'%';
+  const bw=parseFloat(selectedShape.dataset.baseW||'100')||100;
+  const bh=parseFloat(selectedShape.dataset.baseH||'100')||100;
+  const newW=Math.round(bw*s);
+  const newH=Math.round(bh*s);
+  selectedShape.style.setProperty('width',newW+'px','important');
+  selectedShape.style.setProperty('height',newH+'px','important');
+  const el=$('stScaleVal');
+  if(el) el.textContent=Math.round(s*100)+'%';
   if(selectedShapeEditor){
     selectedShapeEditor.dispatchEvent(new Event('input',{bubbles:true}));
   }
@@ -2256,15 +2313,21 @@ function applyRotation(shape,deg){
 }
 
 function setShapePosition(pos){
-  if(!selectedShape) return;
+  if(!selectedShape){
+    console.warn('لا يوجد شكل محدد');
+    return;
+  }
   selectedShape.dataset.float=pos;
-  if(pos==='left'){selectedShape.style.float='left';}
-  else if(pos==='right'){selectedShape.style.float='right';}
-  else {selectedShape.style.float='';}
-  document.querySelectorAll('#shapeToolbar [data-pos]').forEach(b=>b.classList.toggle('on',b.dataset.pos===pos));
+  selectedShape.setAttribute('data-float',pos);
+  selectedShape.style.float='';
+  document.querySelectorAll('#shapeToolbar [data-pos]').forEach(b=>{
+    b.classList.toggle('on',b.dataset.pos===pos);
+  });
   if(selectedShapeEditor){
     selectedShapeEditor.dispatchEvent(new Event('input',{bubbles:true}));
   }
+  const labels={inline:'داخل النص',left:'يسار',center:'وسط',right:'يمين'};
+  toast('📍 الموقع: '+(labels[pos]||pos));
 }
 
 function deleteSelectedShape(){
@@ -2565,7 +2628,6 @@ function migrateQuestion(q){
   if(q.ansTitle===undefined) q.ansTitle='';
   if(q.ansAnswer===undefined) q.ansAnswer=q.answer||'';
   delete q.family;delete q.size;delete q.weight;delete q.color;delete q.text;delete q.answer;
-  // Migrate shape labels
   if(q.desc) q.desc=migrateShapeLabels(q.desc);
   return q;
 }
