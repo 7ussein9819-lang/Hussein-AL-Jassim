@@ -3,47 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منشئ نماذج الأسئلة - A4</title>
+<title>منشئ نماذج الأسئلة</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   * { box-sizing: border-box; }
   :root {
-    --ink:#1f2937; --muted:#6b7280; --line:#d1d5db;
+    --ink:#111827; --muted:#6b7280; --line:#d1d5db;
     --accent:#2563eb; --accent2:#10b981; --danger:#ef4444;
+    --bg:#f3f4f6; --topbar:#0f172a;
   }
   html, body { margin:0; padding:0; }
   body {
-    background:#e5e7eb; font-family:"Tahoma","Segoe UI","Arial",sans-serif;
-    color:var(--ink); padding:20px 12px 60px;
+    background:var(--bg); font-family:"Tahoma","Segoe UI","Arial",sans-serif;
+    color:var(--ink); min-height:100vh;
   }
 
-  /* ===== الشريط العلوي ===== */
-  .toolbar {
-    position:sticky; top:0; z-index:50; max-width:21cm; margin:0 auto 18px;
-    background:#111827; color:#fff; border-radius:14px; padding:10px 12px;
-    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
-    box-shadow:0 6px 20px rgba(0,0,0,.18);
+  /* ===== Topbar ===== */
+  .topbar {
+    position:sticky; top:0; z-index:100;
+    background:var(--topbar); color:#fff;
+    padding:10px 16px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:0 4px 14px rgba(0,0,0,.15);
   }
-  .toolbar .brand { font-weight:bold; font-size:15px; margin-inline-end:auto; padding:4px 8px; white-space:nowrap; }
-  .btn {
-    border:none; border-radius:8px; padding:8px 12px; font-size:13px;
-    font-weight:bold; cursor:pointer; font-family:inherit; color:#fff;
-    background:#374151; transition:.15s; white-space:nowrap;
+  .tabs { display:flex; gap:4px; background:rgba(255,255,255,.06); padding:4px; border-radius:10px; }
+  .tab {
+    border:none; background:transparent; color:#cbd5e1;
+    padding:8px 14px; border-radius:8px; cursor:pointer;
+    font-family:inherit; font-size:14px; font-weight:bold;
+    transition:.15s; display:flex; align-items:center; gap:6px;
   }
-  .btn:hover { filter:brightness(1.15); }
-  .btn:active { transform:translateY(1px); }
-  .btn.blue { background:var(--accent); }
-  .btn.green { background:var(--accent2); }
-  .btn.red { background:var(--danger); }
-  .btn.gray { background:#4b5563; }
+  .tab:hover { color:#fff; background:rgba(255,255,255,.08); }
+  .tab.active { background:#fff; color:var(--ink); }
+  .topbar .spacer { flex:1; }
+  .icon-btn-top {
+    width:40px; height:40px; border:none; border-radius:10px;
+    background:rgba(255,255,255,.08); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:.15s;
+  }
+  .icon-btn-top:hover { background:rgba(255,255,255,.2); }
+  .icon-btn-top svg { width:20px; height:20px; }
+
+  .menu-wrap { position:relative; }
+  .menu {
+    position:absolute; top:calc(100% + 8px); left:0;
+    background:#fff; color:var(--ink); min-width:230px;
+    border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.22);
+    padding:6px; display:none; z-index:200;
+    border:1px solid #e5e7eb;
+  }
+  .menu.open { display:block; animation:pop .15s ease-out; }
+  @keyframes pop { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+  .menu button {
+    width:100%; text-align:right; border:none; background:transparent;
+    padding:10px 12px; border-radius:8px; font-family:inherit;
+    font-size:14px; cursor:pointer; color:var(--ink);
+    display:flex; align-items:center; gap:10px;
+  }
+  .menu button:hover { background:#f3f4f6; }
+  .menu button.danger { color:var(--danger); }
+  .menu button.danger:hover { background:#fef2f2; }
+  .menu hr { border:none; border-top:1px solid #e5e7eb; margin:4px 0; }
+  .menu .mi { font-size:16px; width:20px; text-align:center; }
+
+  /* ===== Main ===== */
+  main { padding:24px 16px 60px; }
+  .view { display:none; }
+  .view.active { display:block; }
 
   /* ===== الورقة ===== */
+  .paper-wrap { display:flex; justify-content:center; }
   .paper {
-    width:21cm; min-height:29.7cm; margin:0 auto; background:#fff;
-    padding:1.6cm 1.5cm; box-shadow:0 0 18px rgba(0,0,0,.18);
+    width:21cm; min-height:29.7cm; background:#fff;
+    padding:1.6cm 1.5cm; box-shadow:0 0 20px rgba(0,0,0,.12);
+    border-radius:2px;
   }
-
-  /* ===== رأس الورقة ===== */
   .paper-header { margin-bottom:18px; }
   .header-top {
     display:flex; align-items:center; gap:14px;
@@ -67,94 +102,82 @@
   .h-school { font-size:20px; font-weight:bold; padding:2px 0; }
   .h-title  { font-size:16px; font-weight:bold; padding:4px 0; color:#374151; }
   .h-sub    { font-size:13px; color:var(--muted); padding:2px 0; }
-
   .header-meta { display:flex; gap:10px; margin-top:10px; font-size:14px; }
-  .meta-item {
-    flex:1; display:flex; align-items:center; gap:6px;
-    border-bottom:1px solid var(--line); padding:4px 2px;
-  }
+  .meta-item { flex:1; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--line); padding:4px 2px; }
   .meta-item label { font-weight:bold; color:#374151; white-space:nowrap; font-size:13px; }
-  .meta-item input {
-    flex:1; border:none; outline:none; font-family:inherit;
-    font-size:14px; background:transparent; color:var(--ink); min-width:0;
-  }
+  .meta-item input { flex:1; border:none; outline:none; font-family:inherit; font-size:14px; background:transparent; color:var(--ink); min-width:0; }
 
-  /* ===== الأسئلة ===== */
   #questions { margin-top:18px; }
   .empty {
     text-align:center; color:#9ca3af; font-size:14px; padding:40px 10px;
     border:2px dashed #e5e7eb; border-radius:10px;
   }
-  .question {
-    margin-bottom:18px; padding:10px 10px 12px; border:1px solid transparent;
-    border-radius:8px; page-break-inside:avoid; break-inside:avoid;
-  }
+  .question { margin-bottom:18px; padding:10px 10px 12px; border:1px solid transparent; border-radius:8px; page-break-inside:avoid; break-inside:avoid; }
   .question:hover { border-color:#e5e7eb; background:#fcfcfd; }
-
   .q-head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
   .q-num { font-weight:bold; font-size:16px; color:var(--accent); min-width:28px; }
-  .q-type {
-    font-size:11px; background:#eef2ff; color:#4338ca;
-    padding:2px 8px; border-radius:20px; font-weight:bold;
-  }
+  .q-type { font-size:11px; background:#eef2ff; color:#4338ca; padding:2px 8px; border-radius:20px; font-weight:bold; }
   .q-head .spacer { flex:1; }
   .q-actions { display:flex; gap:4px; opacity:0; transition:.15s; }
   .question:hover .q-actions { opacity:1; }
-
-  .icon-btn {
-    border:none; background:#f3f4f6; color:#374151;
-    width:24px; height:24px; border-radius:6px; cursor:pointer;
-    font-size:13px; font-weight:bold; line-height:1;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-family:inherit; padding:0;
-  }
+  .icon-btn { border:none; background:#f3f4f6; color:#374151; width:24px; height:24px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:bold; line-height:1; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; padding:0; }
   .icon-btn:hover { background:#e5e7eb; }
   .icon-btn:disabled { opacity:.35; cursor:default; }
   .icon-btn.del:hover { background:#fee2e2; color:var(--danger); }
-
-  .q-text {
-    width:100%; border:none; outline:none; resize:none; overflow:hidden;
-    font-family:inherit; font-size:15px; line-height:1.9; color:var(--ink);
-    background:transparent; padding:2px 0 2px 30px; display:block;
-  }
+  .q-text { width:100%; border:none; outline:none; resize:none; overflow:hidden; font-family:inherit; font-size:15px; line-height:1.9; color:var(--ink); background:transparent; padding:2px 0 2px 30px; display:block; }
   .q-text::placeholder { color:#c7cbd1; }
-
   .options { margin-top:6px; padding-inline-start:30px; }
   .option-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-  .option-letter {
-    width:24px; height:24px; flex:0 0 24px; border-radius:50%;
-    border:1.5px solid var(--line); display:flex; align-items:center;
-    justify-content:center; font-size:13px; font-weight:bold; color:#374151;
-  }
-  .option-row input[type="text"] {
-    flex:1; border:none; border-bottom:1px dotted #d1d5db; outline:none;
-    font-family:inherit; font-size:14px; padding:3px 4px;
-    background:transparent; color:var(--ink);
-  }
+  .option-letter { width:24px; height:24px; flex:0 0 24px; border-radius:50%; border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:bold; color:#374151; }
+  .option-row input[type="text"] { flex:1; border:none; border-bottom:1px dotted #d1d5db; outline:none; font-family:inherit; font-size:14px; padding:3px 4px; background:transparent; color:var(--ink); }
   .option-row input[type="text"]:focus { border-bottom-color:var(--accent); }
   .option-row input[type="radio"] { accent-color:var(--accent2); cursor:pointer; }
   .correct-label { font-size:11px; color:var(--muted); }
-
   .tf-row { margin-top:6px; padding-inline-start:30px; display:flex; gap:24px; align-items:center; }
   .tf-item { display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; }
   .tf-item input { accent-color:var(--accent2); cursor:pointer; }
-
   .lines { margin-top:8px; padding-inline-start:30px; }
   .line { height:26px; border-bottom:1px dotted #b8bec7; }
-
-  .add-option {
-    border:none; background:transparent; color:var(--accent);
-    font-size:13px; font-weight:bold; cursor:pointer;
-    padding:4px 0; font-family:inherit;
-  }
+  .add-option { border:none; background:transparent; color:var(--accent); font-size:13px; font-weight:bold; cursor:pointer; padding:4px 0; font-family:inherit; }
   .add-option:hover { text-decoration:underline; }
+  .lines-ctrl { display:flex; gap:6px; align-items:center; margin-top:4px; padding-inline-start:30px; font-size:12px; color:var(--muted); }
 
-  .lines-ctrl {
-    display:flex; gap:6px; align-items:center; margin-top:4px;
-    padding-inline-start:30px; font-size:12px; color:var(--muted);
+  /* ===== Control panel ===== */
+  .control { max-width:960px; margin:0 auto; display:grid; gap:16px; }
+  .card {
+    background:#fff; border-radius:14px; padding:20px 22px;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
   }
+  .card h3 {
+    margin:0 0 14px; font-size:16px; color:var(--ink);
+    display:flex; align-items:center; gap:8px; font-weight:bold;
+  }
+  .card h3 .em { font-size:18px; }
+  .add-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .add-btn {
+    border:2px dashed #d1d5db; background:#fafafa;
+    padding:22px 12px; border-radius:12px;
+    cursor:pointer; font-family:inherit; font-size:15px; font-weight:bold;
+    color:var(--ink); transition:.15s;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .add-btn:hover { border-color:var(--accent); background:#eff6ff; color:var(--accent); }
+  .add-btn .em { font-size:26px; }
+  .add-btn .desc { font-size:11px; color:var(--muted); font-weight:normal; }
 
-  /* ===== توست ===== */
+  .tools-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .tool-btn {
+    border:1px solid #e5e7eb; background:#fff; padding:14px 12px;
+    border-radius:10px; cursor:pointer; font-family:inherit;
+    font-size:13px; font-weight:bold; color:var(--ink);
+    display:flex; align-items:center; gap:8px; justify-content:center;
+    transition:.15s;
+  }
+  .tool-btn:hover { background:#f9fafb; border-color:#9ca3af; }
+  .tool-btn.danger { color:var(--danger); border-color:#fecaca; }
+  .tool-btn.danger:hover { background:#fef2f2; }
+
+  /* ===== Toast ===== */
   #toast {
     position:fixed; bottom:24px; left:50%;
     transform:translateX(-50%) translateY(20px);
@@ -163,92 +186,179 @@
   }
   #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ===== الطباعة ===== */
+  /* ===== Print ===== */
   @media print {
     @page { size:A4; margin:1.4cm; }
     body { background:#fff; padding:0; }
-    .toolbar, .no-print, #toast, .empty { display:none !important; }
-    .paper {
-      width:auto; min-height:auto; margin:0; padding:0;
-      box-shadow:none;
-    }
+    .topbar, .no-print, #toast, .empty, .control { display:none !important; }
+    .view:not(.active) { display:none !important; }
+    .view.active { display:block !important; }
+    main { padding:0; }
+    .paper { width:auto; min-height:auto; margin:0; padding:0; box-shadow:none; border-radius:0; }
     .question { border-color:transparent !important; background:transparent !important; }
     .logo-box { border-style:solid; border-color:#e5e7eb; }
   }
 
   @media (max-width:900px) {
     .paper { width:100%; padding:18px; min-height:auto; }
+    .add-grid { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
 <!-- ================= الشريط العلوي ================= -->
-<div class="toolbar">
-  <span class="brand">📝 منشئ نماذج الأسئلة</span>
-
-  <button class="btn blue" onclick="addQuestion('essay')">➕ مقالي</button>
-  <button class="btn blue" onclick="addQuestion('mcq')">➕ اختيار من متعدد</button>
-  <button class="btn blue" onclick="addQuestion('tf')">➕ صح / خطأ</button>
-
-  <button class="btn green" onclick="window.print()">🖨️ طباعة</button>
-  <button class="btn green" onclick="exportPDF()">📄 PDF</button>
-
-  <button class="btn gray" onclick="backup()">💾 نسخة احتياطية</button>
-  <button class="btn gray" onclick="document.getElementById('importFile').click()">📂 استيراد</button>
-  <input type="file" id="importFile" accept=".json" style="display:none" onchange="restore(this)">
-
-  <button class="btn red" onclick="clearAll()">🗑️ حذف الكل</button>
-</div>
-
-<!-- ================= الورقة ================= -->
-<div class="paper" id="paper">
-
-  <div class="paper-header">
-    <div class="header-top">
-      <div class="logo-box" id="logoBox" onclick="document.getElementById('logoInput').click()" title="اضغط لرفع الشعار">
-        <img id="logoImg" alt="">
-        <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
-      </div>
-      <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="uploadLogo(this,1)">
-
-      <div class="header-center">
-        <input class="h-school" id="school" placeholder="اسم المدرسة">
-        <input class="h-title"  id="title"  placeholder="نموذج أسئلة">
-        <input class="h-sub"    id="sub"    placeholder="العام الدراسي 2025 - 2026">
-      </div>
-
-      <div class="logo-box" id="logoBox2" onclick="document.getElementById('logoInput2').click()" title="اضغط لرفع الشعار">
-        <img id="logoImg2" alt="">
-        <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
-      </div>
-      <input type="file" id="logoInput2" accept="image/*" style="display:none" onchange="uploadLogo(this,2)">
-    </div>
-
-    <div class="header-meta">
-      <div class="meta-item"><label>المادة:</label><input id="subject" placeholder="........."></div>
-      <div class="meta-item"><label>الصف:</label><input id="grade" placeholder="........."></div>
-      <div class="meta-item"><label>التاريخ:</label><input id="date" placeholder="........."></div>
-    </div>
-
-    <div class="header-meta">
-      <div class="meta-item"><label>اسم الطالب:</label><input id="student" placeholder="........."></div>
-      <div class="meta-item"><label>المدة:</label><input id="duration" placeholder="........."></div>
-      <div class="meta-item"><label>الدرجة:</label><input id="mark" placeholder="........."></div>
-    </div>
+<header class="topbar">
+  <div class="tabs">
+    <button class="tab active" data-tab="preview">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      صفحة المعاينة
+    </button>
+    <button class="tab" data-tab="control">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      لوحة التحكم
+    </button>
   </div>
 
-  <div id="questions"></div>
+  <div class="spacer"></div>
 
-</div>
+  <button class="icon-btn-top" onclick="doPrint()" title="طباعة" aria-label="طباعة">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <rect x="6" y="14" width="12" height="8"></rect>
+    </svg>
+  </button>
+
+  <div class="menu-wrap">
+    <button class="icon-btn-top" onclick="toggleMenu(event)" title="المزيد" aria-label="المزيد">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="5" r="2"/>
+        <circle cx="12" cy="12" r="2"/>
+        <circle cx="12" cy="19" r="2"/>
+      </svg>
+    </button>
+    <div class="menu" id="moreMenu">
+      <button onclick="exportPDF(); closeMenu();">
+        <span class="mi">📄</span> تصدير PDF
+      </button>
+      <button onclick="exportWord(); closeMenu();">
+        <span class="mi">📝</span> تصدير Word
+      </button>
+      <hr>
+      <button onclick="backup(); closeMenu();">
+        <span class="mi">💾</span> نسخة احتياطية
+      </button>
+      <button onclick="document.getElementById('importFile').click(); closeMenu();">
+        <span class="mi">📂</span> استيراد
+      </button>
+      <hr>
+      <button class="danger" onclick="clearAll(); closeMenu();">
+        <span class="mi">🗑️</span> حذف الكل
+      </button>
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="restore(this)">
+  </div>
+</header>
+
+<main>
+  <!-- ================= صفحة المعاينة ================= -->
+  <section class="view active" id="view-preview">
+    <div class="paper-wrap">
+      <div class="paper" id="paper">
+        <div class="paper-header">
+          <div class="header-top">
+            <div class="logo-box" id="logoBox" onclick="document.getElementById('logoInput').click()" title="اضغط لرفع الشعار">
+              <img id="logoImg" alt="">
+              <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
+            </div>
+            <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="uploadLogo(this,1)">
+
+            <div class="header-center">
+              <input class="h-school" id="school" placeholder="اسم المدرسة">
+              <input class="h-title"  id="title"  placeholder="نموذج أسئلة">
+              <input class="h-sub"    id="sub"    placeholder="العام الدراسي 2025 - 2026">
+            </div>
+
+            <div class="logo-box" id="logoBox2" onclick="document.getElementById('logoInput2').click()" title="اضغط لرفع الشعار">
+              <img id="logoImg2" alt="">
+              <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
+            </div>
+            <input type="file" id="logoInput2" accept="image/*" style="display:none" onchange="uploadLogo(this,2)">
+          </div>
+
+          <div class="header-meta">
+            <div class="meta-item"><label>المادة:</label><input id="subject" placeholder="........."></div>
+            <div class="meta-item"><label>الصف:</label><input id="grade" placeholder="........."></div>
+            <div class="meta-item"><label>التاريخ:</label><input id="date" placeholder="........."></div>
+          </div>
+
+          <div class="header-meta">
+            <div class="meta-item"><label>اسم الطالب:</label><input id="student" placeholder="........."></div>
+            <div class="meta-item"><label>المدة:</label><input id="duration" placeholder="........."></div>
+            <div class="meta-item"><label>الدرجة:</label><input id="mark" placeholder="........."></div>
+          </div>
+        </div>
+
+        <div id="questions"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= لوحة التحكم ================= -->
+  <section class="view" id="view-control">
+    <div class="control">
+      <div class="card">
+        <h3><span class="em">➕</span> إضافة أسئلة</h3>
+        <div class="add-grid">
+          <button class="add-btn" onclick="addQuestion('essay')">
+            <span class="em">📝</span>
+            سؤال مقالي
+            <span class="desc">أسطر للكتابة</span>
+          </button>
+          <button class="add-btn" onclick="addQuestion('mcq')">
+            <span class="em">🔘</span>
+            اختيار من متعدد
+            <span class="desc">خيارات أ، ب، ج، د...</span>
+          </button>
+          <button class="add-btn" onclick="addQuestion('tf')">
+            <span class="em">✔️</span>
+            صح / خطأ
+            <span class="desc">إجابتان فقط</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="em">🧰</span> أدوات</h3>
+        <div class="tools-grid">
+          <button class="tool-btn" onclick="exportPDF()">📄 تصدير PDF</button>
+          <button class="tool-btn" onclick="exportWord()">📝 تصدير Word</button>
+          <button class="tool-btn" onclick="backup()">💾 نسخة احتياطية</button>
+          <button class="tool-btn" onclick="document.getElementById('importFile').click()">📂 استيراد</button>
+          <button class="tool-btn danger" onclick="clearAll()">🗑️ حذف الكل</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="em">💡</span> ملاحظة سريعة</h3>
+        <p style="margin:0; font-size:13px; line-height:1.9; color:#4b5563;">
+          • كل شي تكتبه ينحفظ تلقائياً بالمتصفح.<br>
+          • تكدر تحرك أو تحذف أي سؤال بالمرور عليه بالماوس داخل صفحة المعاينة.<br>
+          • اضغط على مربع الشعار داخل الورقة لرفع صورة (شعارين: يمين ويسار).
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <div id="toast"></div>
 
 <script>
 /* ============================================================
-   الحالة العامة + الحفظ التلقائي
+   الحالة + الحفظ
    ============================================================ */
-const STORAGE_KEY = 'qform_v1';
+const STORAGE_KEY = 'qform_v2';
 const LETTERS = ['أ','ب','ج','د','هـ','و','ز','ح','ط','ي','ك','ل'];
 const HEADER_FIELDS = ['school','title','sub','subject','grade','date','student','duration','mark'];
 
@@ -267,13 +377,10 @@ function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch(e){ console.warn('حفظ فشل', e); }
+    catch(e){ console.warn(e); }
   }, 250);
 }
 
-/* ============================================================
-   أدوات صغيرة
-   ============================================================ */
 function toast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -290,12 +397,41 @@ function autoGrow(el){
 function iconBtn(txt, title, fn){
   const b = document.createElement('button');
   b.type = 'button';
-  b.className = 'icon-btn';
+  b.className = 'icon-btn no-print';
   b.textContent = txt;
   b.title = title;
   b.onclick = fn;
   return b;
 }
+
+/* ============================================================
+   التبويبات
+   ============================================================ */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  document.querySelectorAll('.view').forEach(v=>{
+    v.classList.toggle('active', v.id === 'view-' + name);
+  });
+}
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>switchTab(t.dataset.tab));
+});
+
+/* ============================================================
+   القائمة المنسدلة
+   ============================================================ */
+function toggleMenu(e){
+  e.stopPropagation();
+  document.getElementById('moreMenu').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('moreMenu').classList.remove('open');
+}
+document.addEventListener('click', e=>{
+  if (!e.target.closest('.menu-wrap')) closeMenu();
+});
 
 /* ============================================================
    الشعارات
@@ -304,19 +440,18 @@ function renderLogo(n){
   const box = document.getElementById(n === 1 ? 'logoBox'  : 'logoBox2');
   const img = document.getElementById(n === 1 ? 'logoImg'  : 'logoImg2');
   const data = state.header['logo' + n];
-  if (data) { img.src = data; box.classList.add('has-logo'); }
-  else      { img.src = '';   box.classList.remove('has-logo'); }
+  if (data){ img.src = data; box.classList.add('has-logo'); }
+  else     { img.src = ''; box.classList.remove('has-logo'); }
 }
 
 function uploadLogo(input, n){
   const f = input.files && input.files[0];
   if (!f) return;
-  if (f.size > 2 * 1024 * 1024) { toast('الصورة كبيرة، اختر أقل من 2 ميغا'); input.value=''; return; }
+  if (f.size > 2 * 1024 * 1024){ toast('الصورة كبيرة، اختر أقل من 2 ميغا'); input.value=''; return; }
   const reader = new FileReader();
   reader.onload = e => {
     state.header['logo' + n] = e.target.result;
-    renderLogo(n);
-    save();
+    renderLogo(n); save();
     toast('تم رفع الشعار ✅');
   };
   reader.readAsDataURL(f);
@@ -324,7 +459,7 @@ function uploadLogo(input, n){
 }
 
 /* ============================================================
-   إدارة الأسئلة
+   الأسئلة
    ============================================================ */
 function addQuestion(type){
   const q = { type, text:'' };
@@ -332,8 +467,8 @@ function addQuestion(type){
   if (type === 'mcq')   { q.options = ['','','','']; q.correct = -1; }
   if (type === 'tf')    { q.correct = null; }
   state.questions.push(q);
-  save();
-  render();
+  save(); render();
+  switchTab('preview');
   setTimeout(()=>{
     const all = document.querySelectorAll('#questions .q-text');
     if (all.length){
@@ -341,17 +476,14 @@ function addQuestion(type){
       last.focus();
       last.scrollIntoView({ behavior:'smooth', block:'center' });
     }
-  }, 60);
+  }, 120);
 }
 
 function move(idx, dir){
   const ni = idx + dir;
   if (ni < 0 || ni >= state.questions.length) return;
-  const tmp = state.questions[idx];
-  state.questions[idx] = state.questions[ni];
-  state.questions[ni] = tmp;
-  save();
-  render();
+  [state.questions[idx], state.questions[ni]] = [state.questions[ni], state.questions[idx]];
+  save(); render();
 }
 
 function render(){
@@ -361,13 +493,12 @@ function render(){
   if (!state.questions.length){
     const d = document.createElement('div');
     d.className = 'empty';
-    d.textContent = 'اضغط على أزرار الإضافة فوق (مقالي / اختيار من متعدد / صح-خطأ) حتى تضيف أسئلة.';
+    d.textContent = 'روح للوحة التحكم واضغط على أحد أزرار الإضافة (مقالي / اختيار من متعدد / صح-خطأ).';
     cont.appendChild(d);
     return;
   }
 
   state.questions.forEach((q, i) => cont.appendChild(buildQuestion(q, i)));
-
   requestAnimationFrame(()=>{
     cont.querySelectorAll('.q-text').forEach(autoGrow);
   });
@@ -377,7 +508,6 @@ function buildQuestion(q, idx){
   const wrap = document.createElement('div');
   wrap.className = 'question';
 
-  /* ---- رأس السؤال ---- */
   const head = document.createElement('div');
   head.className = 'q-head';
 
@@ -393,8 +523,7 @@ function buildQuestion(q, idx){
                   :                      'صح / خطأ';
   head.appendChild(lbl);
 
-  const sp = document.createElement('span');
-  sp.className = 'spacer';
+  const sp = document.createElement('span'); sp.className = 'spacer';
   head.appendChild(sp);
 
   const acts = document.createElement('div');
@@ -417,20 +546,14 @@ function buildQuestion(q, idx){
   head.appendChild(acts);
   wrap.appendChild(head);
 
-  /* ---- نص السؤال ---- */
   const ta = document.createElement('textarea');
   ta.className = 'q-text';
   ta.rows = 1;
   ta.placeholder = 'اكتب نص السؤال هنا...';
   ta.value = q.text || '';
-  ta.addEventListener('input', ()=>{
-    q.text = ta.value;
-    autoGrow(ta);
-    save();
-  });
+  ta.addEventListener('input', ()=>{ q.text = ta.value; autoGrow(ta); save(); });
   wrap.appendChild(ta);
 
-  /* ---- جسم السؤال حسب النوع ---- */
   if (q.type === 'essay')      wrap.appendChild(buildEssay(q));
   else if (q.type === 'mcq')   wrap.appendChild(buildMCQ(q, idx));
   else                         wrap.appendChild(buildTF(q, idx));
@@ -438,10 +561,8 @@ function buildQuestion(q, idx){
   return wrap;
 }
 
-/* ===== مقالي ===== */
 function buildEssay(q){
   const box = document.createElement('div');
-
   const lines = document.createElement('div');
   lines.className = 'lines';
   const n = q.lines || 0;
@@ -455,26 +576,16 @@ function buildEssay(q){
   const ctrl = document.createElement('div');
   ctrl.className = 'lines-ctrl no-print';
   ctrl.appendChild(document.createTextNode('عدد الأسطر:'));
-
-  ctrl.appendChild(iconBtn('−','تقليل الأسطر', ()=>{
-    q.lines = Math.max(0, (q.lines || 0) - 1); save(); render();
-  }));
-
+  ctrl.appendChild(iconBtn('−','تقليل', ()=>{ q.lines = Math.max(0,(q.lines||0)-1); save(); render(); }));
   const v = document.createElement('span');
-  v.textContent = n;
-  v.style.minWidth = '16px';
-  v.style.textAlign = 'center';
+  v.textContent = n; v.style.minWidth='16px'; v.style.textAlign='center';
   ctrl.appendChild(v);
-
-  ctrl.appendChild(iconBtn('+','زيادة الأسطر', ()=>{
-    q.lines = (q.lines || 0) + 1; save(); render();
-  }));
-
+  ctrl.appendChild(iconBtn('+','زيادة', ()=>{ q.lines = (q.lines||0)+1; save(); render(); }));
   box.appendChild(ctrl);
+
   return box;
 }
 
-/* ===== اختيار من متعدد ===== */
 function buildMCQ(q, idx){
   const box = document.createElement('div');
   box.className = 'options';
@@ -490,7 +601,7 @@ function buildMCQ(q, idx){
 
     const inp = document.createElement('input');
     inp.type = 'text';
-    inp.placeholder = 'الخيار ' + (LETTERS[oi] || (oi + 1));
+    inp.placeholder = 'الخيار ' + (LETTERS[oi] || (oi+1));
     inp.value = opt;
     inp.addEventListener('input', ()=>{ q.options[oi] = inp.value; save(); });
     row.appendChild(inp);
@@ -534,7 +645,6 @@ function buildMCQ(q, idx){
   return box;
 }
 
-/* ===== صح / خطأ ===== */
 function buildTF(q, idx){
   const box = document.createElement('div');
   box.className = 'tf-row';
@@ -558,26 +668,179 @@ function buildTF(q, idx){
 }
 
 /* ============================================================
-   تصدير PDF
+   الطباعة والتصدير
    ============================================================ */
+function doPrint(){
+  switchTab('preview');
+  setTimeout(()=>window.print(), 120);
+}
+
 function exportPDF(){
-  const el = document.getElementById('paper');
-  if (!window.html2pdf){ toast('ما تحمّل الملف، راح نفتح الطباعة'); window.print(); return; }
-  toast('جاري تجهيز PDF...');
-  const opt = {
-    margin: [10, 10, 10, 10],
-    filename: 'نموذج-اسئلة.pdf',
-    image: { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true },
-    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak: { mode:['css','legacy'] }
-  };
-  window.html2pdf().set(opt).from(el).save()
-    .then(()=>toast('تم حفظ PDF ✅'))
-    .catch(()=>{ toast('صار خطأ، نفتح الطباعة'); window.print(); });
+  switchTab('preview');
+  setTimeout(()=>{
+    if (!window.html2pdf){ toast('تعذّر التحميل، نفتح الطباعة'); window.print(); return; }
+    toast('جاري تجهيز PDF...');
+    const el = document.getElementById('paper');
+    const opt = {
+      margin: 10,
+      filename: 'نموذج-اسئلة.pdf',
+      image: { type:'jpeg', quality:0.98 },
+      html2canvas: { scale:2, useCORS:true },
+      jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+      pagebreak: { mode:['css','legacy'] }
+    };
+    window.html2pdf().set(opt).from(el).save()
+      .then(()=>toast('تم حفظ PDF ✅'))
+      .catch(()=>{ toast('صار خطأ، نفتح الطباعة'); window.print(); });
+  }, 150);
+}
+
+function exportWord(){
+  switchTab('preview');
+  setTimeout(()=>{
+    const paper = document.getElementById('paper').cloneNode(true);
+    paper.querySelectorAll('.no-print').forEach(el=>el.remove());
+    paper.querySelectorAll('button').forEach(el=>el.remove());
+
+    // حوّل inputs إلى spans
+    paper.querySelectorAll('input').forEach(inp=>{
+      if (inp.type === 'radio'){ inp.remove(); return; }
+      const span = document.createElement('span');
+      span.textContent = inp.value || '';
+      inp.replaceWith(span);
+    });
+    // حوّل textarea إلى span
+    paper.querySelectorAll('textarea').forEach(ta=>{
+      const span = document.createElement('span');
+      span.innerHTML = (ta.value || '').replace(/\n/g,'<br>') || '&nbsp;';
+      ta.replaceWith(span);
+    });
+
+    const styles = `
+      @page { size: A4; margin: 1.5cm; }
+      body { font-family: Tahoma, Arial, sans-serif; direction: rtl; color:#111827; font-size:12pt; }
+      .paper { width:auto; padding:0; }
+      .header-top { display:flex; align-items:center; gap:14px; border-bottom:2px solid #111; padding-bottom:10px; }
+      .logo-box { width:80px; height:80px; border:1px solid #ccc; text-align:center; }
+      .logo-box img { max-width:100%; max-height:100%; }
+      .header-center { flex:1; text-align:center; }
+      .h-school { font-size:16pt; font-weight:bold; }
+      .h-title { font-size:14pt; font-weight:bold; }
+      .h-sub { font-size:11pt; color:#555; }
+      .header-meta { display:flex; gap:10px; margin-top:8px; font-size:11pt; }
+      .meta-item { flex:1; border-bottom:1px solid #999; padding:3px 2px; }
+      .meta-item label { font-weight:bold; }
+      .question { page-break-inside: avoid; margin-bottom:12px; }
+      .q-num { font-weight:bold; color:#2563eb; }
+      .q-type { font-size:9pt; background:#eef2ff; color:#4338ca; padding:1px 6px; }
+      .line { border-bottom:1px dotted #666; height:24px; }
+      .option-row input[type=text] { border:none; border-bottom:1px dotted #999; }
+      .empty { display:none; }
+    `;
+
+    const html = `<!DOCTYPE html>
+      <html xmlns:o='urn:schemas-microsoft-com:office:office'
+            xmlns:w='urn:schemas-microsoft-com:office:word'
+            xmlns='http://www.w3.org/TR/REC-html40' dir='rtl' lang='ar'>
+      <head><meta charset='utf-8'><title>نموذج أسئلة</title>
+      <style>${styles}</style></head>
+      <body>${paper.outerHTML}</body></html>`;
+
+    const blob = new Blob(['\ufeff', html], { type:'application/msword' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'نموذج-اسئلة.doc';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+    toast('تم حفظ ملف Word ✅');
+  }, 150);
 }
 
 /* ============================================================
    نسخة احتياطية / استيراد / حذف
    ============================================================ */
-functi
+function backup(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'نموذج-اسئلة.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  toast('تم حفظ نسخة احتياطية 💾');
+}
+
+function restore(input){
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (!d || !d.header || !Array.isArray(d.questions)) throw 0;
+      state = d;
+      HEADER_FIELDS.forEach(id=>{
+        const el = document.getElementById(id);
+        if (el) el.value = state.header[id] || '';
+      });
+      renderLogo(1); renderLogo(2);
+      render(); save();
+      switchTab('preview');
+      toast('تم الاستيراد ✅');
+    } catch(err){ toast('الملف غير صالح ❌'); }
+  };
+  r.readAsText(f);
+  input.value = '';
+}
+
+function clearAll(){
+  if (!confirm('متأكد تريد تحذف كل الأسئلة؟')) return;
+  state.questions = [];
+  save(); render();
+  toast('تم الحذف 🗑️');
+}
+
+/* ============================================================
+   قبل الطباعة: نخلي المعاينة فعالة
+   ============================================================ */
+window.addEventListener('beforeprint', ()=>switchTab('preview'));
+
+/* ============================================================
+   الإقلاع
+   ============================================================ */
+function init(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw){
+      const loaded = JSON.parse(raw);
+      if (loaded && loaded.header && Array.isArray(loaded.questions)){
+        state = loaded;
+        state.header = Object.assign(
+          { school:'', title:'نموذج أسئلة', sub:'', subject:'', grade:'',
+            date:'', student:'', duration:'', mark:'', logo1:null, logo2:null },
+          state.header
+        );
+      }
+    }
+  } catch(e){ console.warn(e); }
+
+  HEADER_FIELDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = state.header[id] || '';
+    el.addEventListener('input', ()=>{ state.header[id] = el.value; save(); });
+  });
+
+  renderLogo(1); renderLogo(2);
+  render();
+}
+
+init();
+</script>
+
+</body>
+</html>
