@@ -2,529 +2,375 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>منشئ نماذج الأسئلة</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; }
-
-:root {
-  --ink:#111827;
-  --muted:#6b7280;
-  --line:#d1d5db;
-  --accent:#2563eb;
-  --accent2:#10b981;
-  --danger:#ef4444;
-  --bg:#f3f4f6;
-  --topbar:#0f172a;
-  --nav-h:68px;
+*,*::before,*::after{box-sizing:border-box;}
+:root{
+  --ink:#111827;--muted:#6b7280;--line:#d1d5db;
+  --accent:#2563eb;--accent2:#10b981;--danger:#ef4444;
+  --bg:#e5e7eb;--topbar:#0f172a;--nav-h:64px;
 }
-
-html, body { margin:0; padding:0; }
-
-body {
+html,body{margin:0;padding:0;}
+body{
   background:var(--bg);
-  font-family:"Tahoma","Segoe UI","Arial",sans-serif;
-  color:var(--ink);
-  min-height:100vh;
-  padding-bottom:calc(var(--nav-h) + 20px);
-  padding-bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
-  font-size:14px;
+  font-family:"Tahoma","Segoe UI",Arial,sans-serif;
+  color:var(--ink);font-size:14px;min-height:100vh;
+  padding-bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
   -webkit-tap-highlight-color:transparent;
 }
 
-/* ============ Topbar ============ */
-.topbar {
-  position:sticky; top:0; z-index:100;
-  background:var(--topbar); color:#fff;
-  height:58px; padding:0 12px;
-  display:flex; align-items:center; gap:8px;
+/* ===== Topbar ===== */
+.topbar{
+  position:sticky;top:0;z-index:100;background:var(--topbar);color:#fff;
+  height:56px;padding:0 10px;display:flex;align-items:center;gap:8px;
   box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
-.topbar-title {
-  font-size:14px; font-weight:bold; margin-inline-end:auto;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  min-width:0;
+.topbar-title{
+  font-size:13px;font-weight:bold;margin-inline-end:auto;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;
 }
-.topbar-title small {
-  display:block; font-size:11px; color:#94a3b8;
-  font-weight:normal; margin-top:1px;
-}
-.icon-btn {
-  width:40px; height:40px; border:none; border-radius:10px;
-  background:rgba(255,255,255,.08); color:#fff;
-  display:inline-flex; align-items:center; justify-content:center;
-  cursor:pointer; transition:background .15s; flex:0 0 auto; padding:0;
-  font-family:inherit;
-}
-.icon-btn:hover { background:rgba(255,255,255,.2); }
-.icon-btn:active { transform:scale(.94); }
-.icon-btn svg { width:20px; height:20px; display:block; }
-
-/* ============ Menu ============ */
-.menu-wrap { position:relative; }
-.menu {
-  position:absolute; top:calc(100% + 8px); left:0;
-  background:#fff; color:var(--ink); min-width:220px;
-  border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.22);
-  padding:6px; display:none; z-index:200;
-  border:1px solid #e5e7eb;
-}
-.menu.open { display:block; }
-.menu button {
-  width:100%; text-align:right; border:none; background:transparent;
-  padding:11px 12px; border-radius:8px; font-family:inherit;
-  font-size:14px; cursor:pointer; color:var(--ink);
-  display:flex; align-items:center; gap:10px;
-}
-.menu button:hover { background:#f3f4f6; }
-.menu button.danger { color:var(--danger); }
-.menu button.danger:hover { background:#fef2f2; }
-.menu hr { border:none; border-top:1px solid #e5e7eb; margin:4px 0; }
-.menu .mi { font-size:16px; width:20px; text-align:center; }
-
-/* ============ Main ============ */
-main {
-  padding:14px 12px;
-  max-width:100%;
-  overflow-x:hidden;
-}
-.view { display:none; }
-.view.active { display:block; }
-
-/* ============ Bottom Nav ============ */
-.bottomnav {
-  position:fixed; bottom:0; left:0; right:0;
-  background:#fff; border-top:1px solid #e5e7eb;
-  display:flex; justify-content:space-around; align-items:stretch;
-  padding:6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-  z-index:150;
-  box-shadow:0 -2px 14px rgba(0,0,0,.08);
-  min-height:var(--nav-h);
-}
-.navbtn {
-  flex:1; border:none; background:transparent; color:var(--muted);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:3px; padding:6px 4px; border-radius:10px; cursor:pointer;
-  font-family:inherit; font-size:11px; font-weight:bold;
-  transition:background .15s, color .15s; min-width:0;
-}
-.navbtn svg {
-  width:22px; height:22px;
-  stroke:currentColor;
-}
-.navbtn:hover { background:#f9fafb; }
-.navbtn.active { color:var(--accent); background:#eff6ff; }
-
-@media (min-width:900px) {
-  body { padding-bottom:calc(var(--nav-h) + 30px); }
-  .bottomnav {
-    max-width:760px; margin:0 auto;
-    left:50%; transform:translateX(-50%); right:auto;
-    border-radius:16px 16px 0 0;
-    border:1px solid #e5e7eb; border-bottom:none;
-  }
-}
-
-/* ============ الورقة ============ */
-.paper-wrap { display:flex; justify-content:center; }
-.paper {
-  width:100%; max-width:21cm;
-  background:#fff;
-  padding:clamp(18px,5vw,1.6cm) clamp(16px,5vw,1.5cm);
-  box-shadow:0 2px 22px rgba(0,0,0,.12);
-  border-radius:3px;
-  font-size:clamp(12px,3.4vw,15px);
-  line-height:1.75;
-}
-.paper-header { margin-bottom:18px; }
-.header-top {
-  display:flex; align-items:center; gap:10px;
-  border-bottom:2.5px solid #111827; padding-bottom:10px;
-}
-.logo-box {
-  width:clamp(56px,17vw,80px);
-  height:clamp(56px,17vw,80px);
-  flex:0 0 clamp(56px,17vw,80px);
-  border:1.5px dashed var(--line);
-  border-radius:8px;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; overflow:hidden; background:#f9fafb;
-  transition:border-color .15s, background .15s;
-}
-.logo-box:hover { border-color:var(--accent); background:#eff6ff; }
-.logo-box img { width:100%; height:100%; object-fit:contain; display:none; }
-.logo-box.has-logo img { display:block; }
-.logo-box.has-logo .logo-placeholder { display:none; }
-.logo-box.has-logo { border-style:solid; border-color:#e5e7eb; }
-.logo-placeholder {
-  font-size:10px; color:var(--muted); text-align:center;
-  line-height:1.3; padding:4px;
-}
-.header-center { flex:1; text-align:center; min-width:0; }
-.h-school {
-  font-size:clamp(14px,4vw,20px); font-weight:bold;
-  margin-bottom:3px; min-height:1.2em;
-}
-.h-title {
-  font-size:clamp(12px,3.4vw,16px); font-weight:bold;
-  color:#374151; min-height:1.2em;
-}
-.h-sub {
-  font-size:clamp(10px,2.8vw,13px); color:var(--muted);
-  min-height:1.2em;
-}
-.header-meta {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
-  gap:6px 12px; margin-top:10px;
-  font-size:clamp(11px,3vw,14px);
-}
-.meta-item {
-  display:flex; align-items:baseline; gap:6px;
-  border-bottom:1px solid var(--line); padding:4px 2px;
-  min-width:0;
-}
-.meta-item label {
-  font-weight:bold; color:#374151; white-space:nowrap;
-  font-size:clamp(10px,2.8vw,13px);
-}
-.meta-item .val {
-  flex:1; min-width:0; color:var(--ink);
-  overflow-wrap:anywhere;
-  min-height:1.2em;
-}
-
-/* ============ الأسئلة في المعاينة ============ */
-#paper-questions { margin-top:16px; }
-.empty-note {
-  text-align:center; color:#9ca3af; font-size:13px;
-  padding:40px 10px; border:2px dashed #e5e7eb;
-  border-radius:10px;
-}
-.question {
-  margin-bottom:16px;
-  page-break-inside:avoid;
-  break-inside:avoid;
-}
-.q-head { display:flex; align-items:baseline; gap:8px; margin-bottom:3px; flex-wrap:wrap; }
-.q-num { font-weight:bold; font-size:1.05em; color:var(--accent); min-width:22px; }
-.q-type-tag {
-  font-size:.75em; background:#eef2ff; color:#4338ca;
-  padding:2px 8px; border-radius:20px; font-weight:bold;
-}
-.q-text-display {
-  padding-inline-start:22px; white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  min-height:1.4em;
-}
-.q-text-display:empty::before {
-  content:"نص السؤال...";
-  color:#c7cbd1;
-}
-.options-display { margin-top:6px; padding-inline-start:22px; }
-.option-display {
-  display:flex; align-items:baseline; gap:8px;
-  padding:3px 0; overflow-wrap:anywhere;
-}
-.opt-letter {
-  width:22px; height:22px; flex:0 0 22px;
-  border:1.5px solid var(--line); border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.8em; font-weight:bold; color:#374151;
-}
-.opt-letter.correct {
-  background:var(--accent2); color:#fff; border-color:var(--accent2);
-}
-.opt-text { flex:1; min-width:0; }
-.lines-display { margin-top:6px; padding-inline-start:22px; }
-.line-row { height:24px; border-bottom:1px dotted #b8bec7; }
-.tf-display {
-  margin-top:6px; padding-inline-start:22px;
-  display:flex; gap:20px; font-size:.95em;
-}
-.tf-chip { display:flex; align-items:center; gap:6px; }
-.tf-chip .circle {
-  width:14px; height:14px; border-radius:50%;
-  border:1.5px solid var(--line);
-  display:inline-block;
-}
-.tf-chip.correct .circle {
-  background:var(--accent2); border-color:var(--accent2);
-}
-
-/* ============ لوحة التحكم ============ */
-.subtabs {
-  display:flex; gap:6px; overflow-x:auto;
-  padding:5px; background:#fff; border-radius:12px;
-  margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.05);
-  scrollbar-width:none;
-}
-.subtabs::-webkit-scrollbar { display:none; }
-.subtab {
-  flex:1 0 auto; border:none; background:transparent;
-  color:var(--muted); padding:10px 14px; border-radius:9px;
-  cursor:pointer; font-family:inherit; font-size:13px;
-  font-weight:bold; white-space:nowrap;
-  transition:background .15s, color .15s;
-  display:flex; align-items:center; gap:6px;
-  justify-content:center;
-}
-.subtab:hover { background:#f9fafb; color:var(--ink); }
-.subtab.active { background:var(--accent); color:#fff; }
-.subtab .em { font-size:15px; }
-
-.subview { display:none; }
-.subview.active { display:block; }
-
-.card {
-  background:#fff; border-radius:14px; padding:18px;
-  margin-bottom:14px; box-shadow:0 1px 6px rgba(0,0,0,.05);
-}
-.card h3 {
-  margin:0 0 14px; font-size:15px;
-  display:flex; align-items:center; gap:8px; font-weight:bold;
-}
-.card h3 .em { font-size:18px; }
-.card .hint {
-  margin:10px 0 0; font-size:12px;
-  color:var(--muted); line-height:1.7;
-}
-
-.form-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px;
-}
-.field { display:flex; flex-direction:column; gap:4px; }
-.field label {
-  font-size:12px; color:var(--muted); font-weight:bold;
-}
-.field input {
-  border:1.5px solid #e5e7eb; border-radius:9px;
-  padding:10px 12px; font-family:inherit; font-size:14px;
-  background:#fafafa; outline:none; color:var(--ink);
-  width:100%; transition:border-color .15s, box-shadow .15s;
-}
-.field input:focus {
-  border-color:var(--accent); background:#fff;
-  box-shadow:0 0 0 3px rgba(37,99,235,.1);
-}
-
-.logo-row {
-  display:flex; align-items:center; gap:12px;
-  padding:10px; border:1.5px dashed #e5e7eb;
-  border-radius:10px; margin-top:10px;
-}
-.logo-thumb {
-  width:56px; height:56px; flex:0 0 56px;
-  border-radius:8px; background:#f9fafb;
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden;
-}
-.logo-thumb img {
-  width:100%; height:100%; object-fit:contain;
-}
-.logo-thumb .empty-thumb {
-  font-size:10px; color:var(--muted); text-align:center;
-  line-height:1.2; padding:4px;
-}
-.logo-row .info { flex:1; min-width:0; }
-.logo-row .info b { display:block; font-size:13px; }
-.logo-row .info span { font-size:11px; color:var(--muted); }
-.logo-row .actions { display:flex; gap:6px; flex-wrap:wrap; }
-
-.btn {
-  border:none; border-radius:9px; padding:9px 14px;
-  font-family:inherit; font-size:13px; font-weight:bold;
-  cursor:pointer; transition:filter .15s, transform .1s;
-  color:#fff;
-  display:inline-flex; align-items:center; gap:6px;
-  white-space:nowrap;
-}
-.btn:hover { filter:brightness(1.1); }
-.btn:active { transform:translateY(1px); }
-.btn.blue   { background:var(--accent); }
-.btn.green  { background:var(--accent2); }
-.btn.red    { background:var(--danger); }
-.btn.gray   { background:#4b5563; }
-.btn.ghost  { background:#f3f4f6; color:var(--ink); }
-.btn.ghost:hover { background:#e5e7eb; filter:none; }
-.btn.sm { padding:7px 12px; font-size:12px; }
-
-.add-grid {
-  display:grid; grid-template-columns:1fr;
-  gap:10px; margin-bottom:16px;
-}
-@media (min-width:600px) {
-  .add-grid { grid-template-columns:repeat(3,1fr); }
-}
-.add-btn {
-  border:2px dashed #d1d5db; background:#fafafa;
-  padding:18px 12px; border-radius:12px;
-  cursor:pointer; font-family:inherit; font-size:14px;
-  font-weight:bold; color:var(--ink);
-  transition:border-color .15s, background .15s, color .15s;
-  display:flex; flex-direction:column;
-  align-items:center; gap:6px; text-align:center;
-}
-.add-btn:hover, .add-btn:active {
-  border-color:var(--accent); background:#eff6ff; color:var(--accent);
-}
-.add-btn .em { font-size:24px; }
-.add-btn .desc {
-  font-size:11px; color:var(--muted); font-weight:normal;
-}
-
-.q-card {
-  background:#fff; border-radius:12px; padding:14px;
-  margin-bottom:12px; border:1px solid #e5e7eb;
-}
-.q-card-head {
-  display:flex; align-items:center; gap:8px;
-  margin-bottom:10px; flex-wrap:wrap;
-}
-.q-card-head .num { font-weight:bold; color:var(--accent); font-size:15px; }
-.q-card-head .tag {
-  font-size:11px; background:#eef2ff; color:#4338ca;
-  padding:2px 8px; border-radius:20px; font-weight:bold;
-}
-.q-card-head .spacer { flex:1; }
-.mini-btn {
-  width:32px; height:32px; border-radius:8px; border:none;
-  background:#f3f4f6; color:var(--ink); font-size:14px;
-  cursor:pointer; display:inline-flex; align-items:center;
-  justify-content:center; font-family:inherit; padding:0;
+.topbar-title small{display:block;font-size:10px;color:#94a3b8;font-weight:normal;margin-top:1px;}
+.icon-btn{
+  width:38px;height:38px;border:none;border-radius:10px;
+  background:rgba(255,255,255,.08);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;flex:0 0 auto;padding:0;font-family:inherit;
   transition:background .15s;
 }
-.mini-btn:hover { background:#e5e7eb; }
-.mini-btn:active { transform:scale(.94); }
-.mini-btn:disabled { opacity:.35; cursor:default; }
-.mini-btn.danger { color:var(--danger); }
-.mini-btn.danger:hover { background:#fee2e2; }
+.icon-btn:hover{background:rgba(255,255,255,.2);}
+.icon-btn:active{transform:scale(.94);}
+.icon-btn svg{width:20px;height:20px;display:block;}
 
-.q-textarea {
-  width:100%; border:1.5px solid #e5e7eb; border-radius:9px;
-  padding:10px 12px; font-family:inherit; font-size:14px;
-  line-height:1.7; resize:vertical; min-height:56px;
-  background:#fafafa; outline:none; color:var(--ink);
+/* ===== Menu ===== */
+.menu-wrap{position:relative;}
+.menu{
+  position:absolute;top:calc(100% + 8px);left:0;background:#fff;color:var(--ink);
+  min-width:220px;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.22);
+  padding:6px;display:none;z-index:200;border:1px solid #e5e7eb;
+}
+.menu.open{display:block;}
+.menu button{
+  width:100%;text-align:right;border:none;background:transparent;
+  padding:11px 12px;border-radius:8px;font-family:inherit;font-size:14px;
+  cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:10px;
+}
+.menu button:hover{background:#f3f4f6;}
+.menu button.danger{color:var(--danger);}
+.menu button.danger:hover{background:#fef2f2;}
+.menu hr{border:none;border-top:1px solid #e5e7eb;margin:4px 0;}
+.menu .mi{font-size:16px;width:20px;text-align:center;}
+
+/* ===== Main ===== */
+main{padding:12px 8px;max-width:100%;overflow-x:hidden;}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ===== Bottom Nav ===== */
+.bottomnav{
+  position:fixed;bottom:0;left:0;right:0;background:#fff;
+  border-top:1px solid #e5e7eb;
+  display:flex;justify-content:space-around;align-items:stretch;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+  z-index:150;box-shadow:0 -2px 14px rgba(0,0,0,.08);
+  min-height:var(--nav-h);
+}
+.navbtn{
+  flex:1;border:none;background:transparent;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px 4px;border-radius:10px;cursor:pointer;
+  font-family:inherit;font-size:11px;font-weight:bold;
+  transition:background .15s,color .15s;min-width:0;
+}
+.navbtn svg{width:22px;height:22px;stroke:currentColor;fill:none;}
+.navbtn:hover{background:#f9fafb;}
+.navbtn.active{color:var(--accent);background:#eff6ff;}
+
+@media(min-width:900px){
+  .bottomnav{
+    max-width:760px;margin:0 auto;left:50%;transform:translateX(-50%);
+    right:auto;border-radius:16px 16px 0 0;border:1px solid #e5e7eb;border-bottom:none;
+  }
+}
+
+/* ===== Preview area ===== */
+.preview-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:10px 0;
+}
+/* الصفحة A4 */
+.page{
+  width:210mm;height:297mm;background:#fff;
+  padding:12mm;box-sizing:border-box;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  font-size:12pt;line-height:1.6;
+}
+.page-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  flex:1;min-height:0;
+}
+.page-main{flex:1;min-height:0;}
+
+/* watermark */
+.watermark{
+  position:absolute;inset:0;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;overflow:hidden;
+}
+.watermark-text{
+  font-weight:bold;color:#000;opacity:.08;
+  transform:rotate(-30deg);white-space:nowrap;
+  font-family:Tahoma,Arial,sans-serif;
+}
+.watermark-img{
+  max-width:80%;max-height:80%;object-fit:contain;
+  transform:rotate(-30deg);opacity:.1;
+}
+
+/* Header (first page only) */
+.page-header{margin-bottom:8px;}
+.header-grid{
+  display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;
+  align-items:start;
+}
+.hcol{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.hcol-right{text-align:right;}
+.hcol-center{text-align:center;align-items:center;}
+.hcol-left{text-align:left;align-items:flex-start;}
+.hfield{white-space:pre-wrap;overflow-wrap:anywhere;}
+.header-extra{
+  text-align:center;margin-top:6px;white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.header-line{
+  border-top:2px solid #000;margin:8px 0 6px 0;
+}
+.header-note{
+  text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
+  margin-bottom:10px;
+}
+.header-note:empty{display:none;}
+
+/* Questions */
+.q-item{
+  margin-bottom:8px;white-space:pre-wrap;overflow-wrap:anywhere;
+  page-break-inside:avoid;break-inside:avoid;
+}
+
+/* Footer (last page only) */
+.page-footer{
+  margin-top:auto;padding-top:14px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.footer-wish{
+  text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.footer-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  align-items:start;
+}
+.footer-grid .fcol{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;}
+.footer-grid .fcol.right{text-align:right;}
+.footer-grid .fcol.center{text-align:center;}
+.footer-grid .fcol.left{text-align:left;}
+
+/* Scaling to fit smaller screens - view only */
+@media(max-width:900px){
+  .page{
+    width:100%;height:auto;min-height:auto;
+    padding:5vw 4vw;box-shadow:0 2px 10px rgba(0,0,0,.1);
+  }
+}
+
+/* ===== Control panel ===== */
+.subtabs{
+  display:flex;gap:5px;overflow-x:auto;padding:5px;
+  background:#fff;border-radius:12px;margin-bottom:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);scrollbar-width:none;
+}
+.subtabs::-webkit-scrollbar{display:none;}
+.subtab{
+  flex:1 0 auto;border:none;background:transparent;color:var(--muted);
+  padding:9px 12px;border-radius:9px;cursor:pointer;font-family:inherit;
+  font-size:12.5px;font-weight:bold;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;justify-content:center;
+}
+.subtab.active{background:var(--accent);color:#fff;}
+.subtab .em{font-size:14px;}
+
+.subview{display:none;}
+.subview.active{display:block;}
+
+.card{
+  background:#fff;border-radius:12px;padding:14px;
+  margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+.card h3{
+  margin:0 0 12px;font-size:14px;display:flex;align-items:center;
+  gap:8px;font-weight:bold;
+}
+.card h3 .em{font-size:16px;}
+.card .hint{margin:8px 0 0;font-size:11.5px;color:var(--muted);line-height:1.7;}
+
+.section-title{
+  font-size:12px;color:var(--muted);font-weight:bold;
+  margin:10px 0 6px;padding-bottom:4px;border-bottom:1px solid #f3f4f6;
+}
+.section-title:first-child{margin-top:0;}
+
+/* Field group */
+.field-group{
+  display:flex;flex-direction:column;gap:4px;
+  padding:8px;border:1px solid #f3f4f6;border-radius:8px;
+  margin-bottom:8px;background:#fafafa;
+}
+.field-group > label{
+  font-size:11.5px;font-weight:bold;color:#374151;
+}
+.field-group input[type="text"],
+.field-group input[type="number"]{
+  border:1.5px solid #e5e7eb;border-radius:7px;
+  padding:8px 10px;font-family:inherit;font-size:13px;
+  background:#fff;outline:none;color:var(--ink);width:100%;
   transition:border-color .15s, box-shadow .15s;
 }
-.q-textarea:focus {
-  border-color:var(--accent); background:#fff;
+.field-group input:focus{
+  border-color:var(--accent);
   box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
-.q-textarea::placeholder { color:#c7cbd1; }
+.field-group textarea{
+  border:1.5px solid #e5e7eb;border-radius:7px;
+  padding:8px 10px;font-family:inherit;font-size:13px;
+  background:#fff;outline:none;color:var(--ink);width:100%;
+  min-height:50px;resize:vertical;
+}
+.field-group textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
 
-.options-edit { margin-top:8px; }
-.option-edit-row {
-  display:flex; align-items:center; gap:8px; margin-bottom:6px;
-  flex-wrap:wrap;
+.font-row{
+  display:grid;grid-template-columns:1.6fr 60px 80px;gap:5px;
 }
-.option-edit-row .letter {
-  width:28px; height:28px; flex:0 0 28px;
-  border:1.5px solid var(--line); border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; font-weight:bold; color:#374151;
+.font-row select,
+.font-row input[type="number"]{
+  border:1.5px solid #e5e7eb;border-radius:7px;
+  padding:7px 8px;font-family:inherit;font-size:12px;
+  background:#fff;outline:none;color:var(--ink);width:100%;
 }
-.option-edit-row input[type="text"] {
-  flex:1; border:1.5px solid #e5e7eb; border-radius:8px;
-  padding:8px 10px; font-family:inherit; font-size:13px;
-  background:#fafafa; outline:none;
-  transition:border-color .15s;
-  min-width:100px;
-}
-.option-edit-row input[type="text"]:focus {
-  border-color:var(--accent); background:#fff;
-}
-.option-edit-row .correct-pick {
-  display:flex; align-items:center; gap:4px;
-  font-size:11px; color:var(--muted); cursor:pointer;
-  user-select:none; flex:0 0 auto;
-}
-.option-edit-row input[type="radio"] {
-  accent-color:var(--accent2); cursor:pointer;
-  width:18px; height:18px;
-}
-.add-option {
-  border:none; background:transparent; color:var(--accent);
-  font-size:12px; font-weight:bold; cursor:pointer;
-  padding:6px 0; font-family:inherit;
-}
-.add-option:hover { text-decoration:underline; }
+.font-row select:focus,
+.font-row input:focus{border-color:var(--accent);}
 
-.lines-edit {
-  display:flex; align-items:center; gap:8px; margin-top:8px;
-  font-size:12px; color:var(--muted);
+/* Toolbar in control */
+.btn{
+  border:none;border-radius:8px;padding:9px 14px;
+  font-family:inherit;font-size:13px;font-weight:bold;
+  cursor:pointer;color:#fff;display:inline-flex;
+  align-items:center;gap:6px;transition:filter .15s;
 }
-.lines-edit .count {
-  min-width:24px; text-align:center; font-weight:bold;
-  color:var(--ink);
-}
-.tf-edit {
-  margin-top:8px; display:flex; gap:20px;
-  padding:6px 0;
-}
-.tf-edit label {
-  display:flex; align-items:center; gap:6px;
-  font-size:14px; cursor:pointer;
-}
-.tf-edit input { accent-color:var(--accent2); width:18px; height:18px; }
+.btn:hover{filter:brightness(1.1);}
+.btn.blue{background:var(--accent);}
+.btn.green{background:var(--accent2);}
+.btn.gray{background:#4b5563;}
+.btn.red{background:var(--danger);}
+.btn.ghost{background:#f3f4f6;color:var(--ink);}
+.btn.ghost:hover{background:#e5e7eb;filter:none;}
+.btn.sm{padding:7px 11px;font-size:12px;}
 
-.tools-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:10px;
+/* Question cards */
+.q-card{
+  background:#fff;border-radius:10px;padding:12px;
+  margin-bottom:10px;border:1px solid #e5e7eb;
 }
-.tool-btn {
-  border:1px solid #e5e7eb; background:#fff;
-  padding:16px 12px; border-radius:10px;
-  cursor:pointer; font-family:inherit;
-  font-size:13px; font-weight:bold; color:var(--ink);
-  display:flex; align-items:center; gap:10px;
-  justify-content:flex-start;
-  transition:background .15s, border-color .15s;
-  text-align:right;
+.q-card-head{
+  display:flex;align-items:center;gap:6px;margin-bottom:8px;
 }
-.tool-btn:hover { background:#f9fafb; border-color:#9ca3af; }
-.tool-btn .em { font-size:20px; }
-.tool-btn.danger { color:var(--danger); border-color:#fecaca; }
-.tool-btn.danger:hover { background:#fef2f2; }
+.q-card-head .num{font-weight:bold;color:var(--accent);font-size:14px;}
+.q-card-head .spacer{flex:1;}
+.mini-btn{
+  width:30px;height:30px;border-radius:7px;border:none;
+  background:#f3f4f6;color:var(--ink);font-size:13px;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  font-family:inherit;padding:0;
+}
+.mini-btn:hover{background:#e5e7eb;}
+.mini-btn:disabled{opacity:.35;cursor:default;}
+.mini-btn.danger{color:var(--danger);}
+.mini-btn.danger:hover{background:#fee2e2;}
 
-#toast {
-  position:fixed;
-  bottom:calc(var(--nav-h) + 20px);
-  bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
-  left:50%; transform:translateX(-50%) translateY(20px);
-  background:#111827; color:#fff; padding:11px 20px;
-  border-radius:10px; font-size:14px; opacity:0;
-  pointer-events:none; transition:opacity .25s, transform .25s;
-  z-index:999;
-  max-width:90vw; text-align:center;
+.add-q-btn{
+  width:100%;border:2px dashed #d1d5db;background:#fafafa;
+  padding:14px;border-radius:10px;cursor:pointer;
+  font-family:inherit;font-size:13px;font-weight:bold;
+  color:var(--ink);transition:.15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
-#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.add-q-btn:hover{border-color:var(--accent);background:#eff6ff;color:var(--accent);}
+.add-q-btn:disabled{opacity:.5;cursor:not-allowed;}
 
-@media print {
-  @page { size:A4; margin:1.4cm; }
-  body {
-    background:#fff; padding:0 !important;
+/* Toggle */
+.toggle-row{
+  display:flex;align-items:center;gap:8px;padding:6px 0;
+  font-size:13px;cursor:pointer;
+}
+.toggle-row input[type="checkbox"]{
+  width:18px;height:18px;accent-color:var(--accent);cursor:pointer;
+}
+
+/* Tools grid */
+.tools-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;
+}
+.tool-btn{
+  border:1px solid #e5e7eb;background:#fff;padding:14px 12px;
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  font-size:12.5px;font-weight:bold;color:var(--ink);
+  display:flex;align-items:center;gap:8px;justify-content:flex-start;
+  transition:.15s;text-align:right;
+}
+.tool-btn:hover{background:#f9fafb;border-color:#9ca3af;}
+.tool-btn .em{font-size:18px;}
+.tool-btn.danger{color:var(--danger);border-color:#fecaca;}
+.tool-btn.danger:hover{background:#fef2f2;}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
+  left:50%;transform:translateX(-50%) translateY(20px);
+  background:#111827;color:#fff;padding:10px 20px;border-radius:10px;
+  font-size:13px;opacity:0;pointer-events:none;transition:.25s;
+  z-index:999;max-width:90vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Print */
+@media print{
+  @page{size:A4;margin:0;}
+  body{
+    background:#fff !important;padding:0 !important;margin:0 !important;
     font-size:12pt;
   }
-  .topbar, .bottomnav, .no-print, #toast,
-  .subtabs, .add-grid, .tools-grid, .empty-note, .control-hide {
-    display:none !important;
+  .topbar,.bottomnav,.no-print,#toast,.subtabs,.control-panel{display:none !important;}
+  main{padding:0 !important;}
+  .view{display:none !important;}
+  #view-preview{display:block !important;}
+  .preview-wrap{display:block !important;padding:0 !important;gap:0 !important;}
+  .page{
+    box-shadow:none !important;
+    margin:0 !important;
+    page-break-after:always;
+    break-after:page;
+    page-break-inside:avoid;
   }
-  .view { display:none !important; }
-  #view-preview { display:block !important; }
-  main { padding:0; }
-  .paper {
-    width:auto; max-width:100%; margin:0;
-    padding:0; box-shadow:none; border-radius:0;
-    font-size:12pt;
+  .page:last-child{
+    page-break-after:auto;
+    break-after:auto;
   }
-  .logo-box { border-style:solid; border-color:#e5e7eb; }
-  .question { border:none; }
-  .q-num { color:#111827; }
+  .watermark{opacity:1 !important;}
+  .watermark-text{opacity:.08 !important;}
 }
 </style>
 </head>
@@ -537,7 +383,7 @@ main {
     <small id="topbar-sub">صفحة المعاينة</small>
   </div>
 
-  <button class="icon-btn" onclick="doPrint()" title="طباعة" aria-label="طباعة">
+  <button class="icon-btn" onclick="doPrint()" title="طباعة">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="6 9 6 2 18 2 18 9"></polyline>
       <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -546,7 +392,7 @@ main {
   </button>
 
   <div class="menu-wrap">
-    <button class="icon-btn" onclick="toggleMenu(event)" title="المزيد" aria-label="المزيد">
+    <button class="icon-btn" onclick="toggleMenu(event)" title="المزيد">
       <svg viewBox="0 0 24 24" fill="currentColor">
         <circle cx="12" cy="5" r="2"/>
         <circle cx="12" cy="12" r="2"/>
@@ -555,157 +401,306 @@ main {
     </button>
 
     <div class="menu" id="moreMenu">
-      <button onclick="exportPDF()"><span class="mi">📄</span> تصدير PDF</button>
+      <button onclick="exportPDF()"><span class="mi">📄</span> تصدير PDF (طباعة)</button>
       <button onclick="exportWord()"><span class="mi">📝</span> تصدير Word</button>
       <hr>
       <button onclick="backup()"><span class="mi">💾</span> نسخة احتياطية</button>
       <button onclick="triggerImport()"><span class="mi">📂</span> استيراد</button>
       <hr>
-      <button class="danger" onclick="clearAll()"><span class="mi">🗑️</span> حذف كل الأسئلة</button>
+      <button class="danger" onclick="clearAll()"><span class="mi">🗑️</span> حذف الكل</button>
     </div>
 
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="restore(this)">
   </div>
 </header>
 
-<!-- ================= Main ================= -->
 <main>
 
-  <!-- ========== View 1: Preview ========== -->
+  <!-- ========== Preview ========== -->
   <section class="view active" id="view-preview">
-    <div class="paper-wrap">
-      <div class="paper" id="paper">
-        <div class="paper-header">
-          <div class="header-top">
-            <div class="logo-box" id="logoBox" onclick="triggerLogo(1)" title="اضغط لرفع الشعار">
-              <img id="logoImg" alt="">
-              <span class="logo-placeholder">اضغط<br>لرفع<br>الشعار</span>
-            </div>
-
-            <div class="header-center">
-              <div class="h-school" id="p-school">اسم المدرسة</div>
-              <div class="h-title"  id="p-title">نموذج أسئلة</div>
-              <div class="h-sub"    id="p-sub"></div>
-            </div>
-
-            <div class="logo-box" id="logoBox2" onclick="triggerLogo(2)" title="اضغط لرفع الشعار">
-              <img id="logoImg2" alt="">
-              <span class="logo-placeholder">اضغط<br>لرفع<br>الشعار</span>
-            </div>
-          </div>
-
-          <div class="header-meta">
-            <div class="meta-item"><label>المادة:</label><span class="val" id="p-subject"></span></div>
-            <div class="meta-item"><label>الصف:</label><span class="val" id="p-grade"></span></div>
-            <div class="meta-item"><label>التاريخ:</label><span class="val" id="p-date"></span></div>
-            <div class="meta-item"><label>الطالب:</label><span class="val" id="p-student"></span></div>
-            <div class="meta-item"><label>المدة:</label><span class="val" id="p-duration"></span></div>
-            <div class="meta-item"><label>الدرجة:</label><span class="val" id="p-mark"></span></div>
-          </div>
-        </div>
-
-        <div id="paper-questions"></div>
-      </div>
-    </div>
+    <div class="preview-wrap" id="pages-container"></div>
   </section>
 
-  <!-- ========== View 2: Control Panel ========== -->
-  <section class="view" id="view-control">
+  <!-- ========== Control ========== -->
+  <section class="view control-panel" id="view-control">
 
     <div class="subtabs no-print">
-      <button class="subtab active" data-sub="paper">
-        <span class="em">📄</span> إعدادات الورقة
-      </button>
-      <button class="subtab" data-sub="questions">
-        <span class="em">📝</span> إدخال الأسئلة
-      </button>
-      <button class="subtab" data-sub="tools">
-        <span class="em">🧰</span> أدوات
-      </button>
+      <button class="subtab active" data-sub="header"><span class="em">📄</span> الترويسة</button>
+      <button class="subtab" data-sub="watermark"><span class="em">💧</span> علامة مائية</button>
+      <button class="subtab" data-sub="questions"><span class="em">📝</span> الأسئلة</button>
+      <button class="subtab" data-sub="footer"><span class="em">📌</span> التذييل</button>
+      <button class="subtab" data-sub="tools"><span class="em">🧰</span> أدوات</button>
     </div>
 
-    <!-- Sub view: Paper settings -->
-    <div class="subview active" id="sub-paper">
+    <!-- Sub: Header -->
+    <div class="subview active" id="sub-header">
       <div class="card">
-        <h3><span class="em">🏫</span> معلومات المدرسة والنموذج</h3>
-        <div class="form-grid">
-          <div class="field"><label>اسم المدرسة</label><input id="f-school" placeholder="مثال: متوسطة الأمل"></div>
-          <div class="field"><label>عنوان النموذج</label><input id="f-title" placeholder="نموذج أسئلة"></div>
-          <div class="field"><label>العنوان الفرعي</label><input id="f-sub" placeholder="العام الدراسي 2025 - 2026"></div>
-        </div>
-      </div>
+        <h3><span class="em">📄</span> الترويسة (الصفحة الأولى فقط)</h3>
 
-      <div class="card">
-        <h3><span class="em">📋</span> بيانات رأس الورقة</h3>
-        <div class="form-grid">
-          <div class="field"><label>المادة</label><input id="f-subject" placeholder="رياضيات"></div>
-          <div class="field"><label>الصف</label><input id="f-grade" placeholder="الثالث المتوسط"></div>
-          <div class="field"><label>التاريخ</label><input id="f-date" placeholder="2026/01/15"></div>
-          <div class="field"><label>اسم الطالب</label><input id="f-student" placeholder="................"></div>
-          <div class="field"><label>المدة</label><input id="f-duration" placeholder="ساعة"></div>
-          <div class="field"><label>الدرجة</label><input id="f-mark" placeholder="100"></div>
-        </div>
-      </div>
+        <div class="section-title">الجهة اليمنى</div>
 
-      <div class="card">
-        <h3><span class="em">🖼️</span> الشعارات</h3>
-
-        <div class="logo-row">
-          <div class="logo-thumb" id="thumb1">
-            <div class="empty-thumb">لا<br>شعار</div>
-          </div>
-          <div class="info">
-            <b>الشعار الأيمن</b>
-            <span>صورة PNG/JPG أقل من 2MB</span>
-          </div>
-          <div class="actions">
-            <button class="btn blue sm" onclick="triggerLogo(1)">رفع</button>
-            <button class="btn ghost sm" onclick="removeLogo(1)">حذف</button>
+        <div class="field-group">
+          <label>اسم المدرسة</label>
+          <input type="text" data-key="h.school.text" placeholder="اسم المدرسة">
+          <div class="font-row">
+            <select data-key="h.school.family" data-font></select>
+            <input type="number" data-key="h.school.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.school.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
           </div>
         </div>
 
-        <div class="logo-row">
-          <div class="logo-thumb" id="thumb2">
-            <div class="empty-thumb">لا<br>شعار</div>
-          </div>
-          <div class="info">
-            <b>الشعار الأيسر</b>
-            <span>صورة PNG/JPG أقل من 2MB</span>
-          </div>
-          <div class="actions">
-            <button class="btn blue sm" onclick="triggerLogo(2)">رفع</button>
-            <button class="btn ghost sm" onclick="removeLogo(2)">حذف</button>
+        <div class="field-group">
+          <label>المديرية / العنوان الأعلى</label>
+          <input type="text" data-key="h.dir.text" placeholder="المديرية العامة للتربية">
+          <div class="font-row">
+            <select data-key="h.dir.family" data-font></select>
+            <input type="number" data-key="h.dir.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.dir.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
           </div>
         </div>
 
-        <p class="hint">💡 تكدر هم تضغط مباشرة على مربع الشعار داخل ورقة المعاينة.</p>
+        <div class="section-title">الوسط</div>
+
+        <div class="field-group">
+          <label>المادة / العنوان الرئيسي</label>
+          <input type="text" data-key="h.subject.text" placeholder="مثال: أسئلة الرياضيات">
+          <div class="font-row">
+            <select data-key="h.subject.family" data-font></select>
+            <input type="number" data-key="h.subject.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.subject.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>السنة الدراسية</label>
+          <input type="text" data-key="h.year.text" placeholder="العام الدراسي 2025 - 2026">
+          <div class="font-row">
+            <select data-key="h.year.family" data-font></select>
+            <input type="number" data-key="h.year.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.year.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">الجهة اليسرى</div>
+
+        <div class="field-group">
+          <label>الوقت</label>
+          <input type="text" data-key="h.time.text" placeholder="الوقت: ساعة">
+          <div class="font-row">
+            <select data-key="h.time.family" data-font></select>
+            <input type="number" data-key="h.time.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.time.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>المادة (اليسار)</label>
+          <input type="text" data-key="h.subjectLeft.text" placeholder="المادة: ...">
+          <div class="font-row">
+            <select data-key="h.subjectLeft.family" data-font></select>
+            <input type="number" data-key="h.subjectLeft.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.subjectLeft.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>الصف</label>
+          <input type="text" data-key="h.grade.text" placeholder="الصف: ...">
+          <div class="font-row">
+            <select data-key="h.grade.family" data-font></select>
+            <input type="number" data-key="h.grade.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.grade.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">حقل إضافي (اختياري)</div>
+
+        <label class="toggle-row">
+          <input type="checkbox" data-key="h.extra.enabled">
+          <span>تفعيل الحقل الإضافي</span>
+        </label>
+
+        <div class="field-group">
+          <label>نص الحقل الإضافي</label>
+          <input type="text" data-key="h.extra.text" placeholder="نص اختياري يظهر في الترويسة">
+          <div class="font-row">
+            <select data-key="h.extra.family" data-font></select>
+            <input type="number" data-key="h.extra.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.extra.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">الملاحظة (تحت الخط)</div>
+
+        <div class="field-group">
+          <label>نص الملاحظة</label>
+          <input type="text" data-key="h.note.text" placeholder="مثال: أجب عن أربعة أسئلة فقط">
+          <div class="font-row">
+            <select data-key="h.note.family" data-font></select>
+            <input type="number" data-key="h.note.size" min="8" max="72" placeholder="حجم">
+            <select data-key="h.note.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Sub view: Questions -->
+    <!-- Sub: Watermark -->
+    <div class="subview" id="sub-watermark">
+      <div class="card">
+        <h3><span class="em">💧</span> العلامة المائية</h3>
+
+        <div class="field-group">
+          <label>النوع</label>
+          <div class="font-row" style="grid-template-columns:1fr;">
+            <select data-key="wm.type">
+              <option value="none">بدون</option>
+              <option value="text">نص</option>
+              <option value="image">صورة</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>نص العلامة المائية</label>
+          <input type="text" data-key="wm.text" placeholder="مثال: نموذج امتحان">
+        </div>
+
+        <div class="field-group">
+          <label>صورة العلامة المائية</label>
+          <input type="file" id="wmImageInput" accept="image/*" style="border:1.5px solid #e5e7eb;border-radius:7px;padding:8px;background:#fff;">
+          <button class="btn ghost sm" onclick="removeWatermarkImage()" style="margin-top:6px;">حذف الصورة</button>
+        </div>
+
+        <div class="field-group">
+          <label>الحجم (px للنص / % للصورة)</label>
+          <input type="number" data-key="wm.size" min="20" max="400">
+        </div>
+
+        <div class="field-group">
+          <label>اللون (للنص)</label>
+          <input type="color" data-key="wm.color" style="width:60px;height:38px;border:1.5px solid #e5e7eb;border-radius:7px;padding:2px;background:#fff;">
+        </div>
+
+        <div class="field-group">
+          <label>الشفافية (0.01 = شفاف جداً، 1 = معتم)</label>
+          <input type="number" data-key="wm.opacity" min="0.01" max="1" step="0.05">
+        </div>
+
+        <div class="field-group">
+          <label>الدوران (بالدرجات)</label>
+          <input type="number" data-key="wm.rotate" min="-90" max="90" step="5">
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub: Questions -->
     <div class="subview" id="sub-questions">
-      <div class="add-grid">
-        <button class="add-btn" onclick="addQuestion('essay')">
-          <span class="em">📝</span>
-          سؤال مقالي
-          <span class="desc">أسطر للكتابة</span>
+      <div class="card">
+        <h3><span class="em">📝</span> الأسئلة <span id="q-counter" style="font-size:11px;color:#6b7280;font-weight:normal;">(0/8)</span></h3>
+
+        <button class="add-q-btn" id="addQuestionBtn" onclick="addQuestion()">
+          <span style="font-size:16px;">➕</span> إضافة سؤال
         </button>
-        <button class="add-btn" onclick="addQuestion('mcq')">
-          <span class="em">🔘</span>
-          اختيار من متعدد
-          <span class="desc">خيارات أ، ب، ج، د</span>
-        </button>
-        <button class="add-btn" onclick="addQuestion('tf')">
-          <span class="em">✔️</span>
-          صح / خطأ
-          <span class="desc">إجابتان فقط</span>
-        </button>
+
+        <p class="hint">الحد الأقصى 8 أسئلة. كل سؤال له خط وحجم وسماكة مستقلة.</p>
       </div>
 
       <div id="questions-editor"></div>
     </div>
 
-    <!-- Sub view: Tools -->
+    <!-- Sub: Footer -->
+    <div class="subview" id="sub-footer">
+      <div class="card">
+        <h3><span class="em">📌</span> التذييل (أسفل الصفحة الأخيرة فقط)</h3>
+
+        <div class="section-title">العبارة العلوية (وسط)</div>
+
+        <div class="field-group">
+          <label>النص</label>
+          <input type="text" data-key="f.wish.text" placeholder="مع تمنياتنا لكم بالنجاح">
+          <div class="font-row">
+            <select data-key="f.wish.family" data-font></select>
+            <input type="number" data-key="f.wish.size" min="8" max="72" placeholder="حجم">
+            <select data-key="f.wish.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">الصف السفلي (3 أعمدة)</div>
+
+        <div class="field-group">
+          <label>اليمين (اسم المعلم عادةً)</label>
+          <input type="text" data-key="f.right.text" placeholder="اسم المعلم">
+          <div class="font-row">
+            <select data-key="f.right.family" data-font></select>
+            <input type="number" data-key="f.right.size" min="8" max="72" placeholder="حجم">
+            <select data-key="f.right.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>الوسط</label>
+          <input type="text" data-key="f.center.text" placeholder="نص اختياري">
+          <div class="font-row">
+            <select data-key="f.center.family" data-font></select>
+            <input type="number" data-key="f.center.size" min="8" max="72" placeholder="حجم">
+            <select data-key="f.center.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>اليسار</label>
+          <input type="text" data-key="f.left.text" placeholder="نص اختياري">
+          <div class="font-row">
+            <select data-key="f.left.family" data-font></select>
+            <input type="number" data-key="f.left.size" min="8" max="72" placeholder="حجم">
+            <select data-key="f.left.weight">
+              <option value="normal">عادي</option>
+              <option value="bold">عريض</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sub: Tools -->
     <div class="subview" id="sub-tools">
       <div class="card">
         <h3><span class="em">💾</span> التصدير والحفظ</h3>
@@ -720,7 +715,7 @@ main {
       <div class="card">
         <h3><span class="em">⚠️</span> منطقة الخطر</h3>
         <div class="tools-grid">
-          <button class="tool-btn danger" onclick="clearAll()"><span class="em">🗑️</span> حذف كل الأسئلة</button>
+          <button class="tool-btn danger" onclick="clearAll()"><span class="em">🗑️</span> حذف الكل</button>
         </div>
       </div>
 
@@ -728,26 +723,26 @@ main {
         <h3><span class="em">💡</span> ملاحظات</h3>
         <p class="hint">
           • كل شي ينحفظ تلقائياً بالمتصفح.<br>
-          • الطباعة تعرض ورقة المعاينة فقط بدون أزرار.<br>
-          • زر الطباعة 🖨️ فوق على اليسار.<br>
-          • قائمة الثلاث نقاط ⋮ فيها كل خيارات التصدير.
+          • الطباعة تعرض صفحات A4 فقط.<br>
+          • الترويسة تظهر بالصفحة الأولى فقط، والتذييل بأسفل الصفحة الأخيرة.
         </p>
       </div>
     </div>
+
   </section>
 </main>
 
 <!-- ================= Bottom Nav ================= -->
 <nav class="bottomnav no-print">
   <button class="navbtn active" data-view="preview">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
       <circle cx="12" cy="12" r="3"/>
     </svg>
     المعاينة
   </button>
   <button class="navbtn" data-view="control">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="4" y1="21" x2="4" y2="14"/>
       <line x1="4" y1="10" x2="4" y2="3"/>
       <line x1="12" y1="21" x2="12" y2="12"/>
@@ -765,417 +760,506 @@ main {
 <div id="toast"></div>
 
 <script>
-/* ============================================================
-   1) الثوابت والحالة
-   ============================================================ */
-var STORAGE_KEY = 'qform_v4';
-var LETTERS = ['أ','ب','ج','د','هـ','و','ز','ح','ط','ي','ك','ل'];
-var HEADER_FIELDS = ['school','title','sub','subject','grade','date','student','duration','mark'];
+"use strict";
 
-var state = {
-  header: {
-    school:'', title:'نموذج أسئلة', sub:'',
-    subject:'', grade:'', date:'',
-    student:'', duration:'', mark:'',
-    logo1:null, logo2:null
+/* ============================================================
+   الإعدادات والثوابت
+   ============================================================ */
+const STORAGE_KEY = 'qform_v5';
+const MAX_QUESTIONS = 8;
+
+const FONTS = [
+  { label: 'Tahoma', value: 'Tahoma, Arial, sans-serif' },
+  { label: 'Arial', value: 'Arial, sans-serif' },
+  { label: 'Times New Roman', value: '"Times New Roman", serif' },
+  { label: 'Traditional Arabic', value: '"Traditional Arabic", serif' },
+  { label: 'Simplified Arabic', value: '"Simplified Arabic", serif' },
+  { label: 'Sakkal Majalla', value: '"Sakkal Majalla", serif' },
+  { label: 'Andalus', value: '"Andalus", serif' },
+  { label: 'Diwani', value: '"Diwani", cursive' },
+  { label: 'Arabic Typesetting', value: '"Arabic Typesetting", serif' },
+  { label: 'Calibri', value: 'Calibri, sans-serif' },
+  { label: 'Courier New', value: '"Courier New", monospace' }
+];
+
+/* ============================================================
+   الحالة
+   ============================================================ */
+const defaultState = {
+  h: {
+    school:      { text: 'اسم المدرسة',        family: 'Tahoma', size: 16, weight: 'bold'   },
+    dir:         { text: 'المديرية العامة',    family: 'Tahoma', size: 12, weight: 'normal' },
+    subject:     { text: 'المادة / عنوان الأسئلة', family: 'Tahoma', size: 18, weight: 'bold' },
+    year:        { text: 'العام الدراسي 2025 - 2026', family: 'Tahoma', size: 12, weight: 'normal' },
+    time:        { text: 'الوقت: ساعة',        family: 'Tahoma', size: 12, weight: 'normal' },
+    subjectLeft: { text: 'المادة: ...',        family: 'Tahoma', size: 12, weight: 'normal' },
+    grade:       { text: 'الصف: ...',          family: 'Tahoma', size: 12, weight: 'normal' },
+    extra:       { enabled: false, text: 'حقل إضافي', family: 'Tahoma', size: 12, weight: 'normal' },
+    note:        { text: 'أجب عن أربعة أسئلة فقط', family: 'Tahoma', size: 14, weight: 'bold' }
+  },
+  wm: {
+    type: 'none',
+    text: 'نموذج امتحان',
+    image: null,
+    size: 100,
+    color: '#000000',
+    opacity: 0.08,
+    rotate: -30
+  },
+  f: {
+    wish:   { text: 'مع تمنياتنا لكم بالنجاح', family: 'Tahoma', size: 14, weight: 'bold'   },
+    right:  { text: 'اسم المعلم',              family: 'Tahoma', size: 12, weight: 'normal' },
+    center: { text: '',                        family: 'Tahoma', size: 12, weight: 'normal' },
+    left:   { text: '',                        family: 'Tahoma', size: 12, weight: 'normal' }
   },
   questions: []
 };
 
-var saveTimer = null;
+let state = JSON.parse(JSON.stringify(defaultState));
 
 /* ============================================================
-   2) أدوات مساعدة
+   أدوات مساعدة
    ============================================================ */
+function $(id) { return document.getElementById(id); }
+
+function setNested(obj, path, val) {
+  const parts = path.split('.');
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    if (!(parts[i] in cur)) cur[parts[i]] = {};
+    cur = cur[parts[i]];
+  }
+  cur[parts[parts.length - 1]] = val;
+}
+
+function getNested(obj, path) {
+  return path.split('.').reduce(function(o, k) { return o ? o[k] : undefined; }, obj);
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+let saveTimer = null;
 function save() {
   if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(function(){
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e) {
-      console.warn('فشل الحفظ:', e);
-    }
+  saveTimer = setTimeout(function() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e) { console.warn('save failed', e); }
   }, 250);
 }
 
+let renderTimer = null;
+function scheduleRender() {
+  if (renderTimer) clearTimeout(renderTimer);
+  renderTimer = setTimeout(function() { render(); }, 200);
+}
+
 function toast(msg) {
-  var t = document.getElementById('toast');
+  const t = $('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
   if (t._timer) clearTimeout(t._timer);
-  t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2000);
-}
-
-function $(id) { return document.getElementById(id); }
-
-/* ============================================================
-   3) التنقل
-   ============================================================ */
-function switchView(name) {
-  var navs = document.querySelectorAll('.navbtn');
-  for (var i = 0; i < navs.length; i++) {
-    navs[i].classList.toggle('active', navs[i].getAttribute('data-view') === name);
-  }
-  var views = document.querySelectorAll('.view');
-  for (var j = 0; j < views.length; j++) {
-    views[j].classList.toggle('active', views[j].id === 'view-' + name);
-  }
-  var sub = $('topbar-sub');
-  if (sub) sub.textContent = (name === 'preview') ? 'صفحة المعاينة' : 'لوحة التحكم';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function switchSub(name) {
-  var tabs = document.querySelectorAll('.subtab');
-  for (var i = 0; i < tabs.length; i++) {
-    tabs[i].classList.toggle('active', tabs[i].getAttribute('data-sub') === name);
-  }
-  var subs = document.querySelectorAll('.subview');
-  for (var j = 0; j < subs.length; j++) {
-    subs[j].classList.toggle('active', subs[j].id === 'sub-' + name);
-  }
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2000);
 }
 
 /* ============================================================
-   4) القائمة
+   بناء عناصر الورقة
    ============================================================ */
-function toggleMenu(e) {
-  if (e) e.stopPropagation();
-  var m = $('moreMenu');
-  if (m) m.classList.toggle('open');
+function styleText(el, obj) {
+  if (!obj) return;
+  el.style.fontFamily = obj.family || 'Tahoma';
+  el.style.fontSize = (obj.size || 12) + 'pt';
+  el.style.fontWeight = obj.weight || 'normal';
+  el.textContent = obj.text || '';
 }
 
-function closeMenu() {
-  var m = $('moreMenu');
-  if (m) m.classList.remove('open');
-}
+function buildHeaderElement() {
+  const header = document.createElement('div');
+  header.className = 'page-header';
 
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.menu-wrap')) closeMenu();
-});
+  const grid = document.createElement('div');
+  grid.className = 'header-grid';
 
-/* ============================================================
-   5) الشعارات
-   ============================================================ */
-function triggerLogo(n) {
-  var el = $(n === 1 ? 'logoInput' : 'logoInput2');
-  if (el) el.click();
-}
+  // Right column
+  const colR = document.createElement('div');
+  colR.className = 'hcol hcol-right';
+  const r1 = document.createElement('div'); r1.className = 'hfield';
+  styleText(r1, state.h.school);
+  colR.appendChild(r1);
+  const r2 = document.createElement('div'); r2.className = 'hfield';
+  styleText(r2, state.h.dir);
+  colR.appendChild(r2);
+  grid.appendChild(colR);
 
-function handleLogoUpload(input, n) {
-  var f = input.files && input.files[0];
-  if (!f) return;
-  if (f.size > 2 * 1024 * 1024) {
-    toast('الصورة كبيرة، اختر أقل من 2 ميغا');
-    input.value = '';
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    state.header['logo' + n] = e.target.result;
-    renderLogo(n);
-    save();
-    toast('تم رفع الشعار ✅');
-  };
-  reader.readAsDataURL(f);
-  input.value = '';
-}
+  // Center column
+  const colC = document.createElement('div');
+  colC.className = 'hcol hcol-center';
+  const c1 = document.createElement('div'); c1.className = 'hfield';
+  styleText(c1, state.h.subject);
+  colC.appendChild(c1);
+  const c2 = document.createElement('div'); c2.className = 'hfield';
+  styleText(c2, state.h.year);
+  colC.appendChild(c2);
+  grid.appendChild(colC);
 
-function removeLogo(n) {
-  state.header['logo' + n] = null;
-  renderLogo(n);
-  save();
-  toast('تم حذف الشعار');
-}
+  // Left column
+  const colL = document.createElement('div');
+  colL.className = 'hcol hcol-left';
+  const l1 = document.createElement('div'); l1.className = 'hfield';
+  styleText(l1, state.h.time);
+  colL.appendChild(l1);
+  const l2 = document.createElement('div'); l2.className = 'hfield';
+  styleText(l2, state.h.subjectLeft);
+  colL.appendChild(l2);
+  const l3 = document.createElement('div'); l3.className = 'hfield';
+  styleText(l3, state.h.grade);
+  colL.appendChild(l3);
+  grid.appendChild(colL);
 
-function renderLogo(n) {
-  var boxId = (n === 1) ? 'logoBox' : 'logoBox2';
-  var imgId = (n === 1) ? 'logoImg' : 'logoImg2';
-  var thumbId = (n === 1) ? 'thumb1' : 'thumb2';
+  header.appendChild(grid);
 
-  var box = $(boxId);
-  var img = $(imgId);
-  var thumb = $(thumbId);
-  var data = state.header['logo' + n];
-
-  if (img) {
-    if (data) {
-      img.src = data;
-      if (box) box.classList.add('has-logo');
-    } else {
-      img.removeAttribute('src');
-      if (box) box.classList.remove('has-logo');
-    }
+  // Extra field
+  if (state.h.extra && state.h.extra.enabled && state.h.extra.text) {
+    const extra = document.createElement('div');
+    extra.className = 'header-extra';
+    styleText(extra, state.h.extra);
+    header.appendChild(extra);
   }
 
-  if (thumb) {
-    if (data) {
-      thumb.innerHTML = '<img src="' + data + '" alt="">';
-    } else {
-      thumb.innerHTML = '<div class="empty-thumb">لا<br>شعار</div>';
-    }
-  }
-}
+  // Line
+  const line = document.createElement('div');
+  line.className = 'header-line';
+  header.appendChild(line);
 
-/* ============================================================
-   6) رأس الورقة
-   ============================================================ */
-function bindHeaderFields() {
-  HEADER_FIELDS.forEach(function(id) {
-    var el = $('f-' + id);
-    if (!el) return;
-    el.value = state.header[id] || '';
-    el.addEventListener('input', function() {
-      state.header[id] = el.value;
-      renderPaperHeader();
-      save();
-    });
-  });
-}
-
-function renderPaperHeader() {
-  var set = function(id, val, fallback) {
-    var el = $(id);
-    if (!el) return;
-    if (val) el.textContent = val;
-    else if (fallback) el.textContent = fallback;
-    else el.textContent = '';
-  };
-  set('p-school', state.header.school, 'اسم المدرسة');
-  set('p-title', state.header.title, 'نموذج أسئلة');
-  set('p-sub', state.header.sub, '');
-  set('p-subject', state.header.subject, '');
-  set('p-grade', state.header.grade, '');
-  set('p-date', state.header.date, '');
-  set('p-student', state.header.student, '');
-  set('p-duration', state.header.duration, '');
-  set('p-mark', state.header.mark, '');
-}
-
-/* ============================================================
-   7) إدارة الأسئلة
-   ============================================================ */
-function addQuestion(type) {
-  var q = { type: type, text: '' };
-  if (type === 'essay') q.lines = 3;
-  if (type === 'mcq') { q.options = ['','','','']; q.correct = -1; }
-  if (type === 'tf') { q.correct = null; }
-  state.questions.push(q);
-  save();
-  renderAll();
-  switchSub('questions');
-  setTimeout(function() {
-    var cards = document.querySelectorAll('#questions-editor .q-textarea');
-    if (cards.length) {
-      var last = cards[cards.length - 1];
-      last.focus();
-      last.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, 100);
-}
-
-function moveQuestion(idx, dir) {
-  var ni = idx + dir;
-  if (ni < 0 || ni >= state.questions.length) return;
-  var tmp = state.questions[idx];
-  state.questions[idx] = state.questions[ni];
-  state.questions[ni] = tmp;
-  save();
-  renderAll();
-}
-
-function deleteQuestion(idx) {
-  if (!confirm('حذف السؤال ' + (idx + 1) + '؟')) return;
-  state.questions.splice(idx, 1);
-  save();
-  renderAll();
-}
-
-/* ============================================================
-   8) رندر ورقة المعاينة
-   ============================================================ */
-function renderPaperQuestions() {
-  var cont = $('paper-questions');
-  if (!cont) return;
-  cont.innerHTML = '';
-
-  if (!state.questions.length) {
-    var d = document.createElement('div');
-    d.className = 'empty-note';
-    d.textContent = 'روح للوحة التحكم ← إدخال الأسئلة، وأضف أسئلتك.';
-    cont.appendChild(d);
-    return;
+  // Note
+  if (state.h.note && state.h.note.text) {
+    const note = document.createElement('div');
+    note.className = 'header-note';
+    styleText(note, state.h.note);
+    header.appendChild(note);
   }
 
-  state.questions.forEach(function(q, i) {
-    cont.appendChild(buildPaperQuestion(q, i));
-  });
+  return header;
 }
 
-function buildPaperQuestion(q, idx) {
-  var wrap = document.createElement('div');
-  wrap.className = 'question';
+function buildFooterElement() {
+  const footer = document.createElement('div');
+  footer.className = 'page-footer';
 
-  var head = document.createElement('div');
-  head.className = 'q-head';
+  // Wish (centered above)
+  if (state.f.wish && state.f.wish.text) {
+    const wish = document.createElement('div');
+    wish.className = 'footer-wish';
+    styleText(wish, state.f.wish);
+    footer.appendChild(wish);
+  }
 
-  var num = document.createElement('span');
-  num.className = 'q-num';
-  num.textContent = (idx + 1) + '.';
-  head.appendChild(num);
+  // 3-column row
+  const grid = document.createElement('div');
+  grid.className = 'footer-grid';
 
-  var tag = document.createElement('span');
-  tag.className = 'q-type-tag';
-  tag.textContent = (q.type === 'essay') ? 'مقالي'
-                  : (q.type === 'mcq')   ? 'اختيار من متعدد'
-                  :                        'صح / خطأ';
-  head.appendChild(tag);
-  wrap.appendChild(head);
+  const cR = document.createElement('div');
+  cR.className = 'fcol right';
+  styleText(cR, state.f.right);
+  grid.appendChild(cR);
 
-  var txt = document.createElement('div');
-  txt.className = 'q-text-display';
-  txt.textContent = q.text || '';
-  wrap.appendChild(txt);
+  const cC = document.createElement('div');
+  cC.className = 'fcol center';
+  styleText(cC, state.f.center);
+  grid.appendChild(cC);
 
-  if (q.type === 'essay') wrap.appendChild(buildPaperEssay(q));
-  else if (q.type === 'mcq') wrap.appendChild(buildPaperMCQ(q));
-  else wrap.appendChild(buildPaperTF(q));
+  const cL = document.createElement('div');
+  cL.className = 'fcol left';
+  styleText(cL, state.f.left);
+  grid.appendChild(cL);
 
+  footer.appendChild(grid);
+
+  return footer;
+}
+
+function buildQuestionElement(q) {
+  const el = document.createElement('div');
+  el.className = 'q-item';
+  el.style.fontFamily = q.family || 'Tahoma';
+  el.style.fontSize = (q.size || 14) + 'pt';
+  el.style.fontWeight = q.weight || 'normal';
+  el.textContent = q.text || '';
+  return el;
+}
+
+function buildWatermarkElement() {
+  if (!state.wm || state.wm.type === 'none') return null;
+  const wrap = document.createElement('div');
+  wrap.className = 'watermark';
+
+  if (state.wm.type === 'text' && state.wm.text) {
+    const t = document.createElement('div');
+    t.className = 'watermark-text';
+    t.textContent = state.wm.text;
+    t.style.color = state.wm.color || '#000';
+    t.style.opacity = state.wm.opacity || 0.08;
+    t.style.fontSize = (state.wm.size || 100) + 'px';
+    t.style.transform = 'rotate(' + (state.wm.rotate || -30) + 'deg)';
+    wrap.appendChild(t);
+  } else if (state.wm.type === 'image' && state.wm.image) {
+    const img = document.createElement('img');
+    img.className = 'watermark-img';
+    img.src = state.wm.image;
+    img.style.opacity = state.wm.opacity || 0.1;
+    img.style.transform = 'rotate(' + (state.wm.rotate || -30) + 'deg)';
+    if (state.wm.size) img.style.maxWidth = state.wm.size + '%';
+    wrap.appendChild(img);
+  } else {
+    return null;
+  }
   return wrap;
 }
 
-function buildPaperEssay(q) {
-  var box = document.createElement('div');
-  box.className = 'lines-display';
-  var n = q.lines || 0;
-  for (var i = 0; i < n; i++) {
-    var l = document.createElement('div');
-    l.className = 'line-row';
-    box.appendChild(l);
+/* ============================================================
+   بناء الصفحات (Pagination)
+   ============================================================ */
+function mmToPx(mm) {
+  // 1mm = 96/25.4 px at 96dpi
+  return mm * 96 / 25.4;
+}
+
+const PAGE_PADDING_MM = 12;
+const A4_WIDTH_MM = 210;
+const A4_HEIGHT_MM = 297;
+const CONTENT_WIDTH_MM = A4_WIDTH_MM - 2 * PAGE_PADDING_MM; // 186
+const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - 2 * PAGE_PADDING_MM; // 273
+
+function measure(el) {
+  // uses an off-screen container matching content width
+  const temp = document.createElement('div');
+  temp.style.cssText = 'position:absolute;top:-99999px;left:-99999px;visibility:hidden;' +
+    'width:' + CONTENT_WIDTH_MM + 'mm;padding:0;margin:0;';
+  temp.appendChild(el);
+  document.body.appendChild(temp);
+  const h = el.getBoundingClientRect().height;
+  document.body.removeChild(temp);
+  return h;
+}
+
+function buildPages() {
+  const container = $('pages-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // ----- Measure everything -----
+  const headerEl = buildHeaderElement();
+  const headerH = measure(headerEl);
+
+  const footerEl = buildFooterElement();
+  const footerH = measure(footerEl);
+
+  const qHeights = state.questions.map(function(q) {
+    return measure(buildQuestionElement(q));
+  });
+
+  const contentHeightPx = mmToPx(CONTENT_HEIGHT_MM);
+  const GAP = 8; // px between questions (approximate from CSS)
+
+  // ----- Distribute into pages -----
+  const pages = [];
+  let isFirst = true;
+  let usedH = headerH; // header only on first page
+  let current = { isFirst: true, questions: [] };
+  const qList = qHeights.slice();
+
+  for (let i = 0; i < qList.length; i++) {
+    const need = qList[i] + GAP;
+    if (usedH + need > contentHeightPx && current.questions.length > 0) {
+      pages.push(current);
+      current = { isFirst: false, questions: [] };
+      usedH = 0;
+    }
+    current.questions.push(i);
+    usedH += need;
   }
-  return box;
-}
+  pages.push(current);
 
-function buildPaperMCQ(q) {
-  var box = document.createElement('div');
-  box.className = 'options-display';
-  q.options.forEach(function(opt, oi) {
-    var row = document.createElement('div');
-    row.className = 'option-display';
+  // ----- Check if footer fits on last page -----
+  const last = pages[pages.length - 1];
+  let lastUsed = last.isFirst ? headerH : 0;
+  last.questions.forEach(function(qi) { lastUsed += qHeights[qi] + GAP; });
 
-    var letter = document.createElement('span');
-    letter.className = 'opt-letter' + (q.correct === oi ? ' correct' : '');
-    letter.textContent = LETTERS[oi] || (oi + 1);
-    row.appendChild(letter);
+  if (lastUsed + footerH + GAP > contentHeightPx && last.questions.length > 1) {
+    // move last question to a new page
+    const moved = last.questions.pop();
+    pages.push({ isFirst: false, questions: [moved] });
+  }
 
-    var t = document.createElement('span');
-    t.className = 'opt-text';
-    t.textContent = opt || '';
-    row.appendChild(t);
+  // ----- Render pages -----
+  pages.forEach(function(p, idx) {
+    const pageEl = document.createElement('div');
+    pageEl.className = 'page';
 
-    box.appendChild(row);
+    // Watermark
+    const wmEl = buildWatermarkElement();
+    if (wmEl) pageEl.appendChild(wmEl);
+
+    const content = document.createElement('div');
+    content.className = 'page-content';
+
+    // Header on first page
+    if (p.isFirst) {
+      content.appendChild(buildHeaderElement());
+    }
+
+    // Questions
+    const main = document.createElement('div');
+    main.className = 'page-main';
+    p.questions.forEach(function(qi) {
+      main.appendChild(buildQuestionElement(state.questions[qi]));
+    });
+    content.appendChild(main);
+
+    // Footer on last page
+    if (idx === pages.length - 1) {
+      content.appendChild(buildFooterElement());
+    }
+
+    pageEl.appendChild(content);
+    container.appendChild(pageEl);
   });
-  return box;
-}
-
-function buildPaperTF(q) {
-  var box = document.createElement('div');
-  box.className = 'tf-display';
-
-  var opts = [['صح', true], ['خطأ', false]];
-  opts.forEach(function(pair) {
-    var label = pair[0];
-    var val = pair[1];
-    var span = document.createElement('span');
-    span.className = 'tf-chip' + (q.correct === val ? ' correct' : '');
-    var c = document.createElement('span');
-    c.className = 'circle';
-    span.appendChild(c);
-    span.appendChild(document.createTextNode(label));
-    box.appendChild(span);
-  });
-  return box;
 }
 
 /* ============================================================
-   9) رندر محرر الأسئلة
+   رندر الكل
+   ============================================================ */
+function render() {
+  buildPages();
+  renderQuestionsEditor();
+  updateQuestionCounter();
+}
+
+/* ============================================================
+   محرر الأسئلة
    ============================================================ */
 function renderQuestionsEditor() {
-  var cont = $('questions-editor');
+  const cont = $('questions-editor');
   if (!cont) return;
   cont.innerHTML = '';
 
   if (!state.questions.length) {
-    var d = document.createElement('div');
-    d.className = 'empty-note';
-    d.textContent = 'ما أكو أسئلة بعد. اختر نوع السؤال من فوق حتى تبدأ.';
-    cont.appendChild(d);
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;color:#9ca3af;font-size:12px;padding:20px;';
+    empty.textContent = 'لم تضف أي سؤال بعد.';
+    cont.appendChild(empty);
     return;
   }
 
   state.questions.forEach(function(q, i) {
-    cont.appendChild(buildEditorCard(q, i));
+    cont.appendChild(buildQuestionCard(q, i));
   });
 }
 
-function buildEditorCard(q, idx) {
-  var card = document.createElement('div');
+function buildQuestionCard(q, idx) {
+  const card = document.createElement('div');
   card.className = 'q-card';
 
-  var head = document.createElement('div');
+  const head = document.createElement('div');
   head.className = 'q-card-head';
 
-  var num = document.createElement('span');
+  const num = document.createElement('span');
   num.className = 'num';
-  num.textContent = (idx + 1) + '.';
+  num.textContent = 'سؤال ' + (idx + 1);
   head.appendChild(num);
 
-  var tag = document.createElement('span');
-  tag.className = 'tag';
-  tag.textContent = (q.type === 'essay') ? 'مقالي'
-                  : (q.type === 'mcq')   ? 'اختيار من متعدد'
-                  :                        'صح / خطأ';
-  head.appendChild(tag);
-
-  var sp = document.createElement('span');
+  const sp = document.createElement('span');
   sp.className = 'spacer';
   head.appendChild(sp);
 
-  var up = miniBtn('▲', 'نقل للأعلى', function() { moveQuestion(idx, -1); });
+  const up = miniBtn('▲', 'نقل للأعلى', function() { moveQuestion(idx, -1); });
   if (idx === 0) up.disabled = true;
   head.appendChild(up);
 
-  var dn = miniBtn('▼', 'نقل للأسفل', function() { moveQuestion(idx, 1); });
+  const dn = miniBtn('▼', 'نقل للأسفل', function() { moveQuestion(idx, 1); });
   if (idx === state.questions.length - 1) dn.disabled = true;
   head.appendChild(dn);
 
-  var del = miniBtn('✕', 'حذف', function() { deleteQuestion(idx); });
+  const del = miniBtn('✕', 'حذف', function() { deleteQuestion(idx); });
   del.classList.add('danger');
   head.appendChild(del);
 
   card.appendChild(head);
 
-  var ta = document.createElement('textarea');
-  ta.className = 'q-textarea';
-  ta.placeholder = 'اكتب نص السؤال هنا...';
+  // Textarea
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'نص السؤال...';
   ta.value = q.text || '';
   ta.addEventListener('input', function() {
     q.text = ta.value;
     save();
-    renderPaperQuestions();
+    scheduleRender();
   });
   card.appendChild(ta);
 
-  if (q.type === 'essay') card.appendChild(buildEditorEssay(q));
-  else if (q.type === 'mcq') card.appendChild(buildEditorMCQ(q, idx));
-  else card.appendChild(buildEditorTF(q, idx));
+  // Font row
+  const fontRow = document.createElement('div');
+  fontRow.className = 'font-row';
+  fontRow.style.marginTop = '6px';
+
+  const famSel = document.createElement('select');
+  FONTS.forEach(function(f) {
+    const o = document.createElement('option');
+    o.value = f.label;
+    o.textContent = f.label;
+    if (f.label === q.family) o.selected = true;
+    famSel.appendChild(o);
+  });
+  famSel.addEventListener('change', function() {
+    q.family = famSel.value;
+    save();
+    scheduleRender();
+  });
+  fontRow.appendChild(famSel);
+
+  const szInp = document.createElement('input');
+  szInp.type = 'number';
+  szInp.min = 8;
+  szInp.max = 72;
+  szInp.value = q.size || 14;
+  szInp.placeholder = 'حجم';
+  szInp.addEventListener('input', function() {
+    q.size = Number(szInp.value) || 14;
+    save();
+    scheduleRender();
+  });
+  fontRow.appendChild(szInp);
+
+  const wSel = document.createElement('select');
+  [['normal','عادي'],['bold','عريض']].forEach(function(pair) {
+    const o = document.createElement('option');
+    o.value = pair[0];
+    o.textContent = pair[1];
+    if (pair[0] === q.weight) o.selected = true;
+    wSel.appendChild(o);
+  });
+  wSel.addEventListener('change', function() {
+    q.weight = wSel.value;
+    save();
+    scheduleRender();
+  });
+  fontRow.appendChild(wSel);
+
+  card.appendChild(fontRow);
 
   return card;
 }
 
 function miniBtn(txt, title, fn) {
-  var b = document.createElement('button');
+  const b = document.createElement('button');
   b.type = 'button';
   b.className = 'mini-btn';
   b.textContent = txt;
@@ -1184,271 +1268,255 @@ function miniBtn(txt, title, fn) {
   return b;
 }
 
-function buildEditorEssay(q) {
-  var box = document.createElement('div');
-  box.className = 'lines-edit';
-  box.appendChild(document.createTextNode('عدد الأسطر للكتابة:'));
-
-  var minus = miniBtn('−', 'تقليل', function() {
-    q.lines = Math.max(0, (q.lines || 0) - 1);
-    save();
-    renderAll();
-  });
-  minus.style.width = '30px';
-  minus.style.height = '30px';
-  box.appendChild(minus);
-
-  var c = document.createElement('span');
-  c.className = 'count';
-  c.textContent = q.lines || 0;
-  box.appendChild(c);
-
-  var plus = miniBtn('+', 'زيادة', function() {
-    q.lines = (q.lines || 0) + 1;
-    save();
-    renderAll();
-  });
-  plus.style.width = '30px';
-  plus.style.height = '30px';
-  box.appendChild(plus);
-
-  return box;
+function updateQuestionCounter() {
+  const c = $('q-counter');
+  if (c) c.textContent = '(' + state.questions.length + '/' + MAX_QUESTIONS + ')';
+  const btn = $('addQuestionBtn');
+  if (btn) btn.disabled = (state.questions.length >= MAX_QUESTIONS);
 }
 
-function buildEditorMCQ(q, idx) {
-  var box = document.createElement('div');
-  box.className = 'options-edit';
-
-  q.options.forEach(function(opt, oi) {
-    var row = document.createElement('div');
-    row.className = 'option-edit-row';
-
-    var letter = document.createElement('span');
-    letter.className = 'letter';
-    letter.textContent = LETTERS[oi] || (oi + 1);
-    row.appendChild(letter);
-
-    var inp = document.createElement('input');
-    inp.type = 'text';
-    inp.placeholder = 'الخيار ' + (LETTERS[oi] || (oi + 1));
-    inp.value = opt;
-    inp.addEventListener('input', function() {
-      q.options[oi] = inp.value;
-      save();
-      renderPaperQuestions();
-    });
-    row.appendChild(inp);
-
-    var lab = document.createElement('label');
-    lab.className = 'correct-pick';
-    lab.title = 'تعيين كإجابة صحيحة';
-
-    var rad = document.createElement('input');
-    rad.type = 'radio';
-    rad.name = 'correct_' + idx;
-    rad.checked = (q.correct === oi);
-    rad.addEventListener('change', function() {
-      q.correct = oi;
-      save();
-      renderPaperQuestions();
-    });
-    lab.appendChild(rad);
-    lab.appendChild(document.createTextNode('صح'));
-    row.appendChild(lab);
-
-    if (q.options.length > 2) {
-      var rm = miniBtn('✕', 'حذف الخيار', function() {
-        q.options.splice(oi, 1);
-        if (q.correct === oi) q.correct = -1;
-        else if (q.correct > oi) q.correct--;
-        save();
-        renderAll();
-      });
-      rm.classList.add('danger');
-      rm.style.width = '30px';
-      rm.style.height = '30px';
-      row.appendChild(rm);
-    }
-
-    box.appendChild(row);
-  });
-
-  if (q.options.length < LETTERS.length) {
-    var add = document.createElement('button');
-    add.type = 'button';
-    add.className = 'add-option';
-    add.textContent = '➕ إضافة خيار';
-    add.onclick = function() {
-      q.options.push('');
-      save();
-      renderAll();
-    };
-    box.appendChild(add);
+function addQuestion() {
+  if (state.questions.length >= MAX_QUESTIONS) {
+    toast('وصلت للحد الأقصى (' + MAX_QUESTIONS + ' أسئلة)');
+    return;
   }
-
-  return box;
-}
-
-function buildEditorTF(q, idx) {
-  var box = document.createElement('div');
-  box.className = 'tf-edit';
-
-  var opts = [['صح', true], ['خطأ', false]];
-  opts.forEach(function(pair) {
-    var label = pair[0];
-    var val = pair[1];
-    var lab = document.createElement('label');
-
-    var rad = document.createElement('input');
-    rad.type = 'radio';
-    rad.name = 'tf_' + idx;
-    rad.checked = (q.correct === val);
-    rad.addEventListener('change', function() {
-      q.correct = val;
-      save();
-      renderPaperQuestions();
-    });
-    lab.appendChild(rad);
-    lab.appendChild(document.createTextNode(label));
-    box.appendChild(lab);
+  state.questions.push({
+    text: '',
+    family: 'Tahoma',
+    size: 14,
+    weight: 'normal'
   });
+  save();
+  render();
+  setTimeout(function() {
+    const tas = document.querySelectorAll('#questions-editor textarea');
+    if (tas.length) {
+      const last = tas[tas.length - 1];
+      last.focus();
+      last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 100);
+}
 
-  return box;
+function moveQuestion(idx, dir) {
+  const ni = idx + dir;
+  if (ni < 0 || ni >= state.questions.length) return;
+  const tmp = state.questions[idx];
+  state.questions[idx] = state.questions[ni];
+  state.questions[ni] = tmp;
+  save();
+  render();
+}
+
+function deleteQuestion(idx) {
+  if (!confirm('حذف السؤال ' + (idx + 1) + '؟')) return;
+  state.questions.splice(idx, 1);
+  save();
+  render();
 }
 
 /* ============================================================
-   10) رندر الكل
+   ربط حقول لوحة التحكم
    ============================================================ */
-function renderAll() {
-  renderPaperHeader();
-  renderPaperQuestions();
-  renderQuestionsEditor();
-  renderLogo(1);
-  renderLogo(2);
+function fillFontSelects() {
+  const selects = document.querySelectorAll('[data-font]');
+  for (let i = 0; i < selects.length; i++) {
+    const sel = selects[i];
+    if (sel.options.length > 0) continue;
+    FONTS.forEach(function(f) {
+      const o = document.createElement('option');
+      o.value = f.label;
+      o.textContent = f.label;
+      sel.appendChild(o);
+    });
+  }
+}
+
+function loadStateIntoInputs() {
+  const els = document.querySelectorAll('[data-key]');
+  for (let i = 0; i < els.length; i++) {
+    const el = els[i];
+    const key = el.getAttribute('data-key');
+    const val = getNested(state, key);
+    if (val === undefined || val === null) continue;
+    if (el.type === 'checkbox') el.checked = !!val;
+    else el.value = val;
+  }
+}
+
+function bindAllInputs() {
+  const els = document.querySelectorAll('[data-key]');
+  for (let i = 0; i < els.length; i++) {
+    const el = els[i];
+    if (el._bound) continue;
+    el._bound = true;
+    const handler = function() {
+      const key = el.getAttribute('data-key');
+      let val;
+      if (el.type === 'checkbox') val = el.checked;
+      else if (el.type === 'number') val = Number(el.value) || 0;
+      else val = el.value;
+      setNested(state, key, val);
+      save();
+      scheduleRender();
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
+  }
 }
 
 /* ============================================================
-   11) الطباعة والتصدير
+   التنقل
+   ============================================================ */
+function switchView(name) {
+  const navs = document.querySelectorAll('.navbtn');
+  for (let i = 0; i < navs.length; i++) {
+    navs[i].classList.toggle('active', navs[i].getAttribute('data-view') === name);
+  }
+  const views = document.querySelectorAll('.view');
+  for (let j = 0; j < views.length; j++) {
+    views[j].classList.toggle('active', views[j].id === 'view-' + name);
+  }
+  const sub = $('topbar-sub');
+  if (sub) sub.textContent = (name === 'preview') ? 'صفحة المعاينة' : 'لوحة التحكم';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchSub(name) {
+  const tabs = document.querySelectorAll('.subtab');
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].classList.toggle('active', tabs[i].getAttribute('data-sub') === name);
+  }
+  const subs = document.querySelectorAll('.subview');
+  for (let j = 0; j < subs.length; j++) {
+    subs[j].classList.toggle('active', subs[j].id === 'sub-' + name);
+  }
+}
+
+/* ============================================================
+   القائمة
+   ============================================================ */
+function toggleMenu(e) {
+  if (e) e.stopPropagation();
+  const m = $('moreMenu');
+  if (m) m.classList.toggle('open');
+}
+function closeMenu() {
+  const m = $('moreMenu');
+  if (m) m.classList.remove('open');
+}
+
+/* ============================================================
+   العلامة المائية - رفع صورة
+   ============================================================ */
+function removeWatermarkImage() {
+  state.wm.image = null;
+  save();
+  render();
+  toast('تم حذف الصورة');
+}
+
+/* ============================================================
+   الطباعة والتصدير
    ============================================================ */
 function doPrint() {
   switchView('preview');
-  setTimeout(function() { window.print(); }, 150);
+  setTimeout(function() { window.print(); }, 200);
 }
 
 function exportPDF() {
+  closeMenu();
+  toast('اختر "حفظ كـ PDF" من نافذة الطباعة');
   switchView('preview');
-  setTimeout(function() {
-    if (!window.html2pdf) {
-      toast('تعذّر التحميل، نفتح الطباعة');
-      window.print();
-      return;
-    }
-    toast('جاري تجهيز PDF...');
-    var el = $('paper');
-    var opt = {
-      margin: 10,
-      filename: 'نموذج-اسئلة.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    };
-    window.html2pdf().set(opt).from(el).save()
-      .then(function() { toast('تم حفظ PDF ✅'); })
-      .catch(function() { toast('صار خطأ، نفتح الطباعة'); window.print(); });
-  }, 200);
+  setTimeout(function() { window.print(); }, 300);
 }
 
 function exportWord() {
-  switchView('preview');
-  setTimeout(function() {
-    var paper = $('paper').cloneNode(true);
-    var noPrint = paper.querySelectorAll('.no-print');
-    for (var i = 0; i < noPrint.length; i++) noPrint[i].remove();
+  closeMenu();
+  const container = $('pages-container');
+  if (!container) return;
 
-    var styles = ''
-      + '@page { size: A4; margin: 1.5cm; }'
-      + 'body { font-family: Tahoma, Arial, sans-serif; direction: rtl; color:#111827; font-size:12pt; }'
-      + '.paper { width:auto; padding:0; }'
-      + '.header-top { display:flex; align-items:center; gap:14px; border-bottom:2px solid #111; padding-bottom:10px; }'
-      + '.logo-box { width:80px; height:80px; border:1px solid #ccc; text-align:center; }'
-      + '.logo-box img { max-width:100%; max-height:100%; }'
-      + '.header-center { flex:1; text-align:center; }'
-      + '.h-school { font-size:16pt; font-weight:bold; }'
-      + '.h-title { font-size:14pt; font-weight:bold; }'
-      + '.h-sub { font-size:11pt; color:#555; }'
-      + '.header-meta { display:flex; gap:10px; margin-top:8px; font-size:11pt; flex-wrap:wrap; }'
-      + '.meta-item { min-width:110px; border-bottom:1px solid #999; padding:3px 2px; margin-left:8px; }'
-      + '.meta-item label { font-weight:bold; }'
-      + '.question { page-break-inside: avoid; margin-bottom:12px; }'
-      + '.q-num { font-weight:bold; color:#111; }'
-      + '.q-type-tag { font-size:9pt; background:#eef2ff; color:#4338ca; padding:1px 6px; }'
-      + '.line-row { border-bottom:1px dotted #666; height:24px; }'
-      + '.empty-note { display:none; }';
+  const pages = container.querySelectorAll('.page');
+  let bodyHtml = '';
 
-    var html = '<!DOCTYPE html>'
-      + '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
-      + 'xmlns:w="urn:schemas-microsoft-com:office:word" '
-      + 'xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar">'
-      + '<head><meta charset="utf-8"><title>نموذج أسئلة</title>'
-      + '<style>' + styles + '</style></head>'
-      + '<body>' + paper.outerHTML + '</body></html>';
+  pages.forEach(function(p) {
+    const clone = p.cloneNode(true);
+    bodyHtml += '<div style="page-break-after:always;">' + clone.innerHTML + '</div>';
+  });
 
-    var blob = new Blob(['\ufeff', html], { type: 'application/msword' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'نموذج-اسئلة.doc';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-    toast('تم حفظ ملف Word ✅');
-  }, 200);
+  const styles = ''
+    + '@page { size:A4; margin:0; }'
+    + 'body { font-family:Tahoma,Arial,sans-serif; direction:rtl; }'
+    + '.page-content { padding:12mm; box-sizing:border-box; }'
+    + '.header-grid { display:table; width:100%; table-layout:fixed; border-collapse:collapse; }'
+    + '.hcol { display:table-cell; vertical-align:top; width:33%; padding:2px; }'
+    + '.hcol-center { text-align:center; }'
+    + '.hcol-left { text-align:left; }'
+    + '.header-line { border-top:2px solid #000; margin:8px 0; }'
+    + '.header-extra, .header-note { text-align:center; }'
+    + '.footer-grid { display:table; width:100%; table-layout:fixed; margin-top:20px; }'
+    + '.fcol { display:table-cell; width:33%; padding:2px; }'
+    + '.footer-wish { text-align:center; }'
+    + '.q-item { margin-bottom:8px; }';
+
+  const html = '<!DOCTYPE html>'
+    + '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+    + 'xmlns:w="urn:schemas-microsoft-com:office:word" '
+    + 'xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar">'
+    + '<head><meta charset="utf-8"><title>نموذج أسئلة</title>'
+    + '<style>' + styles + '</style></head>'
+    + '<body>' + bodyHtml + '</body></html>';
+
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'نموذج-أسئلة.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  toast('تم حفظ ملف Word ✅');
 }
 
 /* ============================================================
-   12) نسخة احتياطية / استيراد / حذف
+   نسخة احتياطية / استيراد / حذف
    ============================================================ */
 function backup() {
-  var data = JSON.stringify(state, null, 2);
-  var blob = new Blob([data], { type: 'application/json' });
-  var a = document.createElement('a');
+  closeMenu();
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'نموذج-اسئلة.json';
+  a.download = 'نموذج-أسئلة.json';
   document.body.appendChild(a);
   a.click();
-  a.remove();
-  URL.revokeObjectURL(a.href);
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
   toast('تم حفظ نسخة احتياطية 💾');
 }
 
 function triggerImport() {
-  var el = $('importFile');
+  closeMenu();
+  const el = $('importFile');
   if (el) el.click();
 }
 
 function restore(input) {
-  var f = input.files && input.files[0];
+  const f = input.files && input.files[0];
   if (!f) return;
-  var r = new FileReader();
+  const r = new FileReader();
   r.onload = function(e) {
     try {
-      var d = JSON.parse(e.target.result);
-      if (!d || !d.header || !Array.isArray(d.questions)) throw new Error('bad');
+      const d = JSON.parse(e.target.result);
+      if (!d || !d.h || !Array.isArray(d.questions)) throw new Error('bad');
+      state = Object.assign(JSON.parse(JSON.stringify(defaultState)), d);
+      // merge defaults for nested
+      state.h = Object.assign({}, defaultState.h, state.h);
+      state.f = Object.assign({}, defaultState.f, state.f);
+      state.wm = Object.assign({}, defaultState.wm, state.wm);
 
-      state = d;
-      state.header = Object.assign({
-        school:'', title:'نموذج أسئلة', sub:'',
-        subject:'', grade:'', date:'',
-        student:'', duration:'', mark:'',
-        logo1:null, logo2:null
-      }, state.header);
-
-      HEADER_FIELDS.forEach(function(id) {
-        var el = $('f-' + id);
-        if (el) el.value = state.header[id] || '';
-      });
-      renderAll();
+      loadStateIntoInputs();
+      render();
       save();
       switchView('preview');
       toast('تم الاستيراد ✅');
@@ -1461,20 +1529,69 @@ function restore(input) {
 }
 
 function clearAll() {
-  if (!confirm('متأكد تريد تحذف كل الأسئلة؟')) return;
+  closeMenu();
+  if (!confirm('حذف كل الأسئلة؟')) return;
   state.questions = [];
   save();
-  renderAll();
+  render();
   toast('تم الحذف 🗑️');
 }
 
 /* ============================================================
-   13) الأحداث العامة
+   الإقلاع
    ============================================================ */
-document.addEventListener('DOMContentLoaded', function() {
-  /* ربط أزرار التنقل */
-  var navs = document.querySelectorAll('.navbtn');
-  for (var i = 0; i < navs.length; i++) {
+function boot() {
+  // 1. تحميل الحالة المحفوظة
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      if (loaded && loaded.h && Array.isArray(loaded.questions)) {
+        state = Object.assign(JSON.parse(JSON.stringify(defaultState)), loaded);
+        state.h = Object.assign({}, defaultState.h, state.h);
+        state.f = Object.assign({}, defaultState.f, state.f);
+        state.wm = Object.assign({}, defaultState.wm, state.wm);
+      }
+    }
+  } catch(e) { console.warn('load failed', e); }
+
+  // 2. تعبئة اختيارات الخطوط
+  fillFontSelects();
+
+  // 3. تعبئة الحقول من الحالة
+  loadStateIntoInputs();
+
+  // 4. ربط الأحداث على الحقول
+  bindAllInputs();
+
+  // 5. رفع صورة العلامة المائية
+  const wmInput = $('wmImageInput');
+  if (wmInput) {
+    wmInput.addEventListener('change', function() {
+      const f = wmInput.files && wmInput.files[0];
+      if (!f) return;
+      if (f.size > 3 * 1024 * 1024) {
+        toast('الصورة كبيرة (أقصى 3 ميغا)');
+        wmInput.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        state.wm.image = e.target.result;
+        state.wm.type = 'image';
+        save();
+        loadStateIntoInputs();
+        render();
+        toast('تم رفع الصورة ✅');
+      };
+      reader.readAsDataURL(f);
+      wmInput.value = '';
+    });
+  }
+
+  // 6. أزرار التنقل السفلي
+  const navs = document.querySelectorAll('.navbtn');
+  for (let i = 0; i < navs.length; i++) {
     (function(btn) {
       btn.addEventListener('click', function() {
         switchView(btn.getAttribute('data-view'));
@@ -1482,9 +1599,9 @@ document.addEventListener('DOMContentLoaded', function() {
     })(navs[i]);
   }
 
-  /* ربط تبويبات لوحة التحكم */
-  var tabs = document.querySelectorAll('.subtab');
-  for (var j = 0; j < tabs.length; j++) {
+  // 7. تبويبات لوحة التحكم
+  const tabs = document.querySelectorAll('.subtab');
+  for (let j = 0; j < tabs.length; j++) {
     (function(tab) {
       tab.addEventListener('click', function() {
         switchSub(tab.getAttribute('data-sub'));
@@ -1492,37 +1609,23 @@ document.addEventListener('DOMContentLoaded', function() {
     })(tabs[j]);
   }
 
-  /* ربط حقول الإدخال بالشعارات */
-  var li1 = $('logoInput');
-  if (li1) li1.addEventListener('change', function() { handleLogoUpload(li1, 1); });
-  var li2 = $('logoInput2');
-  if (li2) li2.addEventListener('change', function() { handleLogoUpload(li2, 2); });
+  // 8. إغلاق القائمة عند الضغط خارجها
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.menu-wrap')) closeMenu();
+  });
 
-  /* تحميل الحالة المحفوظة */
-  try {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      var loaded = JSON.parse(raw);
-      if (loaded && loaded.header && Array.isArray(loaded.questions)) {
-        state = loaded;
-        state.header = Object.assign({
-          school:'', title:'نموذج أسئلة', sub:'',
-          subject:'', grade:'', date:'',
-          student:'', duration:'', mark:'',
-          logo1:null, logo2:null
-        }, state.header);
-      }
-    }
-  } catch(e) {
-    console.warn('فشل تحميل الحالة:', e);
-  }
+  // 9. رندر أولي
+  render();
 
-  bindHeaderFields();
-  renderAll();
-
-  /* قبل الطباعة: نرجع للمعاينة */
+  // 10. قبل الطباعة: نروح للمعاينة
   window.addEventListener('beforeprint', function() { switchView('preview'); });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
 </script>
 
 </body>
