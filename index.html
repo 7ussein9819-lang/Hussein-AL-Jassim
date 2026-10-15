@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منشئ نماذج الأسئلة - A4</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --ink:#1f2937; --muted:#6b7280; --line:#d1d5db;
+    --accent:#2563eb; --accent2:#10b981; --danger:#ef4444;
+  }
+  html, body { margin:0; padding:0; }
+  body {
+    background:#e5e7eb; font-family:"Tahoma","Segoe UI","Arial",sans-serif;
+    color:var(--ink); padding:20px 12px 60px;
+  }
+
+  /* ===== الشريط العلوي ===== */
+  .toolbar {
+    position:sticky; top:0; z-index:50; max-width:21cm; margin:0 auto 18px;
+    background:#111827; color:#fff; border-radius:14px; padding:10px 12px;
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+  }
+  .toolbar .brand { font-weight:bold; font-size:15px; margin-inline-end:auto; padding:4px 8px; white-space:nowrap; }
+  .btn {
+    border:none; border-radius:8px; padding:8px 12px; font-size:13px;
+    font-weight:bold; cursor:pointer; font-family:inherit; color:#fff;
+    background:#374151; transition:.15s; white-space:nowrap;
+  }
+  .btn:hover { filter:brightness(1.15); }
+  .btn:active { transform:translateY(1px); }
+  .btn.blue { background:var(--accent); }
+  .btn.green { background:var(--accent2); }
+  .btn.red { background:var(--danger); }
+  .btn.gray { background:#4b5563; }
+
+  /* ===== الورقة ===== */
+  .paper {
+    width:21cm; min-height:29.7cm; margin:0 auto; background:#fff;
+    padding:1.6cm 1.5cm; box-shadow:0 0 18px rgba(0,0,0,.18);
+  }
+
+  /* ===== رأس الورقة ===== */
+  .paper-header { margin-bottom:18px; }
+  .header-top {
+    display:flex; align-items:center; gap:14px;
+    border-bottom:2.5px solid #111827; padding-bottom:10px;
+  }
+  .logo-box {
+    width:80px; height:80px; flex:0 0 80px; border:1.5px dashed var(--line);
+    border-radius:8px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; overflow:hidden; background:#f9fafb;
+  }
+  .logo-box:hover { border-color:var(--accent); }
+  .logo-box img { width:100%; height:100%; object-fit:contain; display:none; }
+  .logo-box.has-logo img { display:block; }
+  .logo-box.has-logo .logo-placeholder { display:none; }
+  .logo-placeholder { font-size:11px; color:var(--muted); text-align:center; line-height:1.4; padding:4px; }
+  .header-center { flex:1; text-align:center; }
+  .h-school, .h-title, .h-sub {
+    width:100%; border:none; outline:none; text-align:center;
+    font-family:inherit; background:transparent; color:var(--ink);
+  }
+  .h-school { font-size:20px; font-weight:bold; padding:2px 0; }
+  .h-title  { font-size:16px; font-weight:bold; padding:4px 0; color:#374151; }
+  .h-sub    { font-size:13px; color:var(--muted); padding:2px 0; }
+
+  .header-meta { display:flex; gap:10px; margin-top:10px; font-size:14px; }
+  .meta-item {
+    flex:1; display:flex; align-items:center; gap:6px;
+    border-bottom:1px solid var(--line); padding:4px 2px;
+  }
+  .meta-item label { font-weight:bold; color:#374151; white-space:nowrap; font-size:13px; }
+  .meta-item input {
+    flex:1; border:none; outline:none; font-family:inherit;
+    font-size:14px; background:transparent; color:var(--ink); min-width:0;
+  }
+
+  /* ===== الأسئلة ===== */
+  #questions { margin-top:18px; }
+  .empty {
+    text-align:center; color:#9ca3af; font-size:14px; padding:40px 10px;
+    border:2px dashed #e5e7eb; border-radius:10px;
+  }
+  .question {
+    margin-bottom:18px; padding:10px 10px 12px; border:1px solid transparent;
+    border-radius:8px; page-break-inside:avoid; break-inside:avoid;
+  }
+  .question:hover { border-color:#e5e7eb; background:#fcfcfd; }
+
+  .q-head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .q-num { font-weight:bold; font-size:16px; color:var(--accent); min-width:28px; }
+  .q-type {
+    font-size:11px; background:#eef2ff; color:#4338ca;
+    padding:2px 8px; border-radius:20px; font-weight:bold;
+  }
+  .q-head .spacer { flex:1; }
+  .q-actions { display:flex; gap:4px; opacity:0; transition:.15s; }
+  .question:hover .q-actions { opacity:1; }
+
+  .icon-btn {
+    border:none; background:#f3f4f6; color:#374151;
+    width:24px; height:24px; border-radius:6px; cursor:pointer;
+    font-size:13px; font-weight:bold; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family:inherit; padding:0;
+  }
+  .icon-btn:hover { background:#e5e7eb; }
+  .icon-btn:disabled { opacity:.35; cursor:default; }
+  .icon-btn.del:hover { background:#fee2e2; color:var(--danger); }
+
+  .q-text {
+    width:100%; border:none; outline:none; resize:none; overflow:hidden;
+    font-family:inherit; font-size:15px; line-height:1.9; color:var(--ink);
+    background:transparent; padding:2px 0 2px 30px; display:block;
+  }
+  .q-text::placeholder { color:#c7cbd1; }
+
+  .options { margin-top:6px; padding-inline-start:30px; }
+  .option-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .option-letter {
+    width:24px; height:24px; flex:0 0 24px; border-radius:50%;
+    border:1.5px solid var(--line); display:flex; align-items:center;
+    justify-content:center; font-size:13px; font-weight:bold; color:#374151;
+  }
+  .option-row input[type="text"] {
+    flex:1; border:none; border-bottom:1px dotted #d1d5db; outline:none;
+    font-family:inherit; font-size:14px; padding:3px 4px;
+    background:transparent; color:var(--ink);
+  }
+  .option-row input[type="text"]:focus { border-bottom-color:var(--accent); }
+  .option-row input[type="radio"] { accent-color:var(--accent2); cursor:pointer; }
+  .correct-label { font-size:11px; color:var(--muted); }
+
+  .tf-row { margin-top:6px; padding-inline-start:30px; display:flex; gap:24px; align-items:center; }
+  .tf-item { display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; }
+  .tf-item input { accent-color:var(--accent2); cursor:pointer; }
+
+  .lines { margin-top:8px; padding-inline-start:30px; }
+  .line { height:26px; border-bottom:1px dotted #b8bec7; }
+
+  .add-option {
+    border:none; background:transparent; color:var(--accent);
+    font-size:13px; font-weight:bold; cursor:pointer;
+    padding:4px 0; font-family:inherit;
+  }
+  .add-option:hover { text-decoration:underline; }
+
+  .lines-ctrl {
+    display:flex; gap:6px; align-items:center; margin-top:4px;
+    padding-inline-start:30px; font-size:12px; color:var(--muted);
+  }
+
+  /* ===== توست ===== */
+  #toast {
+    position:fixed; bottom:24px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:#111827; color:#fff; padding:10px 20px; border-radius:10px;
+    font-size:14px; opacity:0; pointer-events:none; transition:.25s; z-index:999;
+  }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ===== الطباعة ===== */
+  @media print {
+    @page { size:A4; margin:1.4cm; }
+    body { background:#fff; padding:0; }
+    .toolbar, .no-print, #toast, .empty { display:none !important; }
+    .paper {
+      width:auto; min-height:auto; margin:0; padding:0;
+      box-shadow:none;
+    }
+    .question { border-color:transparent !important; background:transparent !important; }
+    .logo-box { border-style:solid; border-color:#e5e7eb; }
+  }
+
+  @media (max-width:900px) {
+    .paper { width:100%; padding:18px; min-height:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= الشريط العلوي ================= -->
+<div class="toolbar">
+  <span class="brand">📝 منشئ نماذج الأسئلة</span>
+
+  <button class="btn blue" onclick="addQuestion('essay')">➕ مقالي</button>
+  <button class="btn blue" onclick="addQuestion('mcq')">➕ اختيار من متعدد</button>
+  <button class="btn blue" onclick="addQuestion('tf')">➕ صح / خطأ</button>
+
+  <button class="btn green" onclick="window.print()">🖨️ طباعة</button>
+  <button class="btn green" onclick="exportPDF()">📄 PDF</button>
+
+  <button class="btn gray" onclick="backup()">💾 نسخة احتياطية</button>
+  <button class="btn gray" onclick="document.getElementById('importFile').click()">📂 استيراد</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="restore(this)">
+
+  <button class="btn red" onclick="clearAll()">🗑️ حذف الكل</button>
+</div>
+
+<!-- ================= الورقة ================= -->
+<div class="paper" id="paper">
+
+  <div class="paper-header">
+    <div class="header-top">
+      <div class="logo-box" id="logoBox" onclick="document.getElementById('logoInput').click()" title="اضغط لرفع الشعار">
+        <img id="logoImg" alt="">
+        <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
+      </div>
+      <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="uploadLogo(this,1)">
+
+      <div class="header-center">
+        <input class="h-school" id="school" placeholder="اسم المدرسة">
+        <input class="h-title"  id="title"  placeholder="نموذج أسئلة">
+        <input class="h-sub"    id="sub"    placeholder="العام الدراسي 2025 - 2026">
+      </div>
+
+      <div class="logo-box" id="logoBox2" onclick="document.getElementById('logoInput2').click()" title="اضغط لرفع الشعار">
+        <img id="logoImg2" alt="">
+        <span class="logo-placeholder">اضغط<br>لرفع الشعار</span>
+      </div>
+      <input type="file" id="logoInput2" accept="image/*" style="display:none" onchange="uploadLogo(this,2)">
+    </div>
+
+    <div class="header-meta">
+      <div class="meta-item"><label>المادة:</label><input id="subject" placeholder="........."></div>
+      <div class="meta-item"><label>الصف:</label><input id="grade" placeholder="........."></div>
+      <div class="meta-item"><label>التاريخ:</label><input id="date" placeholder="........."></div>
+    </div>
+
+    <div class="header-meta">
+      <div class="meta-item"><label>اسم الطالب:</label><input id="student" placeholder="........."></div>
+      <div class="meta-item"><label>المدة:</label><input id="duration" placeholder="........."></div>
+      <div class="meta-item"><label>الدرجة:</label><input id="mark" placeholder="........."></div>
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   الحالة العامة + الحفظ التلقائي
+   ============================================================ */
+const STORAGE_KEY = 'qform_v1';
+const LETTERS = ['أ','ب','ج','د','هـ','و','ز','ح','ط','ي','ك','ل'];
+const HEADER_FIELDS = ['school','title','sub','subject','grade','date','student','duration','mark'];
+
+let state = {
+  header: {
+    school:'', title:'نموذج أسئلة', sub:'',
+    subject:'', grade:'', date:'',
+    student:'', duration:'', mark:'',
+    logo1:null, logo2:null
+  },
+  questions: []
+};
+
+let saveTimer;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ console.warn('حفظ فشل', e); }
+  }, 250);
+}
+
+/* ============================================================
+   أدوات صغيرة
+   ============================================================ */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function iconBtn(txt, title, fn){
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'icon-btn';
+  b.textContent = txt;
+  b.title = title;
+  b.onclick = fn;
+  return b;
+}
+
+/* ============================================================
+   الشعارات
+   ============================================================ */
+function renderLogo(n){
+  const box = document.getElementById(n === 1 ? 'logoBox'  : 'logoBox2');
+  const img = document.getElementById(n === 1 ? 'logoImg'  : 'logoImg2');
+  const data = state.header['logo' + n];
+  if (data) { img.src = data; box.classList.add('has-logo'); }
+  else      { img.src = '';   box.classList.remove('has-logo'); }
+}
+
+function uploadLogo(input, n){
+  const f = input.files && input.files[0];
+  if (!f) return;
+  if (f.size > 2 * 1024 * 1024) { toast('الصورة كبيرة، اختر أقل من 2 ميغا'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.header['logo' + n] = e.target.result;
+    renderLogo(n);
+    save();
+    toast('تم رفع الشعار ✅');
+  };
+  reader.readAsDataURL(f);
+  input.value = '';
+}
+
+/* ============================================================
+   إدارة الأسئلة
+   ============================================================ */
+function addQuestion(type){
+  const q = { type, text:'' };
+  if (type === 'essay') q.lines = 3;
+  if (type === 'mcq')   { q.options = ['','','','']; q.correct = -1; }
+  if (type === 'tf')    { q.correct = null; }
+  state.questions.push(q);
+  save();
+  render();
+  setTimeout(()=>{
+    const all = document.querySelectorAll('#questions .q-text');
+    if (all.length){
+      const last = all[all.length - 1];
+      last.focus();
+      last.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+  }, 60);
+}
+
+function move(idx, dir){
+  const ni = idx + dir;
+  if (ni < 0 || ni >= state.questions.length) return;
+  const tmp = state.questions[idx];
+  state.questions[idx] = state.questions[ni];
+  state.questions[ni] = tmp;
+  save();
+  render();
+}
+
+function render(){
+  const cont = document.getElementById('questions');
+  cont.innerHTML = '';
+
+  if (!state.questions.length){
+    const d = document.createElement('div');
+    d.className = 'empty';
+    d.textContent = 'اضغط على أزرار الإضافة فوق (مقالي / اختيار من متعدد / صح-خطأ) حتى تضيف أسئلة.';
+    cont.appendChild(d);
+    return;
+  }
+
+  state.questions.forEach((q, i) => cont.appendChild(buildQuestion(q, i)));
+
+  requestAnimationFrame(()=>{
+    cont.querySelectorAll('.q-text').forEach(autoGrow);
+  });
+}
+
+function buildQuestion(q, idx){
+  const wrap = document.createElement('div');
+  wrap.className = 'question';
+
+  /* ---- رأس السؤال ---- */
+  const head = document.createElement('div');
+  head.className = 'q-head';
+
+  const num = document.createElement('span');
+  num.className = 'q-num';
+  num.textContent = (idx + 1) + '.';
+  head.appendChild(num);
+
+  const lbl = document.createElement('span');
+  lbl.className = 'q-type';
+  lbl.textContent = q.type === 'essay' ? 'مقالي'
+                  : q.type === 'mcq'   ? 'اختيار من متعدد'
+                  :                      'صح / خطأ';
+  head.appendChild(lbl);
+
+  const sp = document.createElement('span');
+  sp.className = 'spacer';
+  head.appendChild(sp);
+
+  const acts = document.createElement('div');
+  acts.className = 'q-actions no-print';
+
+  const up = iconBtn('▲','نقل للأعلى', ()=>move(idx,-1));
+  if (idx === 0) up.disabled = true;
+  acts.appendChild(up);
+
+  const dn = iconBtn('▼','نقل للأسفل', ()=>move(idx,1));
+  if (idx === state.questions.length - 1) dn.disabled = true;
+  acts.appendChild(dn);
+
+  const del = iconBtn('✕','حذف السؤال', ()=>{
+    state.questions.splice(idx,1); save(); render();
+  });
+  del.classList.add('del');
+  acts.appendChild(del);
+
+  head.appendChild(acts);
+  wrap.appendChild(head);
+
+  /* ---- نص السؤال ---- */
+  const ta = document.createElement('textarea');
+  ta.className = 'q-text';
+  ta.rows = 1;
+  ta.placeholder = 'اكتب نص السؤال هنا...';
+  ta.value = q.text || '';
+  ta.addEventListener('input', ()=>{
+    q.text = ta.value;
+    autoGrow(ta);
+    save();
+  });
+  wrap.appendChild(ta);
+
+  /* ---- جسم السؤال حسب النوع ---- */
+  if (q.type === 'essay')      wrap.appendChild(buildEssay(q));
+  else if (q.type === 'mcq')   wrap.appendChild(buildMCQ(q, idx));
+  else                         wrap.appendChild(buildTF(q, idx));
+
+  return wrap;
+}
+
+/* ===== مقالي ===== */
+function buildEssay(q){
+  const box = document.createElement('div');
+
+  const lines = document.createElement('div');
+  lines.className = 'lines';
+  const n = q.lines || 0;
+  for (let i = 0; i < n; i++){
+    const l = document.createElement('div');
+    l.className = 'line';
+    lines.appendChild(l);
+  }
+  box.appendChild(lines);
+
+  const ctrl = document.createElement('div');
+  ctrl.className = 'lines-ctrl no-print';
+  ctrl.appendChild(document.createTextNode('عدد الأسطر:'));
+
+  ctrl.appendChild(iconBtn('−','تقليل الأسطر', ()=>{
+    q.lines = Math.max(0, (q.lines || 0) - 1); save(); render();
+  }));
+
+  const v = document.createElement('span');
+  v.textContent = n;
+  v.style.minWidth = '16px';
+  v.style.textAlign = 'center';
+  ctrl.appendChild(v);
+
+  ctrl.appendChild(iconBtn('+','زيادة الأسطر', ()=>{
+    q.lines = (q.lines || 0) + 1; save(); render();
+  }));
+
+  box.appendChild(ctrl);
+  return box;
+}
+
+/* ===== اختيار من متعدد ===== */
+function buildMCQ(q, idx){
+  const box = document.createElement('div');
+  box.className = 'options';
+
+  q.options.forEach((opt, oi) => {
+    const row = document.createElement('div');
+    row.className = 'option-row';
+
+    const letter = document.createElement('span');
+    letter.className = 'option-letter';
+    letter.textContent = LETTERS[oi] || (oi + 1);
+    row.appendChild(letter);
+
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = 'الخيار ' + (LETTERS[oi] || (oi + 1));
+    inp.value = opt;
+    inp.addEventListener('input', ()=>{ q.options[oi] = inp.value; save(); });
+    row.appendChild(inp);
+
+    const rad = document.createElement('input');
+    rad.type = 'radio';
+    rad.name = 'correct_' + idx;
+    rad.checked = (q.correct === oi);
+    rad.title = 'تحديد كإجابة صحيحة';
+    rad.addEventListener('change', ()=>{ q.correct = oi; save(); });
+    row.appendChild(rad);
+
+    const lab = document.createElement('span');
+    lab.className = 'correct-label no-print';
+    lab.textContent = 'صح';
+    row.appendChild(lab);
+
+    if (q.options.length > 2){
+      const rm = iconBtn('✕','حذف الخيار', ()=>{
+        q.options.splice(oi,1);
+        if (q.correct === oi) q.correct = -1;
+        else if (q.correct > oi) q.correct--;
+        save(); render();
+      });
+      rm.classList.add('del');
+      row.appendChild(rm);
+    }
+
+    box.appendChild(row);
+  });
+
+  if (q.options.length < LETTERS.length){
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'add-option no-print';
+    add.textContent = '➕ إضافة خيار';
+    add.onclick = ()=>{ q.options.push(''); save(); render(); };
+    box.appendChild(add);
+  }
+
+  return box;
+}
+
+/* ===== صح / خطأ ===== */
+function buildTF(q, idx){
+  const box = document.createElement('div');
+  box.className = 'tf-row';
+
+  [['صح', true], ['خطأ', false]].forEach(([label, val]) => {
+    const lab = document.createElement('label');
+    lab.className = 'tf-item';
+
+    const rad = document.createElement('input');
+    rad.type = 'radio';
+    rad.name = 'tf_' + idx;
+    rad.checked = q.correct === val;
+    rad.addEventListener('change', ()=>{ q.correct = val; save(); });
+
+    lab.appendChild(rad);
+    lab.appendChild(document.createTextNode(label));
+    box.appendChild(lab);
+  });
+
+  return box;
+}
+
+/* ============================================================
+   تصدير PDF
+   ============================================================ */
+function exportPDF(){
+  const el = document.getElementById('paper');
+  if (!window.html2pdf){ toast('ما تحمّل الملف، راح نفتح الطباعة'); window.print(); return; }
+  toast('جاري تجهيز PDF...');
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: 'نموذج-اسئلة.pdf',
+    image: { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true },
+    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak: { mode:['css','legacy'] }
+  };
+  window.html2pdf().set(opt).from(el).save()
+    .then(()=>toast('تم حفظ PDF ✅'))
+    .catch(()=>{ toast('صار خطأ، نفتح الطباعة'); window.print(); });
+}
+
+/* ============================================================
+   نسخة احتياطية / استيراد / حذف
+   ============================================================ */
+functi
