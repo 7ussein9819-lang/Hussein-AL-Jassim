@@ -58,7 +58,7 @@ button,input,select,textarea{font-family:inherit;color:inherit;}
 }
 .brand-text{min-width:0;}
 .brand-text b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.brand-text small{display:block;font-size:11px;color:var(--text-3);font-weight:normal;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text small{display:block;font-size:11px;color:var(--text-3);font-weight:normal;margin-top:1px;}
 .topbar-actions{display:flex;gap:6px;align-items:center;}
 .icon-btn{
   width:38px;height:38px;border:1px solid transparent;border-radius:10px;
@@ -73,7 +73,6 @@ button,input,select,textarea{font-family:inherit;color:inherit;}
 html[data-theme="light"] .icon-btn .icon-dark{display:none;}
 html[data-theme="dark"] .icon-btn .icon-light{display:none;}
 
-/* Menu */
 .menu-wrap{position:relative;}
 .menu{
   position:absolute;top:calc(100% + 8px);left:0;
@@ -81,8 +80,7 @@ html[data-theme="dark"] .icon-btn .icon-light{display:none;}
   border-radius:var(--radius);box-shadow:var(--shadow-lg);
   border:1px solid var(--border);padding:6px;display:none;z-index:200;
 }
-.menu.open{display:block;animation:menuIn .15s ease-out;}
-@keyframes menuIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.menu.open{display:block;}
 .menu button{
   width:100%;text-align:right;border:none;background:transparent;
   padding:10px 12px;border-radius:8px;font-size:13px;font-weight:500;
@@ -94,13 +92,10 @@ html[data-theme="dark"] .icon-btn .icon-light{display:none;}
 .menu hr{border:none;border-top:1px solid var(--border);margin:4px 0;}
 .menu .mi{font-size:16px;width:20px;text-align:center;display:inline-flex;align-items:center;justify-content:center;}
 
-/* Main */
 main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .view{display:none;}
-.view.active{display:block;animation:fadeIn .2s ease-out;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.view.active{display:block;}
 
-/* Bottom nav */
 .bottomnav{
   position:fixed;bottom:0;left:0;right:0;background:var(--bg-1);
   border-top:1px solid var(--border);
@@ -115,45 +110,23 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   font-size:11px;font-weight:bold;transition:background .15s,color .15s;min-width:0;
 }
 .navbtn svg{width:22px;height:22px;stroke:currentColor;fill:none;}
-.navbtn:hover{background:var(--bg-2);color:var(--text-2);}
 .navbtn.active{color:var(--accent);background:var(--accent-light);}
-
 @media (min-width:900px){
   .bottomnav{max-width:760px;margin:0 auto;left:50%;transform:translateX(-50%);right:auto;border-radius:16px 16px 0 0;border:1px solid var(--border);border-bottom:none;}
 }
 
-/* ==================================================
-   Preview area — الورقة دائماً A4
-   ================================================== */
-.preview-wrap{
-  display:flex;flex-direction:column;align-items:center;
-  gap:20px;padding:10px 0;
-}
-.page-scaler{
-  position:relative;
-  /* width/height يُحسبان بالـ JS */
-}
+/* Preview */
+.preview-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:10px 0;}
+.page-scaler{position:relative;}
 .page{
-  width:210mm;
-  height:297mm;
-  background:#ffffff;
-  color:#111827;
-  padding:12mm;
-  position:absolute;
-  top:0;left:0;
-  transform-origin:top center;
+  width:210mm;height:297mm;background:#ffffff;color:#111827;
+  padding:12mm;position:absolute;top:0;left:0;
+  transform-origin:top right;
   box-shadow:var(--shadow-paper);
-  display:flex;
-  flex-direction:column;
-  font-size:12pt;
-  line-height:1.55;
-  overflow:hidden;
+  display:flex;flex-direction:column;font-size:12pt;line-height:1.55;overflow:hidden;
 }
 
-/* frame */
-.page-frame{
-  position:absolute;inset:6mm;pointer-events:none;z-index:3;
-}
+.page-frame{position:absolute;inset:6mm;pointer-events:none;z-index:3;}
 .page-frame.frame-none{display:none;}
 .page-frame.frame-solid{border:1.5px solid var(--frame-c,#000);}
 .page-frame.frame-double{border:4px double var(--frame-c,#000);}
@@ -162,86 +135,65 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .page-frame.frame-thick{border:5px solid var(--frame-c,#000);}
 .page-frame.frame-elegant{border:1px solid var(--frame-c,#000);outline:3px solid var(--frame-c,#000);outline-offset:3px;}
 .page-frame.frame-rounded{border:2px solid var(--frame-c,#000);border-radius:12px;}
-.page-frame.frame-double-thin{
-  border:1px solid var(--frame-c,#000);
-  box-shadow:inset 0 0 0 4px transparent, inset 0 0 0 5px var(--frame-c,#000);
-}
-.page-frame.frame-ornate::before,
-.page-frame.frame-ornate::after{
-  content:'';position:absolute;inset:0;
-  border:3px solid var(--frame-c,#000);
-}
+.page-frame.frame-double-thin{border:1px solid var(--frame-c,#000);box-shadow:inset 0 0 0 4px transparent, inset 0 0 0 5px var(--frame-c,#000);}
+.page-frame.frame-ornate::before,.page-frame.frame-ornate::after{content:'';position:absolute;inset:0;border:3px solid var(--frame-c,#000);}
 .page-frame.frame-ornate::before{inset:6px;border-width:1px;}
 
-.page-content{
-  position:relative;z-index:2;
-  display:flex;flex-direction:column;
-  flex:1;min-height:0;
-}
+.page-content{position:relative;z-index:2;display:flex;flex-direction:column;flex:1;min-height:0;}
 .page-main{flex:1;min-height:0;}
 
-/* watermark */
-.watermark{
-  position:absolute;inset:0;z-index:1;
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:none;overflow:hidden;
-}
+.watermark{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;}
 .watermark-text{font-weight:bold;white-space:nowrap;font-family:var(--font);}
 .watermark-img{max-width:80%;max-height:80%;object-fit:contain;}
 
-/* header */
+/* ============================================================
+   HEADER — 3 columns, محاذاة نظيفة
+   ============================================================ */
 .page-header{margin-bottom:8px;}
 .header-grid{
   display:grid;
   grid-template-columns:1fr 1.5fr 1fr;
-  gap:8px;align-items:start;
+  gap:8px;
+  align-items:start;
 }
-.hcol{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.hcol-right{text-align:right;}
+.hcol{
+  display:flex;flex-direction:column;
+  gap:3px;min-width:0;
+}
+.hcol-right{text-align:right;align-items:flex-end;}
 .hcol-center{text-align:center;align-items:center;}
 .hcol-left{text-align:left;align-items:flex-start;}
-.hfield{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.2em;line-height:1.4;}
+.hfield{
+  white-space:pre-wrap;overflow-wrap:anywhere;
+  min-height:1.2em;line-height:1.4;
+  width:100%;
+}
+.hcol-right .hfield{text-align:right;}
+.hcol-center .hfield{text-align:center;}
+.hcol-left .hfield{text-align:left;}
+
 .header-extra{
-  text-align:center;margin-top:5px;
+  text-align:center;margin-top:6px;
   white-space:pre-wrap;overflow-wrap:anywhere;
 }
-.header-line{border-top:2px solid currentColor;margin:8px 0 6px 0;color:#111827;}
+.header-line{border-top:2px solid currentColor;margin:10px 0 6px 0;color:#111827;}
 .header-note{
   text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
   margin-bottom:10px;
 }
-.header-note:empty{display:none;}
 
-/* questions */
-.q-item{
-  margin-bottom:8px;white-space:pre-wrap;overflow-wrap:anywhere;
-  page-break-inside:avoid;break-inside:avoid;
-}
+.q-item{margin-bottom:8px;white-space:pre-wrap;overflow-wrap:anywhere;page-break-inside:avoid;break-inside:avoid;}
 
-/* footer — ثابتة بأسفل الصفحة الأخيرة */
-.page-footer{
-  margin-top:auto;
-  padding-top:14px;
-  display:flex;flex-direction:column;gap:6px;
-}
-.footer-wish{
-  text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;
-}
-.footer-grid{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
-  align-items:end;
-}
+.page-footer{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:6px;}
+.footer-wish{text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;}
+.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;}
 .footer-grid .fcol{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;}
 .footer-grid .fcol.right{text-align:right;}
 .footer-grid .fcol.center{text-align:center;}
 .footer-grid .fcol.left{text-align:left;}
-.footer-teachers{
-  display:flex;flex-direction:column;gap:2px;
-}
+.footer-teachers{display:flex;flex-direction:column;gap:2px;}
 
-/* ==================================================
-   Control panel
-   ================================================== */
+/* Control panel */
 .subtabs{
   display:flex;gap:5px;overflow-x:auto;padding:5px;
   background:var(--bg-1);border-radius:var(--radius);
@@ -254,24 +206,15 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   padding:9px 12px;border-radius:8px;cursor:pointer;
   font-size:12.5px;font-weight:bold;white-space:nowrap;
   display:flex;align-items:center;gap:5px;justify-content:center;
-  transition:background .15s,color .15s;
 }
-.subtab:hover{background:var(--bg-2);color:var(--text-1);}
 .subtab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px var(--accent-ring);}
 .subtab .em{font-size:14px;}
 
 .subview{display:none;}
-.subview.active{display:block;animation:fadeIn .18s ease-out;}
+.subview.active{display:block;}
 
-.card{
-  background:var(--bg-1);border-radius:var(--radius);
-  padding:14px;margin-bottom:12px;
-  box-shadow:var(--shadow-xs);border:1px solid var(--border);
-}
-.card h3{
-  margin:0 0 12px;font-size:14px;
-  display:flex;align-items:center;gap:8px;font-weight:bold;
-}
+.card{background:var(--bg-1);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-xs);border:1px solid var(--border);}
+.card h3{margin:0 0 12px;font-size:14px;display:flex;align-items:center;gap:8px;font-weight:bold;}
 .card h3 .em{font-size:16px;}
 .card .hint{margin:8px 0 0;font-size:11.5px;color:var(--text-3);line-height:1.7;}
 
@@ -287,7 +230,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   display:flex;flex-direction:column;gap:4px;padding:10px;
   border:1px solid var(--border);border-radius:var(--radius-sm);
   margin-bottom:8px;background:var(--bg-2);
-  transition:border-color .15s;
 }
 .field-group:focus-within{border-color:var(--accent);}
 .field-group > label{font-size:11.5px;font-weight:bold;color:var(--text-2);}
@@ -296,28 +238,19 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 .field-group select{
   border:1.5px solid var(--border-strong);border-radius:7px;
   padding:8px 10px;font-size:13px;background:var(--bg-1);
-  outline:none;width:100%;transition:border-color .15s,box-shadow .15s;
+  outline:none;width:100%;
 }
 .field-group input:focus,.field-group select:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-ring);
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);
 }
 .field-group textarea{
   border:1.5px solid var(--border-strong);border-radius:7px;
   padding:8px 10px;font-size:13px;background:var(--bg-1);
   outline:none;width:100%;min-height:50px;resize:vertical;
-  transition:border-color .15s,box-shadow .15s;
-}
-.field-group textarea:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-ring);
 }
 
-.font-row{
-  display:grid;grid-template-columns:1.5fr 55px 80px 40px;gap:5px;margin-top:4px;
-}
-.font-row select,
-.font-row input[type="number"]{
+.font-row{display:grid;grid-template-columns:1.5fr 55px 80px 40px;gap:5px;margin-top:4px;}
+.font-row select,.font-row input[type="number"]{
   border:1.5px solid var(--border-strong);border-radius:7px;
   padding:6px;font-size:12px;background:var(--bg-1);
   outline:none;width:100%;min-width:0;
@@ -328,25 +261,17 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 }
 .font-row input[type="color"]::-webkit-color-swatch-wrapper{padding:0;}
 .font-row input[type="color"]::-webkit-color-swatch{border:none;border-radius:5px;}
+@media (max-width:520px){.font-row{grid-template-columns:1fr 50px 70px 36px;}}
 
-@media (max-width:520px){
-  .font-row{grid-template-columns:1fr 50px 70px 36px;}
-}
-
-/* buttons */
 .btn{
   border:none;border-radius:8px;padding:9px 14px;
   font-size:13px;font-weight:bold;cursor:pointer;color:#fff;
   display:inline-flex;align-items:center;gap:6px;
-  transition:filter .15s,transform .1s,background .15s;
 }
-.btn:hover{filter:brightness(1.08);}
-.btn:active{transform:translateY(1px);}
 .btn.blue{background:var(--accent);}
 .btn.green{background:var(--success);}
 .btn.red{background:var(--danger);}
 .btn.ghost{background:var(--bg-2);color:var(--text-1);border:1px solid var(--border);}
-.btn.ghost:hover{background:var(--bg-3);filter:none;}
 .btn.sm{padding:7px 11px;font-size:12px;}
 
 .toggle-row{
@@ -357,71 +282,48 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 }
 .toggle-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
 
-/* question cards */
-.q-card{
-  background:var(--bg-1);border:1px solid var(--border);
-  border-radius:var(--radius);padding:12px;margin-bottom:10px;
-  box-shadow:var(--shadow-xs);
-}
+.q-card{background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;box-shadow:var(--shadow-xs);}
 .q-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.q-card-head .num{
-  font-weight:bold;color:var(--accent);font-size:13px;
-  padding:3px 8px;background:var(--accent-light);border-radius:20px;
-}
+.q-card-head .num{font-weight:bold;color:var(--accent);font-size:13px;padding:3px 8px;background:var(--accent-light);border-radius:20px;}
 .q-card-head .spacer{flex:1;}
 .mini-btn{
   width:32px;height:32px;border-radius:8px;
   border:1px solid var(--border);background:var(--bg-2);color:var(--text-1);
   font-size:13px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:0;transition:background .15s,transform .1s,border-color .15s;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;
 }
-.mini-btn:hover{background:var(--bg-3);border-color:var(--border-strong);}
-.mini-btn:active{transform:scale(.94);}
 .mini-btn:disabled{opacity:.35;cursor:default;}
 .mini-btn.danger{color:var(--danger);}
-.mini-btn.danger:hover{background:var(--danger-light);border-color:var(--danger);}
+.mini-btn.danger:hover{background:var(--danger-light);}
 
 .add-q-btn{
   width:100%;border:2px dashed var(--border-strong);background:var(--bg-2);
   padding:14px;border-radius:var(--radius);cursor:pointer;
   font-size:13px;font-weight:bold;color:var(--text-2);
-  transition:all .15s;
   display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.add-q-btn:hover:not(:disabled){
-  border-color:var(--accent);background:var(--accent-light);color:var(--accent);
-}
+.add-q-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
 .add-q-btn:disabled{opacity:.5;cursor:not-allowed;}
 
-/* teachers list */
-.teacher-item{
-  display:flex;align-items:center;gap:6px;margin-bottom:6px;
-}
+.teacher-item{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
 .teacher-item input{
   flex:1;border:1.5px solid var(--border-strong);border-radius:7px;
   padding:8px 10px;font-size:13px;background:var(--bg-1);
   outline:none;min-width:0;
 }
-.teacher-item input:focus{
-  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);
-}
 
-/* tools */
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
 .tool-btn{
   border:1px solid var(--border);background:var(--bg-1);
   padding:14px 12px;border-radius:var(--radius);cursor:pointer;
   font-size:12.5px;font-weight:bold;color:var(--text-1);
   display:flex;align-items:center;gap:8px;justify-content:flex-start;
-  transition:all .15s;text-align:right;
+  text-align:right;
 }
-.tool-btn:hover{background:var(--bg-2);border-color:var(--border-strong);transform:translateY(-1px);box-shadow:var(--shadow);}
 .tool-btn .em{font-size:18px;}
 .tool-btn.danger{color:var(--danger);border-color:#fecaca;}
 .tool-btn.danger:hover{background:var(--danger-light);}
 
-/* frame picker */
 .frame-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;}
 .frame-opt{
   border:1.5px solid var(--border);background:var(--bg-2);
@@ -429,12 +331,8 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   display:flex;flex-direction:column;align-items:center;gap:6px;
   transition:all .15s;font-size:11px;color:var(--text-2);
 }
-.frame-opt:hover{border-color:var(--accent);background:var(--bg-1);}
 .frame-opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring);}
-.frame-opt .preview{
-  width:54px;height:40px;border-radius:3px;background:#fff;
-  display:flex;align-items:center;justify-content:center;
-}
+.frame-opt .preview{width:54px;height:40px;border-radius:3px;background:#fff;display:flex;align-items:center;justify-content:center;}
 .frame-opt .preview .box{width:42px;height:30px;border-radius:2px;}
 
 .theme-picker{display:flex;gap:8px;}
@@ -442,14 +340,12 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   flex:1;border:1.5px solid var(--border);background:var(--bg-2);
   border-radius:10px;padding:12px 8px;cursor:pointer;
   display:flex;align-items:center;gap:8px;justify-content:center;
-  font-size:13px;font-weight:bold;color:var(--text-2);transition:all .15s;
+  font-size:13px;font-weight:bold;color:var(--text-2);
 }
-.theme-opt:hover{border-color:var(--accent);}
 .theme-opt.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
 
 #toast{
-  position:fixed;
-  bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
+  position:fixed;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));
   left:50%;transform:translateX(-50%) translateY(20px);
   background:var(--text-1);color:var(--bg-1);padding:10px 20px;
   border-radius:10px;font-size:13px;opacity:0;pointer-events:none;
@@ -458,9 +354,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ==================================================
-   Print
-   ================================================== */
 @media print{
   @page{size:A4;margin:0;}
   html,body{background:#fff !important;padding:0 !important;margin:0 !important;}
@@ -469,19 +362,8 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   .view{display:none !important;}
   #view-preview{display:block !important;}
   .preview-wrap{display:block !important;padding:0 !important;gap:0 !important;}
-  .page-scaler{
-    width:auto !important;
-    height:auto !important;
-  }
-  .page{
-    position:static !important;
-    transform:none !important;
-    box-shadow:none !important;
-    margin:0 !important;
-    page-break-after:always;
-    break-after:page;
-    page-break-inside:avoid;
-  }
+  .page-scaler{width:auto !important;height:auto !important;}
+  .page{position:static !important;transform:none !important;box-shadow:none !important;margin:0 !important;page-break-after:always;break-after:page;page-break-inside:avoid;}
   .page:last-child{page-break-after:auto;break-after:auto;}
 }
 </style>
@@ -496,42 +378,18 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       <small id="topbar-sub">صفحة المعاينة</small>
     </div>
   </div>
-
   <div class="topbar-actions">
     <button class="icon-btn" onclick="toggleTheme()" title="تبديل الوضع">
-      <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-      <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/>
-        <line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/>
-        <line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
+      <svg class="icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
-
     <button class="icon-btn" onclick="doPrint()" title="طباعة">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 6 2 18 2 18 9"/>
-        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-        <rect x="6" y="14" width="12" height="8"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     </button>
-
     <div class="menu-wrap">
       <button class="icon-btn" onclick="toggleMenu(event)" title="المزيد">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="12" cy="5" r="2"/>
-          <circle cx="12" cy="12" r="2"/>
-          <circle cx="12" cy="19" r="2"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
       </button>
-
       <div class="menu" id="moreMenu">
         <button onclick="exportPDF()"><span class="mi">📄</span> تصدير PDF</button>
         <button onclick="exportWord()"><span class="mi">📝</span> تصدير Word</button>
@@ -541,7 +399,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
         <hr>
         <button class="danger" onclick="clearAll()"><span class="mi">🗑️</span> حذف الكل</button>
       </div>
-
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="restore(this)">
     </div>
   </div>
@@ -553,7 +410,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
   </section>
 
   <section class="view control-panel" id="view-control">
-
     <div class="subtabs no-print">
       <button class="subtab active" data-sub="header"><span class="em">📄</span> الترويسة</button>
       <button class="subtab" data-sub="questions"><span class="em">📝</span> الأسئلة</button>
@@ -563,13 +419,14 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       <button class="subtab" data-sub="tools"><span class="em">🧰</span> أدوات</button>
     </div>
 
-    <!-- Sub: Header -->
+    <!-- Header -->
     <div class="subview active" id="sub-header">
+
       <div class="card">
-        <h3><span class="em">📍</span> الجهة اليمنى</h3>
+        <h3><span class="em">📍</span> الجهة اليمنى (3 حقول)</h3>
 
         <div class="field-group">
-          <label>اسم المدرسة</label>
+          <label>الحقل الأول — اسم المدرسة</label>
           <input type="text" data-key="h.school.text">
           <div class="font-row">
             <select data-key="h.school.family" data-font></select>
@@ -580,13 +437,24 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
         </div>
 
         <div class="field-group">
-          <label>المديرية / العنوان الأعلى</label>
+          <label>الحقل الثاني — المديرية</label>
           <input type="text" data-key="h.dir.text">
           <div class="font-row">
             <select data-key="h.dir.family" data-font></select>
             <input type="number" data-key="h.dir.size" min="8" max="72">
             <select data-key="h.dir.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
             <input type="color" data-key="h.dir.color">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>الحقل الثالث — نص حر</label>
+          <input type="text" data-key="h.rightExtra.text" placeholder="اكتب أي شي...">
+          <div class="font-row">
+            <select data-key="h.rightExtra.family" data-font></select>
+            <input type="number" data-key="h.rightExtra.size" min="8" max="72">
+            <select data-key="h.rightExtra.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
+            <input type="color" data-key="h.rightExtra.color">
           </div>
         </div>
       </div>
@@ -606,7 +474,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
         </div>
 
         <div class="field-group">
-          <label>السنة الدراسية / سطر ثاني</label>
+          <label>السطر الثاني</label>
           <input type="text" data-key="h.year.text">
           <div class="font-row">
             <select data-key="h.year.family" data-font></select>
@@ -618,10 +486,10 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       </div>
 
       <div class="card">
-        <h3><span class="em">📎</span> الجهة اليسرى</h3>
+        <h3><span class="em">📎</span> الجهة اليسرى (4 حقول)</h3>
 
         <div class="field-group">
-          <label>الوقت</label>
+          <label>الحقل الأول — الوقت</label>
           <input type="text" data-key="h.time.text">
           <div class="font-row">
             <select data-key="h.time.family" data-font></select>
@@ -632,7 +500,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
         </div>
 
         <div class="field-group">
-          <label>المادة (اليسار)</label>
+          <label>الحقل الثاني — المادة</label>
           <input type="text" data-key="h.subjectLeft.text">
           <div class="font-row">
             <select data-key="h.subjectLeft.family" data-font></select>
@@ -643,7 +511,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
         </div>
 
         <div class="field-group">
-          <label>الصف</label>
+          <label>الحقل الثالث — الصف</label>
           <input type="text" data-key="h.grade.text">
           <div class="font-row">
             <select data-key="h.grade.family" data-font></select>
@@ -652,13 +520,24 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
             <input type="color" data-key="h.grade.color">
           </div>
         </div>
+
+        <div class="field-group">
+          <label>الحقل الرابع — نص حر</label>
+          <input type="text" data-key="h.leftExtra.text" placeholder="اكتب أي شي...">
+          <div class="font-row">
+            <select data-key="h.leftExtra.family" data-font></select>
+            <input type="number" data-key="h.leftExtra.size" min="8" max="72">
+            <select data-key="h.leftExtra.weight"><option value="normal">عادي</option><option value="bold">عريض</option></select>
+            <input type="color" data-key="h.leftExtra.color">
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3><span class="em">➕</span> حقل إضافي (اختياري)</h3>
+        <h3><span class="em">➕</span> حقل عام (تحت الثلاثة أعمدة)</h3>
         <label class="toggle-row">
           <input type="checkbox" data-key="h.extra.enabled">
-          <span>تفعيل الحقل الإضافي</span>
+          <span>تفعيل الحقل العام</span>
         </label>
         <div class="field-group">
           <label>النص</label>
@@ -687,7 +566,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       </div>
     </div>
 
-    <!-- Sub: Questions -->
+    <!-- Questions -->
     <div class="subview" id="sub-questions">
       <div class="card">
         <h3>
@@ -702,10 +581,10 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       <div id="questions-editor"></div>
     </div>
 
-    <!-- Sub: Footer -->
+    <!-- Footer -->
     <div class="subview" id="sub-footer">
       <div class="card">
-        <h3><span class="em">💬</span> العبارة العلوية (تظهر أعلى التذييل)</h3>
+        <h3><span class="em">💬</span> العبارة العلوية</h3>
         <div class="field-group">
           <label>النص</label>
           <input type="text" data-key="f.wish.text">
@@ -719,10 +598,9 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       </div>
 
       <div class="card">
-        <h3><span class="em">👥</span> أسماء المعلمين (الجهة اليمنى)</h3>
+        <h3><span class="em">👥</span> أسماء المعلمين (اليمين)</h3>
         <div id="teachersEditor"></div>
         <button class="btn blue sm" onclick="addTeacher()" style="margin-top:8px;">➕ إضافة معلم</button>
-
         <div class="field-group" style="margin-top:12px;">
           <label>الخط والحجم واللون</label>
           <div class="font-row">
@@ -736,7 +614,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 
       <div class="card">
         <h3><span class="em">📊</span> الصف السفلي</h3>
-
         <div class="field-group">
           <label>الوسط</label>
           <input type="text" data-key="f.center.text">
@@ -747,7 +624,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
             <input type="color" data-key="f.center.color">
           </div>
         </div>
-
         <div class="field-group">
           <label>اليسار</label>
           <input type="text" data-key="f.left.text">
@@ -761,7 +637,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       </div>
     </div>
 
-    <!-- Sub: Watermark -->
+    <!-- Watermark -->
     <div class="subview" id="sub-watermark">
       <div class="card">
         <h3><span class="em">💧</span> العلامة المائية</h3>
@@ -773,23 +649,20 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
             <option value="image">صورة</option>
           </select>
         </div>
+        <div class="field-group"><label>النص</label><input type="text" data-key="wm.text"></div>
         <div class="field-group">
-          <label>نص العلامة المائية</label>
-          <input type="text" data-key="wm.text">
-        </div>
-        <div class="field-group">
-          <label>صورة العلامة المائية</label>
+          <label>صورة</label>
           <input type="file" id="wmImageInput" accept="image/*" style="border:1.5px solid var(--border-strong);border-radius:7px;padding:8px;background:var(--bg-1);font-size:12px;">
           <button class="btn ghost sm" onclick="removeWatermarkImage()" style="margin-top:6px;">حذف الصورة</button>
         </div>
         <div class="field-group"><label>الحجم</label><input type="number" data-key="wm.size" min="20" max="400"></div>
         <div class="field-group"><label>اللون</label><input type="color" data-key="wm.color" style="width:60px;height:38px;border:1.5px solid var(--border-strong);border-radius:7px;padding:2px;background:var(--bg-1);cursor:pointer;"></div>
         <div class="field-group"><label>الشفافية</label><input type="number" data-key="wm.opacity" min="0.01" max="1" step="0.05"></div>
-        <div class="field-group"><label>الدوران (بالدرجات)</label><input type="number" data-key="wm.rotate" min="-90" max="90" step="5"></div>
+        <div class="field-group"><label>الدوران</label><input type="number" data-key="wm.rotate" min="-90" max="90" step="5"></div>
       </div>
     </div>
 
-    <!-- Sub: Design -->
+    <!-- Design -->
     <div class="subview" id="sub-design">
       <div class="card">
         <h3><span class="em">🌓</span> الوضع</h3>
@@ -798,7 +671,6 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
           <button class="theme-opt" data-theme-pick="dark" onclick="setTheme('dark')">🌙 داكن</button>
         </div>
       </div>
-
       <div class="card">
         <h3><span class="em">🖼️</span> إطار الورقة</h3>
         <div class="frame-picker" id="framePicker"></div>
@@ -809,18 +681,17 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
       </div>
     </div>
 
-    <!-- Sub: Tools -->
+    <!-- Tools -->
     <div class="subview" id="sub-tools">
       <div class="card">
-        <h3><span class="em">💾</span> التصدير والحفظ</h3>
+        <h3><span class="em">💾</span> التصدير</h3>
         <div class="tools-grid">
-          <button class="tool-btn" onclick="exportPDF()"><span class="em">📄</span> تصدير PDF</button>
-          <button class="tool-btn" onclick="exportWord()"><span class="em">📝</span> تصدير Word</button>
+          <button class="tool-btn" onclick="exportPDF()"><span class="em">📄</span> PDF</button>
+          <button class="tool-btn" onclick="exportWord()"><span class="em">📝</span> Word</button>
           <button class="tool-btn" onclick="backup()"><span class="em">💾</span> نسخة احتياطية</button>
           <button class="tool-btn" onclick="triggerImport()"><span class="em">📂</span> استيراد</button>
         </div>
       </div>
-
       <div class="card">
         <h3><span class="em">⚠️</span> منطقة الخطر</h3>
         <div class="tools-grid">
@@ -833,24 +704,11 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 
 <nav class="bottomnav no-print">
   <button class="navbtn active" data-view="preview">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
     المعاينة
   </button>
   <button class="navbtn" data-view="control">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="4" y1="21" x2="4" y2="14"/>
-      <line x1="4" y1="10" x2="4" y2="3"/>
-      <line x1="12" y1="21" x2="12" y2="12"/>
-      <line x1="12" y1="8" x2="12" y2="3"/>
-      <line x1="20" y1="21" x2="20" y2="16"/>
-      <line x1="20" y1="12" x2="20" y2="3"/>
-      <line x1="1" y1="14" x2="7" y2="14"/>
-      <line x1="9" y1="8" x2="15" y2="8"/>
-      <line x1="17" y1="16" x2="23" y2="16"/>
-    </svg>
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
     التحكم
   </button>
 </nav>
@@ -859,7 +717,7 @@ main{padding:14px 10px;max-width:100%;overflow-x:hidden;}
 
 <script>
 "use strict";
-const STORAGE_KEY='qform_v7';
+const STORAGE_KEY='qform_v8';
 const THEME_KEY='qform_theme';
 const MAX_QUESTIONS=8;
 const FONTS=['Arial','Tahoma','Times New Roman','Traditional Arabic','Simplified Arabic','Sakkal Majalla','Andalus','Diwani','Arabic Typesetting','Calibri','Courier New'];
@@ -881,12 +739,14 @@ function defaultFont(){return{text:'',family:'Arial',size:12,weight:'normal',col
 const defaultState={
   h:{
     school:Object.assign(defaultFont(),{text:'اسم المدرسة',size:16,weight:'bold'}),
-    dir:Object.assign(defaultFont(),{text:'المديرية العامة للتربية',size:11}),
+    dir:Object.assign(defaultFont(),{text:'المديرية العامة',size:11}),
+    rightExtra:Object.assign(defaultFont(),{text:'',size:11}),
     subject:Object.assign(defaultFont(),{text:'المادة / عنوان الأسئلة',size:18,weight:'bold'}),
     year:Object.assign(defaultFont(),{text:'العام الدراسي 2025 - 2026',size:12}),
     time:Object.assign(defaultFont(),{text:'الوقت: ساعة',size:12}),
     subjectLeft:Object.assign(defaultFont(),{text:'المادة: ...',size:12}),
     grade:Object.assign(defaultFont(),{text:'الصف: ...',size:12}),
+    leftExtra:Object.assign(defaultFont(),{text:'',size:12}),
     extra:Object.assign(defaultFont(),{enabled:false,text:'حقل إضافي',size:12}),
     note:Object.assign(defaultFont(),{text:'أجب عن أربعة أسئلة فقط',size:14,weight:'bold'})
   },
@@ -907,7 +767,6 @@ let state=JSON.parse(JSON.stringify(defaultState));
 function $(id){return document.getElementById(id);}
 function setNested(obj,path,val){const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++){if(!(p[i] in c))c[p[i]]={};c=c[p[i]];}c[p[p.length-1]]=val;}
 function getNested(obj,path){return path.split('.').reduce((o,k)=>o==null?undefined:o[k],obj);}
-
 let saveTimer=null;
 function save(){if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}},250);}
 let renderTimer=null;
@@ -915,9 +774,6 @@ function scheduleRender(){if(renderTimer)clearTimeout(renderTimer);renderTimer=s
 function toast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');if(t._timer)clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2000);}
 function deepMerge(t,s){const o=Object.assign({},t);for(const k in s){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])&&t[k]&&typeof t[k]==='object'&&!Array.isArray(t[k])){o[k]=deepMerge(t[k],s[k]);}else{o[k]=s[k];}}return o;}
 
-/* ==================================================
-   بناء عناصر الورقة
-   ================================================== */
 function applyStyle(el,obj){
   if(!obj)return;
   el.style.fontFamily=(obj.family||'Arial')+', Arial, sans-serif';
@@ -927,6 +783,9 @@ function applyStyle(el,obj){
   el.textContent=obj.text||'';
 }
 
+/* ============================================================
+   HEADER — 3 columns
+   ============================================================ */
 function buildHeaderElement(){
   const header=document.createElement('div');
   header.className='page-header';
@@ -934,20 +793,29 @@ function buildHeaderElement(){
   const grid=document.createElement('div');
   grid.className='header-grid';
 
+  // RIGHT — 3 fields
   const colR=document.createElement('div');colR.className='hcol hcol-right';
   const r1=document.createElement('div');r1.className='hfield';applyStyle(r1,state.h.school);colR.appendChild(r1);
   const r2=document.createElement('div');r2.className='hfield';applyStyle(r2,state.h.dir);colR.appendChild(r2);
+  if(state.h.rightExtra.text){
+    const r3=document.createElement('div');r3.className='hfield';applyStyle(r3,state.h.rightExtra);colR.appendChild(r3);
+  }
   grid.appendChild(colR);
 
+  // CENTER — 2 fields
   const colC=document.createElement('div');colC.className='hcol hcol-center';
   const c1=document.createElement('div');c1.className='hfield';applyStyle(c1,state.h.subject);colC.appendChild(c1);
   const c2=document.createElement('div');c2.className='hfield';applyStyle(c2,state.h.year);colC.appendChild(c2);
   grid.appendChild(colC);
 
+  // LEFT — 4 fields
   const colL=document.createElement('div');colL.className='hcol hcol-left';
   const l1=document.createElement('div');l1.className='hfield';applyStyle(l1,state.h.time);colL.appendChild(l1);
   const l2=document.createElement('div');l2.className='hfield';applyStyle(l2,state.h.subjectLeft);colL.appendChild(l2);
   const l3=document.createElement('div');l3.className='hfield';applyStyle(l3,state.h.grade);colL.appendChild(l3);
+  if(state.h.leftExtra.text){
+    const l4=document.createElement('div');l4.className='hfield';applyStyle(l4,state.h.leftExtra);colL.appendChild(l4);
+  }
   grid.appendChild(colL);
 
   header.appendChild(grid);
@@ -976,36 +844,28 @@ function buildHeaderElement(){
 function buildFooterElement(){
   const footer=document.createElement('div');
   footer.className='page-footer';
-
   if(state.f.wish.text){
     const wish=document.createElement('div');
     wish.className='footer-wish';
     applyStyle(wish,state.f.wish);
     footer.appendChild(wish);
   }
-
   const grid=document.createElement('div');
   grid.className='footer-grid';
 
-  // Right — teacher names (multiple)
-  const cR=document.createElement('div');
-  cR.className='fcol right';
-  const tWrap=document.createElement('div');
-  tWrap.className='footer-teachers';
+  const cR=document.createElement('div');cR.className='fcol right';
+  const tWrap=document.createElement('div');tWrap.className='footer-teachers';
   state.f.teacherList.forEach(name=>{
     if(!name)return;
     const t=document.createElement('div');
     applyStyle(t,Object.assign({},state.f.teachers,{text:name}));
     tWrap.appendChild(t);
   });
-  if(tWrap.childNodes.length) cR.appendChild(tWrap);
+  if(tWrap.childNodes.length)cR.appendChild(tWrap);
   grid.appendChild(cR);
 
-  const cC=document.createElement('div');cC.className='fcol center';applyStyle(cC,state.f.center);
-  grid.appendChild(cC);
-
-  const cL=document.createElement('div');cL.className='fcol left';applyStyle(cL,state.f.left);
-  grid.appendChild(cL);
+  const cC=document.createElement('div');cC.className='fcol center';applyStyle(cC,state.f.center);grid.appendChild(cC);
+  const cL=document.createElement('div');cL.className='fcol left';applyStyle(cL,state.f.left);grid.appendChild(cL);
 
   footer.appendChild(grid);
   return footer;
@@ -1022,7 +882,6 @@ function buildWatermarkElement(){
   if(!state.wm||state.wm.type==='none')return null;
   const wrap=document.createElement('div');
   wrap.className='watermark';
-
   if(state.wm.type==='text'&&state.wm.text){
     const t=document.createElement('div');
     t.className='watermark-text';
@@ -1053,15 +912,11 @@ function buildFrameElement(){
   return frame;
 }
 
-/* ==================================================
-   القياس والترقيم
-   ================================================== */
 const PAGE_PADDING_MM=12;
 const A4_WIDTH_MM=210;
 const A4_HEIGHT_MM=297;
 const CONTENT_WIDTH_MM=A4_WIDTH_MM-2*PAGE_PADDING_MM;
 const CONTENT_HEIGHT_MM=A4_HEIGHT_MM-2*PAGE_PADDING_MM;
-
 function mmToPx(mm){return mm*96/25.4;}
 
 function measure(el){
@@ -1081,15 +936,12 @@ function buildPages(){
 
   const headerEl=buildHeaderElement();
   const headerH=measure(headerEl);
-
   const footerEl=buildFooterElement();
   const footerH=measure(footerEl);
-
   const qHeights=state.questions.map(q=>measure(buildQuestionElement(q)));
 
   const contentHeightPx=mmToPx(CONTENT_HEIGHT_MM);
   const GAP=8;
-
   const pages=[];
   let usedH=headerH;
   let current={isFirst:true,questions:[]};
@@ -1106,11 +958,9 @@ function buildPages(){
   }
   pages.push(current);
 
-  // تأكد أن التذييل يلحق بالصفحة الأخيرة
   const last=pages[pages.length-1];
   let lastUsed=last.isFirst?headerH:0;
   last.questions.forEach(qi=>{lastUsed+=qHeights[qi]+GAP;});
-
   if(lastUsed+footerH+GAP>contentHeightPx&&last.questions.length>1){
     const moved=last.questions.pop();
     pages.push({isFirst:false,questions:[moved]});
@@ -1130,13 +980,10 @@ function buildPages(){
 
     const wmEl=buildWatermarkElement();
     if(wmEl)pageEl.appendChild(wmEl);
-
-    const frameEl=buildFrameElement();
-    pageEl.appendChild(frameEl);
+    pageEl.appendChild(buildFrameElement());
 
     const content=document.createElement('div');
     content.className='page-content';
-
     if(p.isFirst)content.appendChild(buildHeaderElement());
 
     const main=document.createElement('div');
@@ -1154,7 +1001,6 @@ function buildPages(){
   fitPages();
 }
 
-/* ملاءمة الورقة لحجم الشاشة */
 function fitPages(){
   const container=$('pages-container');
   if(!container)return;
@@ -1162,7 +1008,6 @@ function fitPages(){
   const pageWidthPx=mmToPx(A4_WIDTH_MM);
   const pageHeightPx=mmToPx(A4_HEIGHT_MM);
   const scale=Math.min(1,available/pageWidthPx);
-
   container.querySelectorAll('.page-scaler').forEach(s=>{
     s.style.width=(pageWidthPx*scale)+'px';
     s.style.height=(pageHeightPx*scale)+'px';
@@ -1170,18 +1015,13 @@ function fitPages(){
     if(p){
       p.style.transform='scale('+scale+')';
       p.style.transformOrigin='top right';
-      // in RTL, we need to shift to center; use top right for RTL content
       p.style.right='0';
       p.style.left='auto';
     }
   });
 }
-
 window.addEventListener('resize',fitPages);
 
-/* ==================================================
-   الرندر
-   ================================================== */
 function render(){
   buildPages();
   renderQuestionsEditor();
@@ -1212,11 +1052,8 @@ function buildQuestionCard(q,idx){
   const head=document.createElement('div');
   head.className='q-card-head';
   const num=document.createElement('span');
-  num.className='num';
-  num.textContent='سؤال '+(idx+1);
-  head.appendChild(num);
-  const sp=document.createElement('span');sp.className='spacer';
-  head.appendChild(sp);
+  num.className='num';num.textContent='سؤال '+(idx+1);head.appendChild(num);
+  const sp=document.createElement('span');sp.className='spacer';head.appendChild(sp);
   const up=miniBtn('▲','نقل للأعلى',()=>moveQuestion(idx,-1));if(idx===0)up.disabled=true;head.appendChild(up);
   const dn=miniBtn('▼','نقل للأسفل',()=>moveQuestion(idx,1));if(idx===state.questions.length-1)dn.disabled=true;head.appendChild(dn);
   const del=miniBtn('✕','حذف',()=>deleteQuestion(idx));del.classList.add('danger');head.appendChild(del);
@@ -1278,70 +1115,42 @@ function addQuestion(){
     if(tas.length){const last=tas[tas.length-1];last.focus();last.scrollIntoView({behavior:'smooth',block:'center'});}
   },100);
 }
-
 function moveQuestion(idx,dir){
-  const ni=idx+dir;
-  if(ni<0||ni>=state.questions.length)return;
-  const tmp=state.questions[idx];
-  state.questions[idx]=state.questions[ni];
-  state.questions[ni]=tmp;
+  const ni=idx+dir;if(ni<0||ni>=state.questions.length)return;
+  const tmp=state.questions[idx];state.questions[idx]=state.questions[ni];state.questions[ni]=tmp;
   save();render();
 }
-
 function deleteQuestion(idx){
   if(!confirm('حذف السؤال '+(idx+1)+'؟'))return;
   state.questions.splice(idx,1);save();render();
 }
 
-/* ==================================================
-   المعلمون
-   ================================================== */
 function renderTeachersEditor(){
-  const cont=$('teachersEditor');
-  if(!cont)return;
-  cont.innerHTML='';
+  const cont=$('teachersEditor');if(!cont)return;cont.innerHTML='';
   state.f.teacherList.forEach((name,i)=>{
-    const row=document.createElement('div');
-    row.className='teacher-item';
-
+    const row=document.createElement('div');row.className='teacher-item';
     const inp=document.createElement('input');
-    inp.type='text';
-    inp.placeholder='اسم المعلم '+(i+1);
-    inp.value=name;
+    inp.type='text';inp.placeholder='اسم المعلم '+(i+1);inp.value=name;
     inp.addEventListener('input',()=>{state.f.teacherList[i]=inp.value;save();scheduleRender();});
     row.appendChild(inp);
-
     if(state.f.teacherList.length>1){
-      const rm=miniBtn('✕','حذف',()=>{
-        state.f.teacherList.splice(i,1);save();render();
-      });
-      rm.classList.add('danger');
-      row.appendChild(rm);
+      const rm=miniBtn('✕','حذف',()=>{state.f.teacherList.splice(i,1);save();render();});
+      rm.classList.add('danger');row.appendChild(rm);
     }
-
     cont.appendChild(row);
   });
 }
-
 function addTeacher(){
-  state.f.teacherList.push('');
-  save();render();
-  setTimeout(()=>{
-    const inp=document.querySelectorAll('#teachersEditor input');
-    if(inp.length){inp[inp.length-1].focus();}
-  },100);
+  state.f.teacherList.push('');save();render();
+  setTimeout(()=>{const inp=document.querySelectorAll('#teachersEditor input');if(inp.length)inp[inp.length-1].focus();},100);
 }
 
-/* ==================================================
-   ربط الحقول
-   ================================================== */
 function fillFontSelects(){
   document.querySelectorAll('[data-font]').forEach(sel=>{
     if(sel.options.length>0)return;
     FONTS.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);});
   });
 }
-
 function loadStateIntoInputs(){
   document.querySelectorAll('[data-key]').forEach(el=>{
     const key=el.getAttribute('data-key');
@@ -1350,7 +1159,6 @@ function loadStateIntoInputs(){
     if(el.type==='checkbox')el.checked=!!val;else el.value=val;
   });
 }
-
 function bindAllInputs(){
   document.querySelectorAll('[data-key]').forEach(el=>{
     if(el._bound)return;el._bound=true;
@@ -1367,9 +1175,6 @@ function bindAllInputs(){
   });
 }
 
-/* ==================================================
-   التنقل والقائمة
-   ================================================== */
 function switchView(name){
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-view')===name));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
@@ -1385,27 +1190,16 @@ function switchSub(name){
 function toggleMenu(e){if(e)e.stopPropagation();const m=$('moreMenu');if(m)m.classList.toggle('open');}
 function closeMenu(){const m=$('moreMenu');if(m)m.classList.remove('open');}
 
-/* ==================================================
-   الوضع
-   ================================================== */
 function setTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(THEME_KEY,t);}catch(e){}updateThemePicker();}
 function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light';setTheme(c==='dark'?'light':'dark');}
 function updateThemePicker(){const c=document.documentElement.getAttribute('data-theme')||'light';document.querySelectorAll('[data-theme-pick]').forEach(el=>el.classList.toggle('active',el.getAttribute('data-theme-pick')===c));}
 
-/* ==================================================
-   منتقي الإطار
-   ================================================== */
 function buildFramePicker(){
-  const picker=$('framePicker');
-  if(!picker)return;
-  picker.innerHTML='';
+  const picker=$('framePicker');if(!picker)return;picker.innerHTML='';
   FRAMES.forEach(f=>{
     const btn=document.createElement('button');
-    btn.className='frame-opt';
-    btn.dataset.frame=f.id;
-    btn.type='button';
+    btn.className='frame-opt';btn.dataset.frame=f.id;btn.type='button';
     btn.onclick=()=>{state.frame.style=f.id;save();render();};
-
     const prev=document.createElement('div');prev.className='preview';
     const box=document.createElement('div');box.className='box';
     const c=state.frame.color||'#111827';
@@ -1420,34 +1214,20 @@ function buildFramePicker(){
     else if(f.id==='ornate'){box.style.border='3px solid '+c;box.style.outline='1px solid '+c;box.style.outlineOffset='2px';}
     else if(f.id==='none')box.style.border='1px dashed #cbd5e1';
     prev.appendChild(box);
-
-    const label=document.createElement('span');
-    label.textContent=f.label;
-
-    btn.appendChild(prev);btn.appendChild(label);
-    picker.appendChild(btn);
+    const label=document.createElement('span');label.textContent=f.label;
+    btn.appendChild(prev);btn.appendChild(label);picker.appendChild(btn);
   });
 }
+function updateFramePicker(){document.querySelectorAll('.frame-opt').forEach(el=>el.classList.toggle('active',el.dataset.frame===state.frame.style));}
 
-function updateFramePicker(){
-  document.querySelectorAll('.frame-opt').forEach(el=>el.classList.toggle('active',el.dataset.frame===state.frame.style));
-}
-
-/* ==================================================
-   العلامة المائية
-   ================================================== */
 function removeWatermarkImage(){state.wm.image=null;save();render();toast('تم الحذف');}
 
-/* ==================================================
-   الطباعة والتصدير
-   ================================================== */
 function doPrint(){closeMenu();switchView('preview');setTimeout(()=>window.print(),200);}
-function exportPDF(){closeMenu();toast('اختر "حفظ كـ PDF" من نافذة الطباعة');switchView('preview');setTimeout(()=>window.print(),300);}
+function exportPDF(){closeMenu();toast('اختر "حفظ كـ PDF"');switchView('preview');setTimeout(()=>window.print(),300);}
 
 function exportWord(){
   closeMenu();
-  const container=$('pages-container');
-  if(!container)return;
+  const container=$('pages-container');if(!container)return;
   const pages=container.querySelectorAll('.page');
   let bodyHtml='';
   pages.forEach(p=>{
@@ -1471,7 +1251,6 @@ function exportWord(){
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast('تم حفظ Word ✅');
 }
-
 function backup(){
   closeMenu();
   const data=JSON.stringify(state,null,2);
@@ -1481,9 +1260,7 @@ function backup(){
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast('تم حفظ نسخة 💾');
 }
-
 function triggerImport(){closeMenu();const el=$('importFile');if(el)el.click();}
-
 function restore(input){
   const f=input.files&&input.files[0];if(!f)return;
   const r=new FileReader();
@@ -1493,22 +1270,17 @@ function restore(input){
       if(!d||!d.h||!Array.isArray(d.questions))throw new Error('bad');
       state=deepMerge(JSON.parse(JSON.stringify(defaultState)),d);
       loadStateIntoInputs();render();save();
-      switchView('preview');
-      toast('تم الاستيراد ✅');
+      switchView('preview');toast('تم الاستيراد ✅');
     }catch(err){toast('الملف غير صالح ❌');}
   };
   r.readAsText(f);input.value='';
 }
-
 function clearAll(){
   closeMenu();
   if(!confirm('حذف كل الأسئلة؟'))return;
   state.questions=[];save();render();toast('تم الحذف 🗑️');
 }
 
-/* ==================================================
-   الإقلاع
-   ================================================== */
 function boot(){
   try{const t=localStorage.getItem(THEME_KEY);if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
   try{
@@ -1529,8 +1301,7 @@ function boot(){
   const wmInput=$('wmImageInput');
   if(wmInput){
     wmInput.addEventListener('change',()=>{
-      const f=wmInput.files&&wmInput.files[0];
-      if(!f)return;
+      const f=wmInput.files&&wmInput.files[0];if(!f)return;
       if(f.size>3*1024*1024){toast('الصورة كبيرة');wmInput.value='';return;}
       const reader=new FileReader();
       reader.onload=e=>{state.wm.image=e.target.result;state.wm.type='image';save();loadStateIntoInputs();render();toast('تم الرفع ✅');};
@@ -1538,28 +1309,17 @@ function boot(){
     });
   }
 
-  document.querySelectorAll('.navbtn').forEach(btn=>{
-    btn.addEventListener('click',()=>switchView(btn.getAttribute('data-view')));
-  });
-  document.querySelectorAll('.subtab').forEach(tab=>{
-    tab.addEventListener('click',()=>switchSub(tab.getAttribute('data-sub')));
-  });
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('.menu-wrap'))closeMenu();
-  });
+  document.querySelectorAll('.navbtn').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.getAttribute('data-view'))));
+  document.querySelectorAll('.subtab').forEach(tab=>tab.addEventListener('click',()=>switchSub(tab.getAttribute('data-sub'))));
+  document.addEventListener('click',e=>{if(!e.target.closest('.menu-wrap'))closeMenu();});
 
   render();
   window.addEventListener('beforeprint',()=>switchView('preview'));
-  // إعادة الحساب بعد تحميل الخطوط
   setTimeout(fitPages,300);
   setTimeout(fitPages,1000);
 }
 
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',boot);
-}else{
-  boot();
-}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot);}else{boot();}
 </script>
 
 </body>
